@@ -1,2 +1,5 @@
 **/.idea/
 **/.history/
+**/vendor/
+/go.mod
+/go.sum
