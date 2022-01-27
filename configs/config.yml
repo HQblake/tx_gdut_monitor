@@ -1,9 +1,0 @@
-admin:
-  listen: 8080
-db:
-  host: "localhost"
-  port: 3306
-  type: mysql
-  name: tx_gdut_monitor
-  user: root
-  password: 123456
