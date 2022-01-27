@@ -1,4 +1,4 @@
-module tx_gdut_monitor
+module manage
 
 go 1.17
 

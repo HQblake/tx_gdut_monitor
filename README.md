@@ -12,8 +12,8 @@
 - [ ] **服务Docker化**
 
 ## 系统架构
-![项目架构](./docs/assets/article.jpg)
-![项目流程](./docs/assets/flow.jpg)
+![项目架构](wiki/images/article.jpg)
+![项目流程](wiki/images/flow.jpg)
 1. **信息采集端**
     * **信息采集agent**：负责采集系统的信息并上报给子系统
 2. **告警子系统**
@@ -42,15 +42,38 @@
 4. 数据存储模块：使用influxDB存储时序数据，使用MySQL存储系统配置数据
 
 ## 目录结构
-* configs：放配置文件
-* docs：程序文档
-* global：全局变量
-* internal：内部模块，各个模块代码的具体实现源码放在这个文件夹下
-    * dao：数据访问层
-    * model：模型层
-    * service：项目核心业务逻辑层
+* monitor-agent：Agent采集系统
+    * cmd：通常有一个小的 `main` 函数，从 `/internal` 和 `/pkg` 目录导入和调用代码。但不要在这个目录中放置太多代码。
+    * configs：当前系统的配置文件模板或默认配置。
+    * build：打包和持续集成。
+    * scripts：当前系统执行各种构建、安装、分析等操作的脚本。
+    * test：额外的外部测试应用程序和测试数据。
+    * global：系统全局变量
+    * internal：私有应用程序和库代码。即外部应用程序不可以使用的当前系统的库代码
+    * pkg：外部应用程序可以使用的当前系统的代码
+    * storage：系统生成的临时文件
+    * third_parity：外部辅助工具，分叉代码和其他第三方工具
+    * tools：系统的支持工具
     * ……
-* pkg：项目相关的模块包
-* storage：项目生成的临时文件
-* third_parity：第三方资源库
-* ......
+* monitor-alert：告警系统，目录结构参照`monitor-agent`
+* monitor-manage：服务监控系统，目录结构参照`monitor-agent`
+    * api：OpenAPI/Swagger 规范，JSON 模式文件，协议定义文件。
+* monitor-web：可视化界面系统，目录结构参照`monitor-agent`
+* monitor-storage: 存储系统，目录结构参照`monitor-agent`
+    * configs
+        * database：存放SQL脚本
+* configs：项目全局公共配置文件
+    * proto：存放所有的proto文件
+    * ……
+* wiki：项目部署文档
+    * images：文档相关图片
+* build: 项目的编译、构建相关文件
+
+## 团队开发注意事项
+1. 除了monitor-manage系统与monitor-web系统之间采用HTTP通信，其余所有系统之间采用grpc通信。
+2. 系统与系统之间采用通信的方式共享数据，系统内部的服务之间采用Interface接口的方式共享数据。
+3. 确保系统之间没有代码层面的依赖关系，即一个系统禁止import导入另一个系统的库代码。
+4. 如果一个系统需要调用另一个系统的函数，则该函数应该在PB协议中定义。
+5. 尽量确保每个系统都能独立部署、运行。
+6. 之前上传的一些配置文件和数据库链接初始化示例已转存至monitor-manage文件夹下。
+7. **使用git push自己的代码之前，注意编写好.gitignore文件，过滤掉无须上传的文件或文件夹，并且统一将代码push到develop分支**。
