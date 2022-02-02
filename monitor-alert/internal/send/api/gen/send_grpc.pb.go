@@ -18,7 +18,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SendServiceClient interface {
-	Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error)
+	// 负责更新和新增
+	Set(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error)
+	Del(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*Response, error)
 	Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*Response, error)
 }
 
@@ -30,9 +32,18 @@ func NewSendServiceClient(cc grpc.ClientConnInterface) SendServiceClient {
 	return &sendServiceClient{cc}
 }
 
-func (c *sendServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error) {
+func (c *sendServiceClient) Set(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/api.SendService/Update", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/api.SendService/Set", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *sendServiceClient) Del(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*Response, error) {
+	out := new(Response)
+	err := c.cc.Invoke(ctx, "/api.SendService/Del", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +63,9 @@ func (c *sendServiceClient) Init(ctx context.Context, in *InitRequest, opts ...g
 // All implementations must embed UnimplementedSendServiceServer
 // for forward compatibility
 type SendServiceServer interface {
-	Update(context.Context, *UpdateRequest) (*Response, error)
+	// 负责更新和新增
+	Set(context.Context, *UpdateRequest) (*Response, error)
+	Del(context.Context, *DelRequest) (*Response, error)
 	Init(context.Context, *InitRequest) (*Response, error)
 	mustEmbedUnimplementedSendServiceServer()
 }
@@ -61,8 +74,11 @@ type SendServiceServer interface {
 type UnimplementedSendServiceServer struct {
 }
 
-func (UnimplementedSendServiceServer) Update(context.Context, *UpdateRequest) (*Response, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
+func (UnimplementedSendServiceServer) Set(context.Context, *UpdateRequest) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
+}
+func (UnimplementedSendServiceServer) Del(context.Context, *DelRequest) (*Response, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Del not implemented")
 }
 func (UnimplementedSendServiceServer) Init(context.Context, *InitRequest) (*Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
@@ -80,20 +96,38 @@ func RegisterSendServiceServer(s grpc.ServiceRegistrar, srv SendServiceServer) {
 	s.RegisterService(&SendService_ServiceDesc, srv)
 }
 
-func _SendService_Update_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _SendService_Set_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UpdateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SendServiceServer).Update(ctx, in)
+		return srv.(SendServiceServer).Set(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/api.SendService/Update",
+		FullMethod: "/api.SendService/Set",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SendServiceServer).Update(ctx, req.(*UpdateRequest))
+		return srv.(SendServiceServer).Set(ctx, req.(*UpdateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SendService_Del_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SendServiceServer).Del(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.SendService/Del",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SendServiceServer).Del(ctx, req.(*DelRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -124,8 +158,12 @@ var SendService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*SendServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Update",
-			Handler:    _SendService_Update_Handler,
+			MethodName: "Set",
+			Handler:    _SendService_Set_Handler,
+		},
+		{
+			MethodName: "Del",
+			Handler:    _SendService_Del_Handler,
 		},
 		{
 			MethodName: "Init",
