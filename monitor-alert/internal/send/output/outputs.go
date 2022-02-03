@@ -1,7 +1,7 @@
 package output
 
 import (
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
 	"log"
 	"sync"
 )
@@ -19,7 +19,7 @@ type IOutputs interface {
 	Del(id int) error
 	Set(id int, conf Config) error
 	List() []IOutput
-	Output(info model.MetricInfo) error
+	Output(info model.Info) error
 }
 
 type Outputs struct {
@@ -30,11 +30,11 @@ type Outputs struct {
 	outputs map[int]IOutput
 }
 
-func (o *Outputs) Output(info model.MetricInfo) error {
+func (o *Outputs) Output(info model.Info) error {
 	var err error
 	o.lock.RLock()
 	for _, output := range o.outputs {
-		if output.Level() <= Level(info.Level) {
+		if ParseLevel(info.Level) >= output.Level() {
 			err = output.Output(info)
 			log.Println(err)
 		}

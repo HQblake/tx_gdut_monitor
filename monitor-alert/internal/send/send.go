@@ -3,8 +3,10 @@ package send
 import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/service"
+	model2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
 	"log"
+	"sync"
 )
 
 // ISend 接入判定服务
@@ -13,12 +15,13 @@ type ISend interface {
 	Send(alert model.AlertInfo) error
 }
 
-
 type Service struct {
 	proxy *service.Service
 	agents output.IManager
+	infoPool *sync.Pool
 }
 
+// NewService 初始化发送服务，提供对外的判定服务结构（判定服务直接调用该结构的Send方法即可完成发送）
 func NewService() (*Service, error) {
 	InitFactory()
 	agents := output.NewManager()
@@ -29,16 +32,42 @@ func NewService() (*Service, error) {
 	return &Service{
 		agents: agents,
 		proxy:  s,
+		infoPool: &sync.Pool{
+			New: func() interface{} {
+				return model2.Info{}
+			},
+		},
 	}, nil
 }
 
 func (s *Service) Send(alert model.AlertInfo) error {
 	outputs := s.agents.GetOutputs(alert.AgentID)
 	for _, info := range alert.Metrics {
-		err := outputs.Output(info)
+		i := s.NewInfo(alert.AgentID, info)
+		err := outputs.Output(i)
 		if err != nil {
 			log.Println(err)
 		}
+		s.Release(i)
 	}
 	return nil
 }
+
+func (s *Service) NewInfo(agent string, alert model.MetricInfo) model2.Info {
+	i := s.infoPool.Get().(model2.Info)
+	i.Agent = agent
+	i.Metric = alert.Metric
+	i.Value = alert.Value
+	i.Threshold = alert.Threshold
+	i.Level = output.Level(alert.Level).String()
+	i.Duration = alert.Duration
+	i.Start = alert.Start
+	i.ParseMethod(alert.Method)
+	return i
+}
+
+func (s *Service) Release(info model2.Info) {
+	s.infoPool.Put(info)
+}
+
+

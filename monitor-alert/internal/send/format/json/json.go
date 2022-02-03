@@ -1,13 +1,17 @@
 package json
 
-import "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
+import (
+	"encoding/json"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
+)
 
 type Json struct {
 
 }
 
-func (h *Json) Format(alert model.MetricInfo) ([]byte, error) {
-	panic("implement me")
+// Format json格式化直接输出
+func (h *Json) Format(info model.Info) ([]byte, error) {
+	return json.Marshal(info)
 }
 
 func NewJson() *Json {

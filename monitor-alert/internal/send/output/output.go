@@ -1,6 +1,8 @@
 package output
 
-import "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
+import (
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
+)
 
 
 
@@ -10,7 +12,7 @@ type IOutput interface {
 	// Reset 更新配置
 	Reset(level Level, config interface{}) error
 	// Output 内容输出
-	Output(info model.MetricInfo) error
+	Output(info model.Info) error
 	// Finish 结束
 	Finish() error
 }

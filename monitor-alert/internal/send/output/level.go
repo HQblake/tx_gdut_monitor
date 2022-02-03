@@ -14,19 +14,18 @@ const (
 	ErrorLevel
 	PanicLevel
 )
-func ParseLevel(lvl string) (Level, error) {
+func ParseLevel(lvl string) Level {
 	switch strings.ToLower(lvl) {
 	case "panic":
-		return PanicLevel, nil
+		return PanicLevel
 	case "error":
-		return ErrorLevel, nil
+		return ErrorLevel
 	case "warn", "warning":
-		return WarnLevel, nil
+		return WarnLevel
 	case "info":
-		return InfoLevel, nil
+		return InfoLevel
 	}
-	var l Level
-	return l, fmt.Errorf("not a valid logrus Level: %q", lvl)
+	return InfoLevel
 }
 
 func (level Level) String() string {

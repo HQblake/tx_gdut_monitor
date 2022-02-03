@@ -6,17 +6,6 @@ import (
 )
 
 
-type IFormatterPool interface {
-	Apply() (IFormat, bool)
-	Release(format IFormat)
-}
-
-type IPoolManager interface {
-	Register(name string, pool IFormatterPool)
-	Get(name string) (IFormatterPool, error)
-}
-
-
 var formatPool = newPools()
 
 func Register(name string, pool IFormatterPool)  {
@@ -27,6 +16,10 @@ func Get(name string) (IFormatterPool, error)  {
 	return formatPool.Get(name)
 }
 
+type IPoolManager interface {
+	Register(name string, pool IFormatterPool)
+	Get(name string) (IFormatterPool, error)
+}
 
 type Pools struct {
 	lock *sync.RWMutex

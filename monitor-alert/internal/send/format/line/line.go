@@ -1,13 +1,21 @@
 package line
 
-import "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
+import (
+	"bytes"
+	"fmt"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
+)
 
 type Line struct {
 
 }
 
-func (h *Line) Format(alert model.MetricInfo) ([]byte, error) {
-	panic("implement me")
+func (h *Line) Format(info model.Info) ([]byte, error) {
+	b := &bytes.Buffer{}
+	b.Reset()
+	b.WriteString(fmt.Sprintf("|%s|%.2f|%.2f|%s|%s|%s|%s|", info.Agent, info.Value, info.Threshold, info.Level, info.Method, info.Duration, info.Start))
+	b.WriteByte('\n')
+	return b.Bytes(), nil
 }
 
 func NewLine() *Line {
