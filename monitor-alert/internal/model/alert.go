@@ -1,8 +1,10 @@
 package model
 
+import "sync"
+
 // AlertInfo 记录某台Agent的所有异常指标信息
 type AlertInfo struct {
-	AgentID string                // agent 标识
+	AgentID string                // agent 标识：agent.Local-agent.IP
 	Metrics map[string]MetricInfo // 指标告警信息
 }
 
@@ -15,4 +17,10 @@ type MetricInfo struct {
 	Level     int8    // 告警等级
 	Duration  string  // 持续时间
 	Start     string  // 开始时间
+}
+
+var AlertInfoPool = &sync.Pool{
+	New: func() interface{} {
+		return new(AlertInfo)
+	},
 }

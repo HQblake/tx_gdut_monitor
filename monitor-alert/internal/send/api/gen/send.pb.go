@@ -82,7 +82,7 @@ type Config struct {
 	unknownFields protoimpl.UnknownFields
 
 	SendType Type   `protobuf:"varint,1,opt,name=sendType,proto3,enum=api.Type" json:"sendType,omitempty"`
-	Config   string `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"`
+	Config   string `protobuf:"bytes,2,opt,name=configs,proto3" json:"configs,omitempty"`
 	Level    int32  `protobuf:"varint,3,opt,name=level,proto3" json:"level,omitempty"`
 }
 
@@ -200,7 +200,7 @@ type InitConfig struct {
 	unknownFields protoimpl.UnknownFields
 
 	AgentId string         `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	Config  []*ConfigEntry `protobuf:"bytes,2,rep,name=config,proto3" json:"config,omitempty"`
+	Config  []*ConfigEntry `protobuf:"bytes,2,rep,name=configs,proto3" json:"configs,omitempty"`
 }
 
 func (x *InitConfig) Reset() {
@@ -255,7 +255,7 @@ type UpdateRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	AgentId string       `protobuf:"bytes,1,opt,name=agent_id,json=agentId,proto3" json:"agent_id,omitempty"`
-	Config  *ConfigEntry `protobuf:"bytes,2,opt,name=config,proto3" json:"config,omitempty"`
+	Config  *ConfigEntry `protobuf:"bytes,2,opt,name=configs,proto3" json:"configs,omitempty"`
 }
 
 func (x *UpdateRequest) Reset() {
@@ -365,7 +365,7 @@ type InitRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Config map[string]*InitConfig `protobuf:"bytes,1,rep,name=config,proto3" json:"config,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Config map[string]*InitConfig `protobuf:"bytes,1,rep,name=configs,proto3" json:"configs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *InitRequest) Reset() {
@@ -553,9 +553,9 @@ var file_send_proto_goTypes = []interface{}{
 var file_send_proto_depIdxs = []int32{
 	0, // 0: api.Config.sendType:type_name -> api.Type
 	1, // 1: api.ConfigEntry.conf:type_name -> api.Config
-	2, // 2: api.InitConfig.config:type_name -> api.ConfigEntry
-	2, // 3: api.UpdateRequest.config:type_name -> api.ConfigEntry
-	8, // 4: api.InitRequest.config:type_name -> api.InitRequest.ConfigEntry
+	2, // 2: api.InitConfig.configs:type_name -> api.ConfigEntry
+	2, // 3: api.UpdateRequest.configs:type_name -> api.ConfigEntry
+	8, // 4: api.InitRequest.configs:type_name -> api.InitRequest.ConfigEntry
 	3, // 5: api.InitRequest.ConfigEntry.value:type_name -> api.InitConfig
 	4, // 6: api.SendService.Set:input_type -> api.UpdateRequest
 	5, // 7: api.SendService.Del:input_type -> api.DelRequest
