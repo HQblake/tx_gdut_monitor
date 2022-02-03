@@ -13,7 +13,7 @@ enum Type{
 message Config{
   Type sendType = 1;
   string config = 2;
-  string level = 3;
+  int32 level = 3;
 }
 
 message ConfigEntry {
