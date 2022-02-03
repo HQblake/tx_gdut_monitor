@@ -1,17 +1,44 @@
 package send
 
-import "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
+import (
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/service"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
+	"log"
+)
 
+// ISend 接入判定服务
 type ISend interface {
+	// Send 对判定服务发来的告警信息进行处理，进行通知
 	Send(alert model.AlertInfo) error
 }
 
-//// SendService 告警系统——判定服务模块
-//type SendService struct{}
-//
-//// 为告警系统的其他服务提供调用 SendService 服务相应功能的接口
-//
-//// Send 方法用于对判定服务发来的告警信息进行处理，并通过邮箱进行通知
-//func (ss *SendService) Send(alert *model.AlertInfo) error {
-//	return nil
-//}
+
+type Service struct {
+	proxy *service.Service
+	agents output.IManager
+}
+
+func NewService() (*Service, error) {
+	InitFactory()
+	agents := output.NewManager()
+	s, err := service.NewService(agents, ":8082")
+	if err != nil {
+		return nil, err
+	}
+	return &Service{
+		agents: agents,
+		proxy:  s,
+	}, nil
+}
+
+func (s *Service) Send(alert model.AlertInfo) error {
+	outputs := s.agents.GetOutputs(alert.AgentID)
+	for _, info := range alert.Metrics {
+		err := outputs.Output(info)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	return nil
+}
