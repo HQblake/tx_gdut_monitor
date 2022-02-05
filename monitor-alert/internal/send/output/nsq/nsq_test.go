@@ -1,16 +1,25 @@
-package mail
+package nsq
 
 import (
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/format/html"
+	"fmt"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/format/line"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
+	"github.com/nsqio/go-nsq"
 	"log"
 	"testing"
 	"time"
 )
 
-func TestSendMail(t *testing.T) {
-	html.Register()
+const (
+	// 仅供临时测试
+	address = "81.71.165.211:4150"
+	topic = "test"
+	channel = "test_channel"
+)
+
+func TestPublish(t *testing.T) {
+	line.Register()
 	infos := []model.Info{
 		{
 			Agent: "127.0.0.1 广州",
@@ -62,36 +71,18 @@ func TestSendMail(t *testing.T) {
 		conf *Config
 	}{
 		{
-			name: "one mail",
-			info: []model.Info{infos[0]},
-			conf : &Config{
-				Target: []string{"526756656@qq.com"},
-				FormatType: "html",
-			},
-		},
-		{
-			name: "many mail",
-			info: infos[:5],
-			level: output.WarnLevel,
-			conf : &Config{
-				Target: []string{"526756656@qq.com"},
-				FormatType: "html",
-			},
-		},
-		{
-			name: "more mail",
+			name: "single test",
 			info: infos,
-			level: output.WarnLevel,
 			conf : &Config{
-				Target: []string{"526756656@qq.com","zekewcs@163.com"},
-				FormatType: "html",
+				Topic: topic,
+				Address: address,
+				FormatType: "line",
 			},
 		},
 	}
-
 	for _, cc := range cases {
 		t.Run(cc.name, func(t *testing.T) {
-			outputs, err := NewMail(cc.level, cc.conf)
+			outputs, err := NewNsq(cc.level, cc.conf)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -107,6 +98,30 @@ func TestSendMail(t *testing.T) {
 			}
 		})
 	}
-
 	log.Println("send successfully ... ")
+}
+
+func TestMain(t *testing.M) {
+
+	go createConsumer(address, topic, channel)
+	t.Run()
+	<-time.After(5*time.Second)
+}
+
+// 消费者
+type Consumer struct{}
+func (*Consumer) HandleMessage(msg *nsq.Message) error {
+	fmt.Println("receive", msg.NSQDAddress, "message:", string(msg.Body))
+	return nil
+}
+func createConsumer(address string, topic string, channel string)  {
+	c, err := nsq.NewConsumer(topic, channel, nsq.NewConfig())
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	c.AddHandler(&Consumer{})
+	if err = c.ConnectToNSQD(address); err != nil {
+		log.Fatal(err.Error())
+	}
+
 }

@@ -8,10 +8,9 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output/kafka"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output/mail"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output/nsq"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output/syslog"
 )
 
-func InitFactory()  {
+func Register()  {
 	InitOutputFactory()
 	InitFormatPool()
 }
@@ -21,7 +20,6 @@ func InitOutputFactory()  {
 	kafka.Register()
 	nsq.Register()
 	mail.Register()
-	syslog.Register()
 }
 
 func InitFormatPool()  {

@@ -12,9 +12,16 @@ import (
 	"sync"
 	"time"
 )
+
 // amklofqapqejcabf
 // arcxevvtlmzjcada
-
+const (
+	address = "smtp.qq.com:25"
+	user = "zekew@foxmail.com"
+	code = "arcxevvtlmzjcada"
+	host = "smtp.qq.com"
+	subject = "TX_GDUT_ALERT"
+)
 type Mail struct {
 	pool       *sync.Pool
 	level      output.Level
@@ -27,7 +34,7 @@ type Mail struct {
 }
 
 func NewMail(level output.Level, conf *Config) (*Mail, error) {
-	pool, err := email.NewPool("smtp.qq.com:25",  3, smtp.PlainAuth("", "zekew@foxmail.com", "arcxevvtlmzjcada", "smtp.qq.com"))
+	pool, err := email.NewPool(address, 3, smtp.PlainAuth("", user, code, host))
 	if err != nil {
 		return nil, err
 	}
@@ -41,9 +48,9 @@ func NewMail(level output.Level, conf *Config) (*Mail, error) {
 			New: func() interface{} {
 				return &email.Email{
 					Headers: textproto.MIMEHeader{},
-					From:    "zekew@foxmail.com",
+					From:    user,
 					To:      conf.Target,
-					Subject: "TX_GDUT_ALERT",
+					Subject: subject,
 				}
 			},
 		},
@@ -51,19 +58,20 @@ func NewMail(level output.Level, conf *Config) (*Mail, error) {
 		stopCh: make(chan bool),
 	}
 	go m.sendMail()
+	// 可以写入
 	m.enable = true
 	return m, nil
 }
 
-func (m *Mail) sendMail()  {
+func (m *Mail) sendMail() {
 	for mail := range m.infoCh {
-		err :=  m.mail.Send(mail, 5 * time.Second)
+		err := m.mail.Send(mail, 5*time.Second)
 		if err != nil {
 			log.Println(err)
 		}
 		m.pool.Put(mail)
 	}
-	m.stopCh<-true
+	m.stopCh <- true
 }
 
 func (m *Mail) Level() output.Level {
@@ -84,9 +92,9 @@ func (m *Mail) Reset(level output.Level, config interface{}) error {
 	m.pool.New = func() interface{} {
 		return &email.Email{
 			Headers: textproto.MIMEHeader{},
-			From:    "zekew@foxmail.com",
+			From:    user,
 			To:      conf.Target,
-			Subject: "TX_GDUT_ALERT",
+			Subject: subject,
 		}
 	}
 	return nil
@@ -94,6 +102,9 @@ func (m *Mail) Reset(level output.Level, config interface{}) error {
 
 func (m *Mail) Output(info model.Info) error {
 	if !m.enable {
+		return nil
+	}
+	if m.mail == nil {
 		return nil
 	}
 	em := m.pool.Get().(*email.Email)
@@ -104,22 +115,22 @@ func (m *Mail) Output(info model.Info) error {
 	if m.formatType == "html" {
 		em.HTML = msg
 		em.Headers.Add("Content-Type", "text/html; charset=UTF-8")
-	}else {
+	} else {
 		em.Text = msg
 		em.Headers.Add("Content-Type", "text/plain; charset=UTF-8")
 	}
-	m.infoCh<-em
+	m.infoCh <- em
 	return nil
 }
 
 func (m *Mail) Finish() error {
 	if !m.enable {
+		// 避免重复关
 		return nil
 	}
-	m.enable = false
 	close(m.infoCh)
 	<-m.stopCh
 	m.mail.Close()
+	m.enable = false
 	return nil
 }
-

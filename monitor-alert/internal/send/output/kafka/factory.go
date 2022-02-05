@@ -1,6 +1,7 @@
 package kafka
 
 import (
+	"fmt"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
 	"reflect"
 )
@@ -10,17 +11,27 @@ func Register() {
 }
 
 type factory struct {
-
+	configType reflect.Type
 }
 
 func NewFactory() *factory {
-	return &factory{}
+	return &factory{
+		configType: reflect.TypeOf(new(Config)),
+	}
 }
 
 func (f *factory) Create(level output.Level, config interface{}) (output.IOutput, error) {
-	panic("implement me")
+	conf, ok := config.(*Config)
+	if !ok {
+		return nil, fmt.Errorf("config type is invalid")
+	}
+	c, err := conf.doCheck()
+	if err != nil {
+		return nil, err
+	}
+	return NewKafka(level, c)
 }
 
 func (f *factory) ConfigType() reflect.Type {
-	panic("implement me")
+	return f.configType
 }
