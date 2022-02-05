@@ -15,10 +15,8 @@ type pool struct {
 	p *sync.Pool
 }
 
-func (f *pool) Apply() (format.IFormat, bool) {
-	formatter, ok := f.p.Get().(format.IFormat)
-	return formatter, ok
-
+func (f *pool) Apply() format.IFormat {
+	return f.p.Get().(format.IFormat)
 }
 
 func (f *pool) Release(format format.IFormat) {

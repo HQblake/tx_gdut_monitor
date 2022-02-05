@@ -10,11 +10,13 @@ func Register() {
 }
 
 type factory struct {
-
+	configType reflect.Type
 }
 
 func NewFactory() *factory {
-	return &factory{}
+	return &factory{
+		configType: reflect.TypeOf(new(Config)),
+	}
 }
 
 func (f *factory) Create(level output.Level, config interface{}) (output.IOutput, error) {
@@ -22,5 +24,5 @@ func (f *factory) Create(level output.Level, config interface{}) (output.IOutput
 }
 
 func (f *factory) ConfigType() reflect.Type {
-	panic("implement me")
+	return f.configType
 }

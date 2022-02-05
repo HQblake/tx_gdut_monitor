@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/go-redis/redis/v8 v8.11.4
+	github.com/jordan-wright/email v4.0.1-0.20210109023952-943e75fe5223+incompatible
 	github.com/panjf2000/ants/v2 v2.4.7
 	github.com/spf13/viper v1.10.1
 	google.golang.org/grpc v1.44.0

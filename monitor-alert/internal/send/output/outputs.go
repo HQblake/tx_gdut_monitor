@@ -9,7 +9,7 @@ import (
 type Config struct {
 	Name   string
 	Level  Level
-	Config interface{}
+	Config string
 }
 
 
@@ -84,16 +84,6 @@ func (o *Outputs) Del(id int) error {
 func (o *Outputs) Set(id int, conf Config) error {
 	o.lock.Lock()
 	defer o.lock.Unlock()
-	v, ok := o.outputs[id]
-	// 存在则更新配置
-	if ok {
-		err := v.Reset(conf.Level, conf.Config)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	// 不存在则直接新增
 	factory, err := Get(conf.Name)
 	if err != nil {
 		return err
@@ -102,6 +92,16 @@ func (o *Outputs) Set(id int, conf Config) error {
 	if err != nil {
 		return err
 	}
+	v, ok := o.outputs[id]
+	// 存在则更新配置
+	if ok {
+		err = v.Reset(conf.Level, c)
+		if err != nil {
+			return err
+		}
+		return nil
+	}
+	// 不存在则直接新增
 	output, err := factory.Create(conf.Level, c)
 	if err != nil {
 		return err

@@ -3,8 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <title>TX_GDUT_MONITOR</title>
+    <style>
+        .container{
+            width: 80%;
+            margin: 50px auto;
+            max-width: 960px;
+        }
+        #table-1 thead, #table-1 tr {
+            border-top-width: 1px;
+            border-top-style: solid;
+            border-top-color: #a8bfde;
+        }
+        #table-1 {
+            width: 100%;
+            border-bottom-width: 1px;
+            border-bottom-style: solid;
+            border-bottom-color: #a8bfde;
+        }
+        #table-1 td, #table-1 th {
+            padding: 5px 10px;
+            font-size: 12px;
+            font-family: Verdana;
+            color: #5b7da3;
+        }
+        #table-1 tr:nth-child(even) {
+            background: #FFF
+        }
+        #table-1 tr:nth-child(odd) {
+            background: #d3dfed
+        }
+    </style>
 </head>
 <body>
+<div class="container">
+    <div style="text-align: center">
+        <h3>监控指标异常告警，请尽快修复！</h3>
+    </div>
+    <table id="table-1">
+        <tr>
+            <th>Agent</th>
+            <th>指标类型</th>
+            <th>指标值</th>
+            <th>阈值</th>
+            <th>聚合方式</th>
+            <th>告警等级</th>
+            <th>持续时间</th>
+            <th>开始时间</th>
+        </tr>
+        <tr>
+            <td>{{ .Agent }}</td>
+            <td>{{ .Metric }}</td>
+            <td>{{ .Value }}</td>
+            <td>{{ .Threshold }}</td>
+            <td>{{ .Method }}</td>
+            <td>{{ .Level }}</td>
+            <td>{{ .Duration }}</td>
+            <td>{{ .Start }}</td>
+        </tr>
+    </table>
+</div>
 
 </body>
 </html>

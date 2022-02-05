@@ -5,13 +5,9 @@ import (
 	"reflect"
 )
 
-func ToConfig(v interface{}, t reflect.Type) (interface{}, error) {
-	data, err := json.Marshal(v)
-	if err != nil {
-		return nil, err
-	}
+func ToConfig(v string, t reflect.Type) (interface{}, error) {
 	obj := newConfig(t)
-	err = json.Unmarshal(data, obj)
+	err := json.Unmarshal([]byte(v), obj)
 	if err != nil {
 		return nil, err
 	}

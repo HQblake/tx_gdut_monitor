@@ -10,7 +10,7 @@ type IFormat interface {
 }
 
 type IFormatterPool interface {
-	Apply() (IFormat, bool)
+	Apply() IFormat
 	Release(format IFormat)
 }
 
