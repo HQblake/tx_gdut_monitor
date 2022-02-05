@@ -6,8 +6,7 @@ enum Type{
   EMAIL = 0;
   KAFKA = 1;
   NSQ = 2;
-  SYSLOG = 3;
-  HTTP_LOG = 4;
+  HTTP_LOG = 3;
 }
 // 发送配置，包括配置类型，配置内容及配置等级
 message Config{

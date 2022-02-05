@@ -12,6 +12,9 @@ type Config struct {
 
 func (c *Config) doCheck() error {
 	c.FormatType = strings.ToLower(c.FormatType)
+	if c.FormatType == "" {
+		c.FormatType = "html"
+	}
 	for _, s := range c.Target {
 		if strings.Index(s, "@") == -1 {
 			return fmt.Errorf("email %s is invalid", s)
