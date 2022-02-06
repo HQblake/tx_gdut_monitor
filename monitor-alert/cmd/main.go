@@ -13,8 +13,8 @@ func main() {
 
 	// 初始化判定模块
 
-	// 初始化发送模块
-	s, err := send.NewService()
+	// 初始化发送模块,入参是供管理模块调用的grpc地址
+	s, err := send.NewService(":8082")
 	if err != nil{
 		log.Fatal(err)
 	}
