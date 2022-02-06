@@ -27,3 +27,9 @@ type ISend interface {
 - warn-警告 1
 - Error-严重 2
 - panic-致命 3
+
+#### 支持告警
+- 邮件告警
+- nsq mq
+- kafka mq
+- http接口告警
