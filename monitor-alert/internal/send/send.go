@@ -43,17 +43,17 @@ func NewService() (*Service, error) {
 func (s *Service) Send(alert model.AlertInfo) error {
 	outputs := s.agents.GetOutputs(alert.AgentID)
 	for _, info := range alert.Metrics {
-		i := s.NewInfo(alert.AgentID, info)
+		i := s.newInfo(alert.AgentID, info)
 		err := outputs.Output(i)
 		if err != nil {
 			log.Println(err)
 		}
-		s.Release(i)
+		s.release(i)
 	}
 	return nil
 }
 
-func (s *Service) NewInfo(agent string, alert model.MetricInfo) model2.Info {
+func (s *Service) newInfo(agent string, alert model.MetricInfo) model2.Info {
 	i := s.infoPool.Get().(model2.Info)
 	i.Agent = agent
 	i.Metric = alert.Metric
@@ -66,7 +66,7 @@ func (s *Service) NewInfo(agent string, alert model.MetricInfo) model2.Info {
 	return i
 }
 
-func (s *Service) Release(info model2.Info) {
+func (s *Service) release(info model2.Info) {
 	s.infoPool.Put(info)
 }
 
