@@ -8,7 +8,7 @@ import (
 
 type Config struct {
 	Topic         string   `json:"topic"`
-	Address       []string `json:"address"`
+	Address       string `json:"address"`
 	Version       string   `json:"version"`
 	PartitionType string   `json:"partition_type"`
 	Partition     int32    `json:"partition"`
@@ -33,11 +33,13 @@ func (c *Config) doCheck() (*ProducerConfig, error) {
 	if c.Topic == "" {
 		return nil, fmt.Errorf("topic can not be null")
 	}
-	if len(c.Address) == 0 {
+	// 方便前端处理，以逗号分割
+	address := strings.Split(c.Address, ",")
+	if len(address) == 0 {
 		return nil, fmt.Errorf("address can not be null")
 	}
 	p := &ProducerConfig{}
-	p.Address = c.Address
+	p.Address = address
 	p.Topic = c.Topic
 	s := sarama.NewConfig()
 	if c.Version != "" {

@@ -29,7 +29,7 @@ func (f *factory) Create(level output.Level, config interface{}) (output.IOutput
 	if err != nil {
 		return nil, err
 	}
-	return nil, nil
+	return NewHttp(level, conf)
 }
 
 func (f *factory) ConfigType() reflect.Type {

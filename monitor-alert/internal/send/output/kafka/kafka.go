@@ -18,7 +18,7 @@ type Kafka struct {
 	enable     bool
 	input      chan<- *sarama.ProducerMessage
 	producer   sarama.AsyncProducer
-	lock *sync.Mutex
+	lock *sync.RWMutex
 	wg         *sync.WaitGroup
 	cancel     context.CancelFunc
 }
@@ -29,7 +29,7 @@ func NewKafka(level output.Level, conf *ProducerConfig) (*Kafka, error) {
 		return nil, err
 	}
 	k := &Kafka{
-		lock: &sync.Mutex{},
+		lock: &sync.RWMutex{},
 		level: level,
 		conf: conf,
 		formatType: conf.FormatType,
@@ -42,6 +42,8 @@ func NewKafka(level output.Level, conf *ProducerConfig) (*Kafka, error) {
 }
 
 func (k *Kafka) Level() output.Level {
+	k.lock.RLock()
+	defer k.lock.RUnlock()
 	return k.level
 }
 
@@ -54,6 +56,8 @@ func (k *Kafka) Reset(level output.Level, config interface{}) error {
 	if err != nil {
 		return err
 	}
+	k.lock.Lock()
+	defer k.lock.Unlock()
 	// 关闭旧的生产者
 	if k.producer != nil {
 		k.close()
@@ -72,6 +76,8 @@ func (k *Kafka) Reset(level output.Level, config interface{}) error {
 }
 
 func (k *Kafka) Output(info model.Info) error {
+	k.lock.RLock()
+	defer k.lock.RUnlock()
 	if k.producer == nil || k.input == nil {
 		return nil
 	}
@@ -92,14 +98,16 @@ func (k *Kafka) Output(info model.Info) error {
 	if k.conf.PartitionType == "hash" {
 		msg.Key = sarama.StringEncoder(k.conf.PartitionKey)
 	}
-	k.lock.Lock()
 	k.input <- msg
-	k.lock.Unlock()
 	return nil
 }
 
 func (k *Kafka) Finish() error {
+	k.lock.Lock()
+	defer k.lock.Unlock()
 	k.close()
+	k.producer = nil
+	k.input = nil
 	return nil
 }
 

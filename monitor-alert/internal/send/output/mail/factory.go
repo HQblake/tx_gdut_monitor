@@ -25,11 +25,11 @@ func (f *factory) Create(level output.Level, config interface{}) (output.IOutput
 	if !ok {
 		return nil, fmt.Errorf("config type is invalid")
 	}
-	err := conf.doCheck()
+	m, err := conf.doCheck()
 	if err != nil {
 		return nil, err
 	}
-	return NewMail(level, conf)
+	return NewMail(level, m)
 }
 
 func (f *factory) ConfigType() reflect.Type {

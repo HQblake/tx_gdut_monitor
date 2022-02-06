@@ -6,6 +6,7 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
 	"github.com/nsqio/go-nsq"
+	"sync"
 )
 
 type Nsq struct {
@@ -14,6 +15,7 @@ type Nsq struct {
 	producer  *nsq.Producer
 	topic string
 	address string
+	lock *sync.RWMutex
 }
 
 func NewNsq(level output.Level, config *Config) (*Nsq, error) {
@@ -23,6 +25,7 @@ func NewNsq(level output.Level, config *Config) (*Nsq, error) {
 		return nil, err
 	}
 	return &Nsq{
+		lock: &sync.RWMutex{},
 		level: level,
 		formatType: config.FormatType,
 		topic: config.Topic,
@@ -33,6 +36,8 @@ func NewNsq(level output.Level, config *Config) (*Nsq, error) {
 
 
 func (n *Nsq) Level() output.Level {
+	n.lock.RLock()
+	defer n.lock.RUnlock()
 	return n.level
 }
 
@@ -45,6 +50,8 @@ func (n *Nsq) Reset(level output.Level, config interface{}) error {
 	if err != nil {
 		return err
 	}
+	n.lock.Lock()
+	defer n.lock.Unlock()
 	n.level = level
 	n.formatType = conf.FormatType
 	n.topic = conf.Topic
@@ -67,6 +74,12 @@ func (n *Nsq) Output(info model.Info) error {
 	if err != nil {
 		return err
 	}
+	n.lock.RLock()
+	defer n.lock.RUnlock()
+	if n.producer == nil {
+		return nil
+	}
+	// 是否判定联通待定
 	err = n.producer.Publish(n.topic, msg)
 	if err != nil {
 		return err
@@ -75,6 +88,8 @@ func (n *Nsq) Output(info model.Info) error {
 }
 
 func (n *Nsq) Finish() error {
+	n.lock.Lock()
+	defer n.lock.Unlock()
 	n.producer.Stop()
 	n.producer = nil
 	return nil

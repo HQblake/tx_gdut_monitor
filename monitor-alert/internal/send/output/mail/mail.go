@@ -31,14 +31,17 @@ type Mail struct {
 	infoCh     chan *email.Email
 	stopCh     chan bool
 	enable     bool
+
+	lock *sync.RWMutex
 }
 
-func NewMail(level output.Level, conf *Config) (*Mail, error) {
+func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
 	pool, err := email.NewPool(address, 3, smtp.PlainAuth("", user, code, host))
 	if err != nil {
 		return nil, err
 	}
 	m := &Mail{
+		lock: &sync.RWMutex{},
 		enable:     false,
 		level:      level,
 		target:     conf.Target,
@@ -75,6 +78,8 @@ func (m *Mail) sendMail() {
 }
 
 func (m *Mail) Level() output.Level {
+	m.lock.RLock()
+	defer m.lock.RUnlock()
 	return m.level
 }
 
@@ -83,17 +88,19 @@ func (m *Mail) Reset(level output.Level, config interface{}) error {
 	if !ok {
 		return fmt.Errorf("config type is invalid")
 	}
-	err := conf.doCheck()
+	c, err := conf.doCheck()
 	if err != nil {
 		return err
 	}
+	m.lock.Lock()
+	defer m.lock.Unlock()
 	m.level = level
-	m.formatType = conf.FormatType
+	m.formatType = c.FormatType
 	m.pool.New = func() interface{} {
 		return &email.Email{
 			Headers: textproto.MIMEHeader{},
 			From:    user,
-			To:      conf.Target,
+			To:      c.Target,
 			Subject: subject,
 		}
 	}
@@ -104,6 +111,8 @@ func (m *Mail) Output(info model.Info) error {
 	if !m.enable {
 		return nil
 	}
+	m.lock.RLock()
+	defer m.lock.RUnlock()
 	if m.mail == nil {
 		return nil
 	}
@@ -128,9 +137,12 @@ func (m *Mail) Finish() error {
 		// 避免重复关
 		return nil
 	}
+	m.lock.Lock()
+	defer m.lock.Unlock()
 	close(m.infoCh)
 	<-m.stopCh
 	m.mail.Close()
+	m.mail = nil
 	m.enable = false
 	return nil
 }
