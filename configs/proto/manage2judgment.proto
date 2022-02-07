@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package manage2judgment;
+package proto;
 
 option go_package="./proto";
 

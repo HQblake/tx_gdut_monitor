@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package="./proto";
+
+service MetricService {
+  // 获取聚合数据
+  rpc GetAggregatedData(AggregatedRequest) returns (AggregatedResponse) {}
+}
+
+message AggregatedRequest {
+  int32 Method = 1;
+  string Period = 2;
+  string MetricData = 3;
+}
+
+message AggregatedResponse {
+  int32 Code = 1;
+  string Msg = 2;
+  float Value = 3;
+}
