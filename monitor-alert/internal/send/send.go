@@ -12,7 +12,7 @@ import (
 // ISend 接入判定服务
 type ISend interface {
 	// Send 对判定服务发来的告警信息进行处理，进行通知
-	Send(alert model.AlertInfo) error
+	Send(alert *model.AlertInfo) error
 }
 
 type Service struct {
@@ -40,7 +40,7 @@ func NewService(addr string) (*Service, error) {
 	}, nil
 }
 
-func (s *Service) Send(alert model.AlertInfo) error {
+func (s *Service) Send(alert *model.AlertInfo) error {
 	outputs := s.agents.GetOutputs(alert.AgentID)
 	for _, info := range alert.Metrics {
 		i := s.newInfo(alert.AgentID, info)
