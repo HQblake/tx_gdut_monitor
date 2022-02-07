@@ -1,0 +1,20 @@
+syntax = "proto3";
+package api;
+option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/api/gen;managepb";
+
+
+message CheckRequest {
+  string AgentID = 1;
+  repeated string Metrics = 2;  // 指标列表
+}
+
+message CheckResponse {
+  int32 Code = 1; 	// 返回码，000000为成功
+  string Msg = 2; 	// 返回消息：success、error
+  string Result = 3; // JSON字符串，可解析为AgentRule结构体
+}
+
+
+service ManageService {
+  rpc Get(CheckRequest) returns (CheckResponse);
+}

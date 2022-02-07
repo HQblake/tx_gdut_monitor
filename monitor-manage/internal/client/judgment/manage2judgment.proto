@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package manage2judgment;
+
+option go_package="./proto";
+
+// 管理服务向判定服务发起agent判定规则更新请求
+service RuleUpdater  {
+  rpc Update (RuleReq) returns (RuleRsp) {}
+}
+
+// 请求参数
+message RuleReq {
+  string AgentID = 1;
+  string AgentRule = 2;  // JSON字符串，可解析为AgentRule结构体
+}
+
+// 响应参数
+message RuleRsp {
+  int32 Code = 1; 	// 返回码
+  string Msg = 2; 	// 返回消息：success、error
+}
