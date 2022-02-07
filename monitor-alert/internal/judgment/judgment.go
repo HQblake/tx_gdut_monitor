@@ -3,6 +3,7 @@ package judgment
 import (
 	"context"
 	"encoding/json"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/cache"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/proto"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
@@ -25,16 +26,16 @@ var workerSetting = &setting.WorkersSetting{}
 // 为告警系统的其他服务提供调用 JudgmentService 服务相应功能的接口
 
 // NewJudgmentService 创建新的判定服务服务
-func NewJudgmentService(s *setting.Setting) *JudgmentService {
+func NewJudgmentService(s *setting.Setting) (*JudgmentService, error) {
 	// 读取协程池与Redis的配置
 	err := s.ReadSection("Workers", workerSetting)
 	if err == nil {
-		log.Fatalf("Config load error: %v", err)
+		return nil, err
 	}
 
 	s.ReadSection("Redis", redisSetting)
 	if err == nil {
-		log.Fatalf("Config load error: %v", err)
+		return nil, err
 	}
 
 	ruleCache = cache.NewCache(redisSetting)
@@ -49,9 +50,9 @@ func NewJudgmentService(s *setting.Setting) *JudgmentService {
 		Logger:           ants.Logger(log.New(os.Stderr, "", log.LstdFlags)),
 	}))
 	if err != nil {
-		log.Fatalf("Workers create error: %v", err)
+		return nil, err
 	}
-	return &JudgmentService{}
+	return &JudgmentService{}, nil
 }
 
 // Check 方法用于判定接入服务接收的agent上报数据是否正常
@@ -67,6 +68,7 @@ func (js *JudgmentService) Check(agent *model.AgentReport) error {
 	// 从协程池中提取workers完成各个指标的判定
 	var wg sync.WaitGroup
 	alert := model.AlertInfoPool.Get().(*model.AlertInfo)
+	defer model.AlertInfoPool.Put(alert)
 	alert.Metrics = make(map[string]model.MetricInfo)
 	alert.AgentID = agentID
 	for k, _ := range agent.Metrics {
@@ -76,8 +78,7 @@ func (js *JudgmentService) Check(agent *model.AgentReport) error {
 	wg.Wait()
 
 	// 将 alert 转发给发送服务
-
-	return nil
+	return (*global.SendService).Send(alert)
 }
 
 // Update 方法接收管理服务发来的agent指标判定规则，更新服务内部缓存

@@ -16,8 +16,8 @@ type ISend interface {
 }
 
 type Service struct {
-	proxy *service.Service
-	agents output.IManager
+	proxy    *service.Service
+	agents   output.IManager
 	infoPool *sync.Pool
 }
 
@@ -69,5 +69,3 @@ func (s *Service) newInfo(agent string, alert model.MetricInfo) model2.Info {
 func (s *Service) release(info model2.Info) {
 	s.infoPool.Put(info)
 }
-
-
