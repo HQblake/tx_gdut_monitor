@@ -7,16 +7,46 @@ option go_package="./proto";
 service MetricService {
   // 获取聚合数据
   rpc GetAggregatedData(AggregatedRequest) returns (AggregatedResponse) {}
+
+  // 插入告警信息
+  rpc InsertAlertInfo(AlertInfoRequest) returns (AlertInfoResponse) {}
 }
+
+message MetricAlert {
+  string Metric = 1;
+  double Value = 2;
+  double Threshold = 3;
+  int32 Method = 4;
+  int32 Level = 5;
+  string Duration = 6;
+  int64 Start = 7;
+}
+
+message AlertInfoRequest {
+  string AgenID = 1;
+  map<string, MetricAlert> Metrics = 2;
+}
+
+message AlertInfoResponse {
+  int32 Code = 1;
+  string Msg = 2;
+}
+
 
 message AggregatedRequest {
   int32 Method = 1;
   string Period = 2;
-  string MetricData = 3;
+  string Metric = 3;
+  double Value = 4;
+  string IP = 5;
+  string Local = 6;
+  string Port = 7;
+  int64 Timestamp = 8;
+  map<string, string> Dimensions = 9;
 }
 
 message AggregatedResponse {
   int32 Code = 1;
   string Msg = 2;
-  float Value = 3;
+  double Value = 3;
 }
