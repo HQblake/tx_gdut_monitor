@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package proto;
+package judgment2store;
 
 option go_package="./proto";
 
