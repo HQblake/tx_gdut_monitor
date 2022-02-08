@@ -7,7 +7,7 @@ option go_package="./proto";
 service ManageConfig {
   // 查询Agent信息
   /*
-   * 1. 查询所有存活的Agent信息，返回结果：ip、port、local、isLive
+   * 1. 查询所有存活的Agent信息，返回结果：ip、port、local、isLive、metrics
    * 2. 根据AgentID（或IP和Local）查询Agent的所有metric
    */
   rpc GetAllAgentInfo(AgentRequest) returns (stream AgentResponse) {}
@@ -38,7 +38,7 @@ service ManageConfig {
    * 4. 根据id获取配置详情
    * 5. 获取所有的配置，返回一个列表（流式响应）
    * 6. 根据agentID（或ip和local）查看配置，返回一个列表（流式响应）
-   * 7. 根据agentID（或ip和local）和判定类型（checkType）查看配置，返回一个列表（流式响应）
+   * 7. 根据agentID（或ip和local）和聚合方式（method）查看配置，返回一个列表（流式响应）
    */
 
   // 告警服务配置数据的增删改查
