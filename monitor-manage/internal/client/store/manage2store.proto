@@ -1,0 +1,133 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package="./proto";
+
+service ManageConfig {
+  // 查询Agent信息
+  /*
+   * 1. 查询所有存活的Agent信息，返回结果：ip、port、local、isLive
+   * 2. 根据AgentID（或IP和Local）查询Agent的所有metric
+   */
+  rpc GetAllAgentInfo(AgentRequest) returns (stream AgentResponse) {}
+  rpc GetMetricsByAgentID(AgentRequest) returns (stream AgentResponse) {}
+
+  // 查询上报的时序数据
+  /*
+   * 1. 根据AgentID、metric、开始时间戳、结束时间戳、聚合时间获取上报的指标数据列表（流式响应）
+   */
+  rpc GetMetricData(MetricRequest) returns (stream MetricResponse) {}
+
+  // 查询历史告警信息
+  /*
+   * 1. 查询所有告警信息，返回一个列表（流式响应）
+   * 2. 根据id删除告警信息
+   * 3. 根据id获取告警信息
+   * 4. 根据agentID、等级、日期、指标等查看告警信息，返回一个列表（流式响应）
+   */
+  rpc GetAllAlertInfo(AlertRequest) returns (stream AlertResponse) {}
+  rpc GetAlertInfo(AlertRequest) returns (stream AlertResponse) {}
+  rpc DelAlterInfo(AlertRequest) returns (AlertResponse) {}
+
+  // 判定服务配置数据的增删改查
+  /*
+   * 1. 新增配置
+   * 2. 根据id更新配置
+   * 3. 根据id删除配置
+   * 4. 根据id获取配置详情
+   * 5. 获取所有的配置，返回一个列表（流式响应）
+   * 6. 根据agentID（或ip和local）查看配置，返回一个列表（流式响应）
+   * 7. 根据agentID（或ip和local）和判定类型（checkType）查看配置，返回一个列表（流式响应）
+   */
+
+  // 告警服务配置数据的增删改查
+  /*
+   * 1. 新增配置
+   * 2. 根据id更新配置
+   * 3. 根据id删除配置
+   * 4. 根据id获取配置详情
+   * 5. 获取所有的配置列表，返回一个列表（流式响应）
+   * 6. 根据agentID（或ip和local）查看配置，返回一个列表（流式响应）
+   */
+  rpc AddConfig(ConfigRequest) returns (ConfigResponse) {}            // 新增配置
+  rpc UpdateConfigById(ConfigRequest) returns (ConfigResponse) {}     // 根据id更新配置
+  rpc DeleteConfigById(ConfigRequest) returns (ConfigResponse) {}     // 根据id删除配置
+  rpc GetConfig(ConfigRequest) returns (stream ConfigResponse) {}            // 根据id获取配置详情
+  rpc GetAllConfigs(ConfigRequest) returns (stream ConfigResponse) {}        // 获取所有的配置，返回一个列表
+}
+
+enum ResponseCode {
+  SUCCESS = 0;
+  NOSEARCH = 1;
+  ERROR = 2;
+}
+
+message AgentRequest {
+  string AgentID = 1;
+}
+
+message AgentResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+  string Result = 3;
+}
+
+message MetricRequest {
+  string AgentID = 1;
+  string Metric = 2;
+  int64 Begin = 3;
+  int64 End = 4;
+  string Period = 5;
+}
+
+message MetricResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+
+  int64 Timestamp = 3;
+  string Metric = 4;
+  float Value = 5;
+}
+
+message AlertRequest {
+  int32 ID = 1;
+  string AgentID = 2;
+  int64 Begin = 3;
+  int64 End = 4;
+  int32 Level = 5;
+  string Metric = 6;
+}
+
+message AlertResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+
+  int32 ID = 3;
+  string AgentID = 4;
+  string Metric = 5;
+  float Value = 6;
+  float Threshold = 7;
+  string Duration = 8;
+  int32 Level = 9;
+  int64 Begin = 10;
+}
+
+enum ConfigType {
+  JUDGMENT = 0;
+  ALERT = 1;
+}
+
+message ConfigRequest {
+  ConfigType Type = 1;
+  int32 ID = 2;
+  string AgentID = 3;
+  string Method = 4;
+  string Config = 5;          // JSON字符串，包含具体配置内容
+}
+
+message ConfigResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+  string Config = 3;          // JSON字符串，包含具体配置内容
+}
