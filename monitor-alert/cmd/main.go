@@ -1,12 +1,19 @@
 package main
 
 import (
-	"fmt"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
+	"google.golang.org/grpc"
 	"log"
+	"net"
 )
 
 func main() {
+	l, err := net.Listen("tcp",":8082")
+	if err != nil {
+		log.Fatal(err)
+	}
+	ser := grpc.NewServer()
+
 	// 告警系统程序启动入口
 
 	// 初始化接收模块
@@ -14,14 +21,21 @@ func main() {
 	// 初始化判定模块
 
 	// 初始化发送模块,入参是供管理模块调用的grpc地址
-	s, err := send.NewService(":8082")
+	s, err := send.NewService()
 	if err != nil{
 		log.Fatal(err)
 	}
 	// 发送模块的功能接口（由判定模块看情况调用）
 	//s.Send()
-
-	fmt.Println(s)
+	// 注册rpc服务
+	s.RegisterService(ser)
+	err = ser.Serve(l)
+	if err != nil {
+		log.Println("grpc server:", err)
+		ser.Stop()
+		return
+	}
+	ser.Stop()
 
 
 

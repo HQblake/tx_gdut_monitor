@@ -78,7 +78,7 @@ func (js *JudgmentService) Check(agent *model.AgentReport) error {
 	wg.Wait()
 
 	// 将 alert 转发给发送服务
-	return (*global.SendService).Send(alert)
+	return global.SendService.Send(alert)
 }
 
 // Update 方法接收管理服务发来的agent指标判定规则，更新服务内部缓存

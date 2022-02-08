@@ -8,8 +8,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"log"
-	"net"
 	"strings"
 )
 
@@ -19,24 +17,10 @@ type Service struct {
 	*sendpb.UnimplementedSendServiceServer
 }
 
-func NewService(agents output.IManager, addr string) (*Service, error) {
-	l, err := net.Listen("tcp",addr)
-	if err != nil {
-		return nil, err
-	}
-	s := &Service{
+func NewService(agents output.IManager) (*Service, error) {
+	return &Service{
 		agents: agents,
-		Server: grpc.NewServer(),
-	}
-	sendpb.RegisterSendServiceServer(s.Server, s)
-	go func() {
-		err = s.Server.Serve(l)
-		if err != nil {
-			log.Println("grpc server:", err)
-			return
-		}
-	}()
-	return s, nil
+	},nil
 }
 
 func (s *Service) Set(ctx context.Context, request *sendpb.UpdateRequest) (*sendpb.Response, error) {
