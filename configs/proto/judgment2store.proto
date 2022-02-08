@@ -9,26 +9,22 @@ service MetricService {
   rpc GetAggregatedData(AggregatedRequest) returns (AggregatedResponse) {}
 
   // 插入告警信息
-  rpc InsertAlertInfo(AlertInfoRequest) returns (AlertInfoResponse) {}
+  rpc InsertAlertInfo(HistoryInfoRequest) returns (HistoryInfoResponse) {}
 }
 
-message MetricAlert {
-  string Metric = 1;
-  double Value = 2;
-  double Threshold = 3;
-  int32 Method = 4;
-  int32 Level = 5;
-  string Duration = 6;
-  int64 Start = 7;
+message HistoryInfoRequest {
+  string IP = 1;
+  string Local = 2;
+  string Metric = 3;
+  double Value = 4;
+  int32 Method = 5;
+  int32 Level = 6;
+  string Duration = 7;
+  int64 Start = 8;
 }
 
-message AlertInfoRequest {
-  string AgenID = 1;
-  map<string, MetricAlert> Metrics = 2;
-}
-
-message AlertInfoResponse {
-  int32 Code = 1;
+message HistoryInfoResponse {
+  ResponseCode Code = 1;
   string Msg = 2;
 }
 
@@ -46,7 +42,12 @@ message AggregatedRequest {
 }
 
 message AggregatedResponse {
-  int32 Code = 1;
+  ResponseCode Code = 1;
   string Msg = 2;
-  double Value = 3;
+  double Result = 3;
+}
+
+enum ResponseCode {
+  SUCCESS = 0;
+  ERROR = 1;
 }
