@@ -1,0 +1,44 @@
+syntax = "proto3";
+package api;
+option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/api/gen;managepb";
+
+// 判定模块向管理模块发起的请求
+
+service ManageService {
+  rpc Get(CheckRequest) returns (Response);
+}
+
+message CheckRequest {
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  repeated string Metrics = 3;  // 指标列表
+}
+
+message Response {
+  ResponseCode Code = 1; 	// 返回码，0为成功
+  string Msg = 2; 	// 返回消息：success、error
+  AgentRule Result = 3; // AgentRule结构
+}
+
+enum ResponseCode {
+  SUCCESS = 0;
+  ERROR = 1;
+}
+
+message AgentRule {
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  map<string, MetricRule> Metrics = 3; // 所有指标的判定规则
+}
+
+
+message MetricRule{
+  int32 Method = 1; // 指标的聚合方式
+  string Period = 2; // 指标的聚合周期 eg. 格式如：5s、5m、5h、1h1m1s....
+  map<int32, double> Threshold = 3;// 阈值等级判定
+}
+
+
+
+
+

@@ -21,8 +21,9 @@ message ConfigEntry {
 }
 
 message InitConfig{
-  string agent_id = 1;
-  repeated ConfigEntry config = 2;
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  repeated ConfigEntry config = 3;
 }
 
 message UpdateRequest{
@@ -30,8 +31,9 @@ message UpdateRequest{
   ConfigEntry config = 2;
 }
 message DelRequest{
-  string agent_id = 1;
-  int32 config_id = 2;
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  int32 config_id = 3;
 }
 
 // 以agentID为键值，返回配置列表
@@ -39,14 +41,19 @@ message InitRequest{
   map<string, InitConfig> config = 1;
 }
 
-message Response{
-  int32  Code = 1;
-  string Msg = 2;
-}
 
 service SendService {
   // 负责更新和新增
   rpc Set(UpdateRequest) returns (Response);
   rpc Del(DelRequest) returns (Response);
   rpc Init(InitRequest) returns (Response);
+}
+
+message Response {
+  ResponseCode Code = 1;
+  string Msg = 2;
+}
+enum ResponseCode {
+  SUCCESS = 0;
+  ERROR = 1;
 }

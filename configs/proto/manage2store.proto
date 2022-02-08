@@ -4,6 +4,28 @@ package judgment2store;
 
 option go_package="./proto";
 
+// 判定服务相关的存储rpc服务
+service CheckService{
+
+}
+
+// 发送服务相关的存储rpc服务
+service SendService{
+
+}
+
+// 告警历史信息相关的存储rpc服务
+service HistoryService{
+
+}
+
+// agent相关的rpc服务
+service AgentService {
+
+}
+
+
+
 service ManageConfig {
   // 查询Agent信息
   /*
