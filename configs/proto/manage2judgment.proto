@@ -9,7 +9,6 @@ service RuleUpdater  {
   rpc Update (AgentRule) returns (Response) {}
 }
 
-
 // 请求结构
 message AgentRule {
   string IP = 1; // ip和local组成agent的唯一标识

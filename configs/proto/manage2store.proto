@@ -4,43 +4,8 @@ package judgment2store;
 
 option go_package="./proto";
 
-// 判定服务相关的存储rpc服务
-service CheckService{
-
-}
-
-// 发送服务相关的存储rpc服务
-service SendService{
-
-}
-
 // 告警历史信息相关的存储rpc服务
 service HistoryService{
-
-}
-
-// agent相关的rpc服务
-service AgentService {
-
-}
-
-
-
-service ManageConfig {
-  // 查询Agent信息
-  /*
-   * 1. 查询所有存活的Agent信息，返回结果：ip、port、local、isLive、metrics
-   * 2. 根据AgentID（或IP和Local）查询Agent的所有metric
-   */
-  rpc GetAllAgentInfo(AgentRequest) returns (stream AgentResponse) {}
-  rpc GetMetricsByAgentID(AgentRequest) returns (stream AgentResponse) {}
-
-  // 查询上报的时序数据
-  /*
-   * 1. 根据AgentID、metric、开始时间戳、结束时间戳、聚合时间获取上报的指标数据列表（流式响应）
-   */
-  rpc GetMetricData(MetricRequest) returns (stream MetricResponse) {}
-
   // 查询历史告警信息
   /*
    * 1. 查询所有告警信息，返回一个列表（流式响应）
@@ -48,20 +13,173 @@ service ManageConfig {
    * 3. 根据id获取告警信息
    * 4. 根据agentID、等级、日期、指标等查看告警信息，返回一个列表（流式响应）
    */
-  rpc GetAllAlertInfo(AlertRequest) returns (stream AlertResponse) {}
+  rpc GetAllAlertInfo(BaseRequest) returns (stream AlertResponse) {}
+  // 既可以根据单个agentID或单个ID获取信息，也可以通过其他额外的补充信息获取某个区间的告警信息
   rpc GetAlertInfo(AlertRequest) returns (stream AlertResponse) {}
-  rpc DelAlterInfo(AlertRequest) returns (AlertResponse) {}
+  rpc DelAlterInfo(IDRequest) returns (BaseResponse) {}
+}
 
-  // 判定服务配置数据的增删改查
+message AlertRequest {
+  int32 ID = 1;
+  string IP = 2; // ip和local组成agent的唯一标识
+  string Local = 3;
+  int64 Begin = 4;
+  int64 End = 5;
+  int32 Level = 6;
+  string Metric = 7;
+}
+message AlertInfo {
+  int32 ID = 1;
+  string IP = 2; // ip和local组成agent的唯一标识
+  string Local = 3;
+  string Metric = 4;
+  double Value = 5;
+  float Threshold = 6;
+  string Duration = 7;
+  int32 Level = 8;
+  int64 Start = 9;
+  int32 Method = 10;
+}
+
+message AlertResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+  AlertInfo Result = 3;
+}
+
+service MetricService{
+  // 查询上报的时序数据
+  /*
+   * 1. 根据AgentID、metric、开始时间戳、结束时间戳、聚合时间获取上报的指标数据列表（流式响应）
+   */
+  rpc GetMetricData(MetricRequest) returns (stream MetricResponse) {}
+}
+message MetricRequest {
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  string Metric = 3;
+  int64 Begin = 4;
+  int64 End = 5;
+  string Period = 6;
+}
+message MetricResult {
+  int64 Timestamp = 3;
+  string Metric = 4;
+  double Value = 5;
+}
+message MetricResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+  MetricResult Result = 3;
+}
+
+// agent相关的rpc服务
+service AgentService {
+
+  // 查询Agent信息
+  // 查询所有存活的Agent信息，返回结果：ip、port、local、isLive、metrics列表，流形式返回
+  rpc GetAllAgentInfo(BaseRequest) returns (stream AgentResponse) {}
+
+  // 查询指定Agent(ip和local)的信息，返回结果：ip、port、local、isLive、metrics列表
+  rpc GetAgentInfoByAgentID(AgentRequest) returns (AgentResponse) {}
+
+  // 根据AgentID查询Agent的所有metric，以流形式返回
+  // rpc GetMetricsByAgentID(AgentRequest) returns (stream MetricsResponse) {}
+
+}
+
+message AgentRequest {
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+}
+message AgentResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+  AgentInfo Result = 3;
+}
+message MetricsResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+  string Result = 3; // metric项
+}
+message AgentInfo {
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  string Port = 3;
+  bool IsLive = 4; // 是否存活
+  repeated string Metrics = 5; // 支持的metrics列表
+}
+
+// 判定服务相关的存储rpc服务
+service JudgmentService{
+  // 判定服务配置数据的删改查
+  /*
+   * 1. 根据agentID（ip和local）查看配置，返回一个列表（流式响应）
+   * 2. 根据id更新配置
+   * 3. 根据id删除配置
+   */
+  rpc GetConfigsByAgent(AgentRequest) returns (stream JudgmentConfigResponse) {}        // 获取agent所有的配置，返回一个列表
+  rpc UpdateConfig(JudgmentEntry) returns (BaseResponse) {}     // 根据id更新配置
+  rpc DeleteConfig(IDRequest) returns (BaseResponse) {}     // 根据id删除配置
+}
+message JudgmentConfigResponse{
+  ResponseCode Code = 1;
+  string Msg = 2;
+  JudgmentEntry Result = 3;
+}
+message JudgmentEntry {
+  int32 ID = 1;
+  string IP = 2; // ip和local组成agent的唯一标识
+  string Local = 3;
+  string Metric = 4;
+  int32 Method = 5;
+  string Period = 6;
+  string Threshold = 7;
+}
+
+// 发送服务相关的存储rpc服务
+service SendService{
+  // 告警服务配置数据的增删改查
   /*
    * 1. 新增配置
    * 2. 根据id更新配置
    * 3. 根据id删除配置
    * 4. 根据id获取配置详情
-   * 5. 获取所有的配置，返回一个列表（流式响应）
-   * 6. 根据agentID（或ip和local）查看配置，返回一个列表（流式响应）
-   * 7. 根据agentID（或ip和local）和聚合方式（method）查看配置，返回一个列表（流式响应）
+   * 5. 根据agentID（或ip和local）查看配置，返回一个列表（流式响应）
    */
+  rpc AddConfig(AddSendRequest) returns (BaseResponse) {}
+  rpc UpdateConfig(SendEntry) returns (BaseResponse) {}
+  rpc DeleteConfig(IDRequest) returns (BaseResponse) {}     // 根据id删除配置
+  rpc GetConfigByID(IDRequest) returns (SendConfigResponse) {}  // 根据id获取配置详情
+  rpc GetConfigsByAgent(AgentRequest) returns (stream SendConfigResponse) {}  // 获取agent所有的配置，返回一个列表
+}
+message SendConfigResponse{
+  ResponseCode Code = 1;
+  string Msg = 2;
+  SendEntry Result = 3;
+}
+message AddSendRequest {
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  int32 SendType = 3;
+  string Config = 4;
+  int32 Level = 5;
+}
+message SendEntry {
+  int32 ID = 1;
+  string IP = 2; // ip和local组成agent的唯一标识
+  string Local = 3;
+  int32 SendType = 4;
+  string Config = 5;
+  int32 Level = 6;
+}
+service ManageConfig {
+
+
+
+
+
+
 
   // 告警服务配置数据的增删改查
   /*
@@ -79,61 +197,6 @@ service ManageConfig {
   rpc GetAllConfigs(ConfigRequest) returns (stream ConfigResponse) {}        // 获取所有的配置，返回一个列表
 }
 
-enum ResponseCode {
-  SUCCESS = 0;
-  NOSEARCH = 1;
-  ERROR = 2;
-}
-
-message AgentRequest {
-  string AgentID = 1;
-}
-
-message AgentResponse {
-  ResponseCode Code = 1;
-  string Msg = 2;
-  string Result = 3;
-}
-
-message MetricRequest {
-  string AgentID = 1;
-  string Metric = 2;
-  int64 Begin = 3;
-  int64 End = 4;
-  string Period = 5;
-}
-
-message MetricResponse {
-  ResponseCode Code = 1;
-  string Msg = 2;
-
-  int64 Timestamp = 3;
-  string Metric = 4;
-  float Value = 5;
-}
-
-message AlertRequest {
-  int32 ID = 1;
-  string AgentID = 2;
-  int64 Begin = 3;
-  int64 End = 4;
-  int32 Level = 5;
-  string Metric = 6;
-}
-
-message AlertResponse {
-  ResponseCode Code = 1;
-  string Msg = 2;
-
-  int32 ID = 3;
-  string AgentID = 4;
-  string Metric = 5;
-  float Value = 6;
-  float Threshold = 7;
-  string Duration = 8;
-  int32 Level = 9;
-  int64 Begin = 10;
-}
 
 enum ConfigType {
   JUDGMENT = 0;
@@ -152,4 +215,17 @@ message ConfigResponse {
   ResponseCode Code = 1;
   string Msg = 2;
   string Config = 3;          // JSON字符串，包含具体配置内容
+}
+
+enum ResponseCode {
+  SUCCESS = 0;
+  ERROR = 1;
+}
+message BaseResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+}
+message BaseRequest{}
+message IDRequest{
+  int32 ID = 1;
 }
