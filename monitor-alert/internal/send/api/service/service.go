@@ -5,7 +5,6 @@ import (
 	"fmt"
 	sendpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/gen"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"strings"
@@ -13,14 +12,13 @@ import (
 
 type Service struct {
 	agents output.IManager
-	*grpc.Server
 	*sendpb.UnimplementedSendServiceServer
 }
 
-func NewService(agents output.IManager) (*Service, error) {
+func NewService(agents output.IManager) *Service {
 	return &Service{
 		agents: agents,
-	},nil
+	}
 }
 
 func (s *Service) Set(ctx context.Context, request *sendpb.UpdateRequest) (*sendpb.Response, error) {

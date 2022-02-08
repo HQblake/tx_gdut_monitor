@@ -21,10 +21,7 @@ func main() {
 	// 初始化判定模块
 
 	// 初始化发送模块,入参是供管理模块调用的grpc地址
-	s, err := send.NewService()
-	if err != nil{
-		log.Fatal(err)
-	}
+	s := send.NewService()
 	// 发送模块的功能接口（由判定模块看情况调用）
 	//s.Send()
 	// 注册rpc服务

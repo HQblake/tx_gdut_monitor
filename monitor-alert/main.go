@@ -37,10 +37,8 @@ func setupService() {
 	}
 
 	// 加载发送服务
-	global.SendService, err = send.NewService()
-	if err != nil {
-		log.Fatalln(err)
-	}
+	global.SendService = send.NewService()
+
 	// 注册发送服务的rpc
 	global.SendService.RegisterService(ser)
 	err = ser.Serve(l)

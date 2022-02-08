@@ -28,22 +28,18 @@ type Service struct {
 
 
 // NewService 初始化发送服务，提供对外的判定服务结构（判定服务直接调用该结构的Send方法即可完成发送）
-func NewService() (*Service, error) {
+func NewService() *Service{
 	Register()
 	agents := output.NewManager()
-	s, err := service.NewService(agents)
-	if err != nil {
-		return nil, err
-	}
 	return &Service{
 		agents: agents,
-		proxy:  s,
+		proxy:  service.NewService(agents),
 		infoPool: &sync.Pool{
 			New: func() interface{} {
 				return model2.Info{}
 			},
 		},
-	}, nil
+	}
 }
 func (s *Service) RegisterService(ser *grpc.Server) {
 	sendpb.RegisterSendServiceServer(ser, s.proxy)
