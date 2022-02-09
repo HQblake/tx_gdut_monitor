@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package judgment2store;
 
-option go_package="./proto";
+option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/manage/api/gen;managepb";
 
 // 告警历史信息相关的存储rpc服务
 service HistoryService{
@@ -174,13 +174,6 @@ message SendEntry {
   int32 Level = 6;
 }
 service ManageConfig {
-
-
-
-
-
-
-
   // 告警服务配置数据的增删改查
   /*
    * 1. 新增配置
