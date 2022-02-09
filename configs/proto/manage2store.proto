@@ -173,42 +173,6 @@ message SendEntry {
   string Config = 5;
   int32 Level = 6;
 }
-service ManageConfig {
-  // 告警服务配置数据的增删改查
-  /*
-   * 1. 新增配置
-   * 2. 根据id更新配置
-   * 3. 根据id删除配置
-   * 4. 根据id获取配置详情
-   * 5. 获取所有的配置列表，返回一个列表（流式响应）
-   * 6. 根据agentID（或ip和local）查看配置，返回一个列表（流式响应）
-   */
-  rpc AddConfig(ConfigRequest) returns (ConfigResponse) {}            // 新增配置
-  rpc UpdateConfigById(ConfigRequest) returns (ConfigResponse) {}     // 根据id更新配置
-  rpc DeleteConfigById(ConfigRequest) returns (ConfigResponse) {}     // 根据id删除配置
-  rpc GetConfig(ConfigRequest) returns (stream ConfigResponse) {}            // 根据id获取配置详情
-  rpc GetAllConfigs(ConfigRequest) returns (stream ConfigResponse) {}        // 获取所有的配置，返回一个列表
-}
-
-
-enum ConfigType {
-  JUDGMENT = 0;
-  ALERT = 1;
-}
-
-message ConfigRequest {
-  ConfigType Type = 1;
-  int32 ID = 2;
-  string AgentID = 3;
-  string Method = 4;
-  string Config = 5;          // JSON字符串，包含具体配置内容
-}
-
-message ConfigResponse {
-  ResponseCode Code = 1;
-  string Msg = 2;
-  string Config = 3;          // JSON字符串，包含具体配置内容
-}
 
 enum ResponseCode {
   SUCCESS = 0;
