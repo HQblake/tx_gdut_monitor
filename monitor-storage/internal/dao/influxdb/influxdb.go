@@ -3,6 +3,7 @@ package influxdb
 import (
 	"github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
+	"time"
 )
 
 type Client struct {
@@ -12,7 +13,20 @@ type Client struct {
 }
 
 func NewClient(s *InfluxDBSetting) *Client {
-	client := influxdb2.NewClientWithOptions(s.URL, s.Token,
-		influxdb2.DefaultOptions().SetBatchSize(uint(s.BatchSize)))
+	// 定义选项
+	option := influxdb2.DefaultOptions()
+	option.SetLogLevel(uint(s.LogLevel))
+	option.SetBatchSize(uint(s.BatchSize))
+	option.SetFlushInterval(uint(s.FlushIntervalMs))
+	option.SetRetryInterval(uint(s.RetryInterval))
+	option.SetMaxRetryInterval(uint(s.MaxRetryIntervalMs))
+	option.SetMaxRetries(uint(s.MaxRetries))
+	option.SetMaxRetryTime(uint(s.MaxRetryTime))
+	option.SetPrecision(time.Duration(s.Precision) * time.Nanosecond)
+	option.SetExponentialBase(uint(s.ExponentialBase))
+	option.SetHTTPRequestTimeout(uint(s.HttpRequestTimeout))
+	option.SetRetryBufferLimit(uint(s.RetryBufferLimit))
+	option.SetUseGZip(s.UseGZip)
+	client := influxdb2.NewClientWithOptions(s.URL, s.Token, option)
 	return &Client{client.WriteAPI(s.ORG, s.Bucket), client.QueryAPI(s.ORG), s.Bucket}
 }
