@@ -1,11 +1,22 @@
 package influxdb
 
 type InfluxDBSetting struct {
-	URL       string
-	ORG       string
-	Token     string
-	Bucket    string
-	BatchSize int
+	URL                string
+	ORG                string
+	Token              string
+	Bucket             string
+	LogLevel           int
+	BatchSize          int
+	FlushIntervalMs    int
+	RetryInterval      int
+	MaxRetryIntervalMs int
+	MaxRetries         int
+	MaxRetryTime       int
+	ExponentialBase    int
+	UseGZip            bool
+	RetryBufferLimit   int
+	Precision          int
+	HttpRequestTimeout int
 }
 
 type Method struct {

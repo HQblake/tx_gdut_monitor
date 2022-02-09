@@ -3,7 +3,18 @@ InfluxDB:   # InfluxDB配置
   ORG: personal
   Token: FTGYhVo9DwF5v56ZxFC4j56R4TE-L6scyeO5jBf-eHsKPjj7O1dRl5dz2sDf65DuKUl-vlvt3exVrzuMBWKzig==
   Bucket: metric
-  BatchSize: 20
+  BatchSize: 20   # 批处理数量
+  LogLevel: 0
+  FlushIntervalMs: 1000     # 单位为ms
+  RetryInterval: 5000
+  MaxRetryIntervalMs: 125000  # 单位为ms
+  MaxRetries: 5
+  MaxRetryTime: 180000
+  ExponentialBase: 2
+  UseGZip: False
+  RetryBufferLimit: 50000
+  Precision: 1      # 单位为ns
+  HttpRequestTimeout: 20  # 单位为s
 MySQL:     # MySQL配置
   RunMode: debug
   Username: root
