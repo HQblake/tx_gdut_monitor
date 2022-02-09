@@ -17,10 +17,11 @@ message HistoryInfoRequest {
   string Local = 2;
   string Metric = 3;
   double Value = 4;
-  int32 Method = 5;
-  int32 Level = 6;
-  string Duration = 7;
-  int64 Start = 8;
+  double Threshold = 5;
+  int32 Method = 6;
+  int32 Level = 7;
+  string Duration = 8;
+  int64 Start = 9;
 }
 
 message HistoryInfoResponse {
