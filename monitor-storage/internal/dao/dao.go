@@ -25,10 +25,6 @@ func NewStorageDao(s *setting.Setting) *StorageDao {
 	return dao
 }
 
-func (dao *StorageDao) GetAllMethod() map[string]int32 {
-	return dao.influxdbClient.GetGetAllMethod()
-}
-
 // GetAggregatedData 操作InfluxDB数据库
 func (dao *StorageDao) GetAggregatedData(period string, method int32, metric *model.Metric) (float64, error) {
 	// 1. 将上报数据保存到InfluxDB中
@@ -38,7 +34,7 @@ func (dao *StorageDao) GetAggregatedData(period string, method int32, metric *mo
 	}
 
 	// 2. 获取聚合数据
-	return dao.influxdbClient.GetAggregatedData(metric.Name, period, method, metric.Timestamp)
+	return dao.influxdbClient.GetAggregatedData(metric, period, method, metric.Timestamp)
 }
 
 func (dao *StorageDao) SaveAgentInfo(metric *model.Metric) error {
@@ -62,8 +58,8 @@ func (dao *StorageDao) GetMetricsByIPAndLocal(ip, local string) []string {
 }
 
 // GetMetricData 操作InfluxDB数据库
-func (dao *StorageDao) GetMetricData(ip, local, metricName, period string, begin, end int64) []model.Metric {
-	return dao.influxdbClient.GetMetricData(ip, local, metricName, period, begin, end)
+func (dao *StorageDao) GetMetricData(ip, local, metricName, period string, begin, end int64, method int32) ([]model.Metric, error) {
+	return dao.influxdbClient.GetMetricData(ip, local, metricName, period, begin, end, method)
 }
 
 func (dao *StorageDao) GetAllAlertInfo() []model.HistoryInfo {

@@ -3,6 +3,7 @@ InfluxDB:   # InfluxDB配置
   ORG: personal
   Token: FTGYhVo9DwF5v56ZxFC4j56R4TE-L6scyeO5jBf-eHsKPjj7O1dRl5dz2sDf65DuKUl-vlvt3exVrzuMBWKzig==
   Bucket: metric
+  BatchSize: 20
 MySQL:     # MySQL配置
   RunMode: debug
   Username: root

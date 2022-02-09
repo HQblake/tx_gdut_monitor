@@ -12,6 +12,7 @@ type Client struct {
 }
 
 func NewClient(s *InfluxDBSetting) *Client {
-	client := influxdb2.NewClient(s.URL, s.Token)
+	client := influxdb2.NewClientWithOptions(s.URL, s.Token,
+		influxdb2.DefaultOptions().SetBatchSize(uint(s.BatchSize)))
 	return &Client{client.WriteAPI(s.ORG, s.Bucket), client.QueryAPI(s.ORG), s.Bucket}
 }

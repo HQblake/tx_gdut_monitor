@@ -12,10 +12,19 @@ type MetricService struct {
 }
 
 func (m *MetricService) GetMetricData(request *managepb.MetricRequest, server managepb.MetricService_GetMetricDataServer) error {
-	metrics := m.dao.GetMetricData(request.IP, request.Local, request.Metric, request.Period, request.Begin, request.End)
+	metrics, err := m.dao.GetMetricData(request.IP, request.Local, request.Metric,
+		request.Period, request.Begin, request.End, request.Method)
+	if err != nil {
+		_ = server.Send(&managepb.MetricResponse{
+			Code: managepb.ResponseCode_ERROR,
+			Msg:  err.Error(),
+		})
+		return err
+	}
+
 	for _, metric := range metrics {
 		_ = server.Send(&managepb.MetricResponse{
-			Code: 200,
+			Code: managepb.ResponseCode_SUCCESS,
 			Msg:  "SUCCESS",
 			Result: &managepb.MetricResult{
 				Timestamp: metric.Timestamp,
