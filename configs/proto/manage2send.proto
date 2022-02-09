@@ -1,6 +1,6 @@
 syntax = "proto3";
 package api;
-option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/managepb;sendpb";
+option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/gen;sendpb";
 
 
 service SendService {

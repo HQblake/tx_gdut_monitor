@@ -61,6 +61,7 @@ message MetricRequest {
   int64 Begin = 4;
   int64 End = 5;
   string Period = 6;
+  int32 Method = 7;
 }
 message MetricResult {
   int64 Timestamp = 3;
