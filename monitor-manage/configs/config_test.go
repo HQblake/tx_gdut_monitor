@@ -7,8 +7,17 @@ import (
 
 func TestReadConfig(t *testing.T) {
 	target := &config{
-		AdminConfig: &adminConfig{
+		AdminConfig: &listenConfig{
 			Listen: "8080",
+		},
+		DefaultRule: &ruleConfig{
+			Method: 1,
+			Period: "5m",
+			Threshold: map[string]float64{
+				"warn": 0.03,
+				"error": 0.06,
+				"panic": 0.08,
+			},
 		},
 	}
 	err := InitConfig("./config.yml")
@@ -19,5 +28,6 @@ func TestReadConfig(t *testing.T) {
 	if !reflect.DeepEqual(c, target) {
 		t.Error("read config error")
 	}
+	t.Log(GetDefaultRule())
 
 }
