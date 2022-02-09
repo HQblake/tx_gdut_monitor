@@ -1,0 +1,17 @@
+InfluxDB:   # InfluxDB配置
+  URL: http://127.0.0.1:8086
+  ORG: personal
+  Token: FTGYhVo9DwF5v56ZxFC4j56R4TE-L6scyeO5jBf-eHsKPjj7O1dRl5dz2sDf65DuKUl-vlvt3exVrzuMBWKzig==
+  Bucket: metric
+MySQL:     # MySQL配置
+  RunMode: debug
+  Username: root
+  Password: root
+  Host: 127.0.0.1:3306
+  DBName: monitor
+  Charset: utf8mb4
+  ParseTime: True
+  MaxIdleConns: 10
+  MaxOpenConns: 10
+  SkipTransaction: true
+  SingularTable: true
