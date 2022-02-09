@@ -16,7 +16,7 @@ InfluxDB:   # InfluxDB配置
   Precision: 1      # 单位为ns
   HttpRequestTimeout: 20  # 单位为s
 MySQL:     # MySQL配置
-  RunMode: debug
+  DBType: mysql
   Username: root
   Password: root
   Host: 127.0.0.1:3306
@@ -25,5 +25,4 @@ MySQL:     # MySQL配置
   ParseTime: True
   MaxIdleConns: 10
   MaxOpenConns: 10
-  SkipTransaction: true
-  SingularTable: true
+  MaxLifetime: 3
