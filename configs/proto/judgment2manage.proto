@@ -1,6 +1,6 @@
 syntax = "proto3";
 package api;
-option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/api/gen;managepb";
+option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/api/managepb;managepb";
 
 // 判定模块向管理模块发起的请求
 
