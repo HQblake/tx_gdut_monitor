@@ -1,7 +1,7 @@
 package mysql
 
 type MySQLSetting struct {
-	RunMode         string
+	DBType          string
 	UserName        string
 	PassWord        string
 	Host            string
@@ -10,6 +10,7 @@ type MySQLSetting struct {
 	ParseTime       bool
 	MaxIdleConns    int
 	MaxOpenConns    int
+	MaxLifetime     int
 	SingularTable   bool
 	SkipTransaction bool
 }
