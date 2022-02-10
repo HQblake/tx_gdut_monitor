@@ -154,6 +154,7 @@ service SendService{
   rpc DeleteConfig(IDRequest) returns (BaseResponse) {}     // 根据id删除配置
   rpc GetConfigByID(IDRequest) returns (SendConfigResponse) {}  // 根据id获取配置详情
   rpc GetConfigsByAgent(AgentRequest) returns (stream SendConfigResponse) {}  // 获取agent所有的配置，返回一个列表
+  rpc GetAllConfigs(BaseRequest) returns (stream SendConfigResponse) {}  // 获取所有的配置，返回一个列表
 }
 message SendConfigResponse{
   ResponseCode Code = 1;
