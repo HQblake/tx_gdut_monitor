@@ -19,6 +19,9 @@ type Service struct {
 	metricClient managepb.MetricServiceClient
 }
 
+func (s *Service) GetMetricsInOneDay(ip string, local string, metric string) []model.MetricsInfo {
+	panic("implement me")
+}
 
 func NewService(alertClient managepb.HistoryServiceClient, metricClient managepb.MetricServiceClient) *Service {
 	return &Service{

@@ -6,7 +6,11 @@ import (
 	"log"
 
 )
+var configPath string
 
+func init() {
+	flag.StringVar(&configPath, "config", "./config.yml", "config path")
+}
 // 监控系统的入口程序,也是主程序入口，在此做各个模块的初始化处理
 func main() {
 	flag.Parse()

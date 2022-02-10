@@ -1,8 +1,33 @@
-package service
+package http
 
 import (
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/agent"
+	agent2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/http/agent"
+	judgment2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/http/judgment"
+	send2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/http/send"
+	show2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/http/show"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/judgment"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/send"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/show"
 	"github.com/gin-gonic/gin"
 )
+
+
+type Handler struct {
+	IAgentHandler
+	IJudgmentHandler
+	ISendHandler
+	IShowHandler
+}
+
+func NewHandler(agent agent.IAgent, judgment judgment.IJudgment, send send.ISend, show show.IShow) *Handler {
+	return &Handler{
+		IAgentHandler: agent2.NewHandler(agent),
+		IJudgmentHandler: judgment2.NewHandler(judgment),
+		ISendHandler: send2.NewHandler(send),
+		IShowHandler: show2.NewHandler(show),
+	}
+}
 
 // IAgentHandler agent信息的管理http接口
 type IAgentHandler interface {
@@ -37,6 +62,6 @@ type ISendHandler interface {
 
 // IShowHandler 视图显示的http接口，自青补充
 type IShowHandler interface {
-
+	GetMetricsInOneDay(c *gin.Context)
 }
 
