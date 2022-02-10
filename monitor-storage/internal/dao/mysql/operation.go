@@ -85,3 +85,8 @@ func (c *Client) GetAlertConfigByID(id int32) model.AlertConfig {
 func (c *Client) GetAlertConfigByIPAndLocal(ip, local string) []model.AlertConfig {
 	return nil
 }
+
+// GetAllAlertConfig 获取所有alert记录
+func (c *Client) GetAllAlertConfig() []model.AlertConfig {
+	return nil
+}

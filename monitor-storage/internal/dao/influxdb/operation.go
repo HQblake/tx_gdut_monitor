@@ -18,21 +18,21 @@ func (c *Client) SaveMatricData(metric *model.Metric) error {
 
 func (c *Client) GetAggregatedData(metric *model.Metric, period string, method int32, timestamp int64) (float64, error) {
 	query := `from(bucket: "%s")
-			  |> range(start: %v, stop: %v)
-			  |> filter(fn: (r) => r["_measurement"] == "%s"
-			  |> filter(fn: (r) => r["ip"] == "%s")
-			  |> filter(fn: (r) => r["local"] == "%s")
-			  |> filter(fn: (r) => r["_field"] == "value")
-			  |> aggregateWindow(every: %s, fn: %s, createEmpty: false)`
+	|> range(start: %v, stop: %v)
+	|> filter(fn: (r) => r["_measurement"] == "%s")
+	|> filter(fn: (r) => r["ip"] == "%s")
+	|> filter(fn: (r) => r["local"] == "%s")
+	|> filter(fn: (r) => r["_field"] == "value")
+	|> aggregateWindow(every: %s, fn: %s, createEmpty: false)`
 	duration, err := time.ParseDuration(period)
 	if err != nil {
 		return 0, err
 	}
 	stop := time.Unix(timestamp, 0).Add(1 * time.Second)
-	start := stop.Add(-(duration + 1))
+	start := stop.Add(-(duration + 1)).Unix()
 
-	result, err := c.queryAPI.Query(context.Background(),
-		fmt.Sprintf(query, c.bucket, start, stop, metric.Name, metric.IP, metric.Local, period, Methods[method]))
+	flux := fmt.Sprintf(query, c.bucket, start, stop.Unix(), metric.Name, metric.IP, metric.Local, period, Methods[method].English)
+	result, err := c.queryAPI.Query(context.Background(), flux)
 	if err != nil {
 		return 0, err
 	}
@@ -44,16 +44,28 @@ func (c *Client) GetAggregatedData(metric *model.Metric, period string, method i
 	}
 }
 
-func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop int64, method int32) ([]model.Metric, error) {
-	query := `from(bucket: "%s")
-			  |> range(start: %v, stop: %v)
-			  |> filter(fn: (r) => r["_measurement"] == "%s"
-			  |> filter(fn: (r) => r["ip"] == "%s")
-			  |> filter(fn: (r) => r["local"] == "%s")
-			  |> filter(fn: (r) => r["_field"] == "value")
-			  |> aggregateWindow(every: %s, fn: %s)`
-	result, err := c.queryAPI.Query(context.Background(),
-		fmt.Sprintf(query, c.bucket, start, stop+1, metricName, ip, local, period, Methods[method]))
+func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop int64,
+	method, limit int32) ([]model.Metric, error) {
+	var query string
+	if method < 0 {
+		if limit <= 0 {
+			query = fmt.Sprintf(everyWitoutLimit, c.bucket,
+				start, stop+1, metricName, ip, local)
+		} else {
+			query = fmt.Sprintf(everyWitLimit, c.bucket,
+				start, stop+1, metricName, ip, local, limit)
+		}
+	} else {
+		if limit <= 0 {
+			query = fmt.Sprintf(aggregateWitoutLimit, c.bucket,
+				start, stop+1, metricName, ip, local, period, Methods[method].English)
+		} else {
+			query = fmt.Sprintf(aggregateWitLimit, c.bucket,
+				start, stop+1, metricName, ip, local, period, Methods[method].English, limit)
+		}
+	}
+
+	result, err := c.queryAPI.Query(context.Background(), query)
 	if err != nil {
 		return nil, err
 	}

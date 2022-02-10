@@ -13,7 +13,7 @@ type MetricService struct {
 
 func (m *MetricService) GetMetricData(request *managepb.MetricRequest, server managepb.MetricService_GetMetricDataServer) error {
 	metrics, err := m.dao.GetMetricData(request.IP, request.Local, request.Metric,
-		request.Period, request.Begin, request.End, request.Method)
+		request.Period, request.Begin, request.End, request.Method, request.Limit)
 	if err != nil {
 		_ = server.Send(&managepb.MetricResponse{
 			Code: managepb.ResponseCode_ERROR,

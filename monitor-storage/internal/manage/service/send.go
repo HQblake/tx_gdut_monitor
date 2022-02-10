@@ -13,6 +13,25 @@ type SendService struct {
 	*managepb.UnimplementedSendServiceServer
 }
 
+func (s *SendService) GetAllConfigs(request *managepb.BaseRequest, server managepb.SendService_GetAllConfigsServer) error {
+	alerts := s.dao.GetAllAlertConfig()
+	for _, config := range alerts {
+		_ = server.Send(&managepb.SendConfigResponse{
+			Code: managepb.ResponseCode_SUCCESS,
+			Msg:  "SUCCESS",
+			Result: &managepb.SendEntry{
+				ID:       config.ID,
+				IP:       config.IP,
+				Local:    config.Local,
+				SendType: config.SendType,
+				Config:   config.Config,
+				Level:    config.Level,
+			},
+		})
+	}
+	return nil
+}
+
 func (s *SendService) AddConfig(ctx context.Context, request *managepb.AddSendRequest) (*managepb.BaseResponse, error) {
 	alert := model.AlertConfigPool.Get().(*model.AlertConfig)
 	defer model.AlertConfigPool.Put(alert)

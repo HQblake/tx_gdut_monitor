@@ -58,8 +58,9 @@ func (dao *StorageDao) GetMetricsByIPAndLocal(ip, local string) []string {
 }
 
 // GetMetricData 操作InfluxDB数据库
-func (dao *StorageDao) GetMetricData(ip, local, metricName, period string, begin, end int64, method int32) ([]model.Metric, error) {
-	return dao.influxdbClient.GetMetricData(ip, local, metricName, period, begin, end, method)
+func (dao *StorageDao) GetMetricData(ip, local, metricName, period string, begin, end int64,
+	method, limit int32) ([]model.Metric, error) {
+	return dao.influxdbClient.GetMetricData(ip, local, metricName, period, begin, end, method, limit)
 }
 
 func (dao *StorageDao) GetAllAlertInfo() []model.HistoryInfo {
@@ -104,4 +105,8 @@ func (dao *StorageDao) GetAlertConfigByID(id int32) model.AlertConfig {
 
 func (dao *StorageDao) GetAlertConfigByIPAndLocal(ip, local string) []model.AlertConfig {
 	return dao.mysqlClient.GetAlertConfigByIPAndLocal(ip, local)
+}
+
+func (dao *StorageDao) GetAllAlertConfig() []model.AlertConfig {
+	return dao.mysqlClient.GetAllAlertConfig()
 }
