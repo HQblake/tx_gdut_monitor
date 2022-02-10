@@ -16,7 +16,7 @@ func NewClient(s *MySQLSetting) *Client {
 	// 加载数据库驱动
 	dns := "%s:%s@tcp(%s)/%s?charset=%s&parseTime=%t&loc=Local"
 	db, err := sql.Open(s.DBType,
-		fmt.Sprintf(dns, s.UserName, s.PassWord, s.Host, s.DBName, s.Charset, s.ParseTime))
+		fmt.Sprintf(dns, s.Username, s.Password, s.Host, s.DBName, s.Charset, s.ParseTime))
 
 	if err != nil {
 		log.Fatalln(err)

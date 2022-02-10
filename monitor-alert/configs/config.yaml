@@ -6,5 +6,10 @@ Workers:
   MaxBlockingTasks: 0   # 最大阻塞任务数，默认0，任务阻塞直到分配到worker；当非0时，达到最大任务数，不执行任务并返回overload
 Redis:
   Host: 127.0.0.1:6379
-  Password: "root"
+  Password: root
   DB: 0
+Hosts:
+  Network: tcp
+  Server: 127.0.0.1:8080
+  ManageClient: 127.0.0.1:8081
+  StorageClient: 127.0.0.1:8082

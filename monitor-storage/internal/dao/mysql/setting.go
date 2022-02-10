@@ -2,8 +2,8 @@ package mysql
 
 type MySQLSetting struct {
 	DBType          string
-	UserName        string
-	PassWord        string
+	Username        string
+	Password        string
 	Host            string
 	DBName          string
 	Charset         string

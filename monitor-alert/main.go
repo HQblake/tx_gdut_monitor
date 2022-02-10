@@ -6,7 +6,6 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"google.golang.org/grpc"
-	"log"
 	"net"
 )
 
@@ -16,7 +15,17 @@ func init() {
 }
 
 func main() {
+	server := grpc.NewServer()
+	// 注册发送服务
+	global.Send.RegisterService(server)
+	// 注册判定服务
+	global.Judgement.RegisterService(server)
+	// 注册接入服务
+	/*global.Receive.RegisterService(server)*/
 
+	// 启动端口监听
+	lis, _ := net.Listen(global.Setting.Hosts.Network, global.Setting.Hosts.Server)
+	server.Serve(lis)
 }
 
 func setupSetting() {
@@ -24,28 +33,8 @@ func setupSetting() {
 }
 
 func setupService() {
-	l, err := net.Listen("tcp",":8082")
-	if err != nil {
-		log.Fatal(err)
-	}
-	ser := grpc.NewServer()
-	// 加载判定服务
-
-	global.JudgementService, err = judgment.NewJudgmentService(global.Setting)
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	// 加载发送服务
-	global.SendService = send.NewService()
-
-	// 注册发送服务的rpc
-	global.SendService.RegisterService(ser)
-	err = ser.Serve(l)
-	if err != nil {
-		log.Println("grpc server:", err)
-		ser.Stop()
-		return
-	}
-	ser.Stop()
+	// 服务加载顺序：先加载发送服务、再加载判定服务、最后加载接入服务
+	global.Send = send.NewService()
+	global.Judgement = judgment.NewService(global.Setting, global.Send)
+	// 加载接入服务待实现
 }
