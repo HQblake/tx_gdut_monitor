@@ -62,6 +62,7 @@ message MetricRequest {
   int64 End = 5;
   string Period = 6;
   int32 Method = 7;
+  int32 Limit = 8; // 返回条数限制
 }
 message MetricResult {
   int64 Timestamp = 3;
