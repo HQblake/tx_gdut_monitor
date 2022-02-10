@@ -1,6 +1,7 @@
 package send
 
 import (
+	"fmt"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	sendpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/gen"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/service"
@@ -9,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"log"
 	"sync"
+	"time"
 )
 
 // ISend 接入判定服务
@@ -46,9 +48,9 @@ func (s *Service) RegisterService(ser *grpc.Server) {
 }
 
 func (s *Service) Send(alert *model.AlertInfo) error {
-	outputs := s.agents.GetOutputs(alert.AgentID)
+	outputs := s.agents.GetOutputs(fmt.Sprintf("%s-%s", alert.IP, alert.Local))
 	for _, info := range alert.Metrics {
-		i := s.newInfo(alert.AgentID, info)
+		i := s.newInfo(fmt.Sprintf("%s-%s", alert.IP, alert.Local), info)
 		err := outputs.Output(i)
 		if err != nil {
 			log.Println(err)
@@ -66,7 +68,7 @@ func (s *Service) newInfo(agent string, alert model.MetricInfo) model2.Info {
 	i.Threshold = alert.Threshold
 	i.Level = output.Level(alert.Level).String()
 	i.Duration = alert.Duration
-	i.Start = alert.Start
+	i.Start = time.Unix(alert.Start, 0).Format("[2006-01-01 15:04:05]")
 	i.ParseMethod(alert.Method)
 	return i
 }

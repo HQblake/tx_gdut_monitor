@@ -11,9 +11,23 @@ type Info struct {
 	Duration  string  `json:"duration"`  // 持续时间
 	Start     string  `json:"start"`     // 开始时间
 }
-
+var methodType = map[int32]string{
+	0: "计数",
+	1: "总和",
+	2: "平均值",
+	3: "中位数",
+	4: "积分",
+	5: "众数",
+	6: "极值",
+	7: "标准差",
+	8: "最大值",
+	9: "最小值",
+}
 // ParseMethod 解析聚合方式
-// todo int类型，需要再进行解析
-func (i *Info) ParseMethod(method int8) {
-	i.Method = string(method)
+func (i *Info) ParseMethod(method int32) {
+	m, ok := methodType[method]
+	if ok {
+		i.Method = m
+	}
+	i.Method = "unknown"
 }
