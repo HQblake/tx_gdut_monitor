@@ -1,10 +1,10 @@
 package model
 
 type AgentInfo struct {
-	Ip string `json:"ip"`
+	IP string `json:"ip"`
 	Port string `json:"port"`
 	Local string `json:"local"`
-	IsLive string `json:"is_live"`
+	IsLive bool `json:"is_live"`
 	Metric []string `json:"metric"`
 }
 type Metrics struct {

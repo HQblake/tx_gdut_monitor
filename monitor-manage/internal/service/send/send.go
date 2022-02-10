@@ -65,15 +65,14 @@ func (s *Service) GetAllConfigs() ([]model.SendConfig, error) {
 			continue
 		}
 		config := resp.GetResult()
-		conf := model.SendConfig{
+		res = append(res, model.SendConfig{
 			ID: config.GetID(),
 			IP: config.GetIP(),
 			Local: config.GetLocal(),
 			SendType:config.GetSendType(),
 			Level:config.GetLevel(),
 			Config:config.GetConfig(),
-		}
-		res = append(res, conf)
+		})
 	}
 	return res, nil
 }
@@ -102,15 +101,14 @@ func (s *Service) GetConfigs(ip string, local string) ([]model.SendConfig, error
 			continue
 		}
 		config := resp.GetResult()
-		conf := model.SendConfig{
+		res = append(res, model.SendConfig{
 			ID: config.GetID(),
 			IP: config.GetIP(),
 			Local: config.GetLocal(),
 			SendType:config.GetSendType(),
 			Level:config.GetLevel(),
 			Config:config.GetConfig(),
-		}
-		res = append(res, conf)
+		})
 	}
 	return res, nil
 }
@@ -230,29 +228,23 @@ func (s *Service) Init() {
 		res := make(map[string]*sendpb.InitConfig)
 		for _, config := range list {
 			agent := fmt.Sprintf("%s-%s", config.IP, config.Local)
+			entry :=  &sendpb.ConfigEntry{
+				ConfigID: config.ID,
+				Conf: &sendpb.Config{
+					SendType: config.SendType,
+					Config: config.Config,
+					Level: config.Level,
+				},
+			}
 			if v, ok := res[agent]; ok {
-				v.Config = append(v.Config, &sendpb.ConfigEntry{
-					ConfigID: config.ID,
-					Conf: &sendpb.Config{
-						SendType: config.SendType,
-						Config: config.Config,
-						Level: config.Level,
-					},
-				})
+				v.Config = append(v.Config,entry)
 			}else {
 				res[agent] = &sendpb.InitConfig{
 					IP: config.IP,
 					Local: config.Local,
 					Config: make([]*sendpb.ConfigEntry, 0, 4),
 				}
-				res[agent].Config = append(res[agent].Config, &sendpb.ConfigEntry{
-					ConfigID: config.ID,
-					Conf: &sendpb.Config{
-						SendType: config.SendType,
-						Config: config.Config,
-						Level: config.Level,
-					},
-				})
+				res[agent].Config = append(res[agent].Config, entry)
 			}
 		}
 		resp, err := s.send.Init(context.Background(), &sendpb.InitRequest{
