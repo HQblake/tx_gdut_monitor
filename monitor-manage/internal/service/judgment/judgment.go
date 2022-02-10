@@ -39,7 +39,7 @@ func (s *Service) GetConfigs(ip string, local string) ([]model.JudgmentConfig,ma
 		return nil, nil, err
 	}
 	var resp *managepb.JudgmentConfigResponse
-	res := make([]model.JudgmentConfig, 0)
+	res := make([]model.JudgmentConfig, 0, 10)
 	mres := make(map[string]model.JudgmentConfig)
 	// 遍历获取指定metric的规则，没有则用默认规则代替
 	for {

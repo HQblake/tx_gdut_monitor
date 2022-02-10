@@ -2,10 +2,10 @@ package model
 
 
 type SendConfig struct {
-	Id int `json:"id"`
-	Ip string `json:"ip"`
-	Local string `json:"local"`
-	SendType int `json:"send_type"`
-	Level int `json:"level"`
-	Config string `json:"config"`
+	ID       int32    `json:"id"`
+	IP       string `json:"ip"`
+	Local    string `json:"local"`
+	SendType int32    `json:"send_type"`
+	Level    int32    `json:"level"`
+	Config   string `json:"config"`
 }

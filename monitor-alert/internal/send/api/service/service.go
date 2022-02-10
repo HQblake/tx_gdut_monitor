@@ -5,8 +5,7 @@ import (
 	"fmt"
 	sendpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/gen"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
+	"log"
 	"strings"
 )
 
@@ -30,7 +29,10 @@ func (s *Service) Set(ctx context.Context, request *sendpb.UpdateRequest) (*send
 	}
 	err := outputs.Set(int(request.GetConfig().GetConfigID()), conf)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return &sendpb.Response{
+			Code: sendpb.ResponseCode_ERROR,
+			Msg: err.Error(),
+		}, nil
 	}
 	return &sendpb.Response{
 		Code: sendpb.ResponseCode_SUCCESS,
@@ -43,7 +45,10 @@ func (s *Service) Del(ctx context.Context, request *sendpb.DelRequest) (*sendpb.
 
 	err := outputs.Del(int(request.GetConfigID()))
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, err.Error())
+		return &sendpb.Response{
+			Code: sendpb.ResponseCode_ERROR,
+			Msg: err.Error(),
+		}, nil
 	}
 	return &sendpb.Response{
 		Code: sendpb.ResponseCode_SUCCESS,
@@ -62,7 +67,8 @@ func (s *Service) Init(ctx context.Context, request *sendpb.InitRequest) (*sendp
 			}
 			err := outputs.Set(int(c.GetConfigID()), conf)
 			if err != nil {
-				return nil, status.Errorf(codes.Internal, err.Error())
+				// 打日志，不影响其他
+				log.Printf("init agent %s, set config id %d error:%s", agent, c.GetConfigID(), err.Error())
 			}
 		}
 	}

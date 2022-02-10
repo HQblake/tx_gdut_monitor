@@ -721,6 +721,7 @@ type SendServiceClient interface {
 	DeleteConfig(ctx context.Context, in *IDRequest, opts ...grpc.CallOption) (*BaseResponse, error)
 	GetConfigByID(ctx context.Context, in *IDRequest, opts ...grpc.CallOption) (*SendConfigResponse, error)
 	GetConfigsByAgent(ctx context.Context, in *AgentRequest, opts ...grpc.CallOption) (SendService_GetConfigsByAgentClient, error)
+	GetAllConfigs(ctx context.Context, in *BaseRequest, opts ...grpc.CallOption) (SendService_GetAllConfigsClient, error)
 }
 
 type sendServiceClient struct {
@@ -799,6 +800,38 @@ func (x *sendServiceGetConfigsByAgentClient) Recv() (*SendConfigResponse, error)
 	return m, nil
 }
 
+func (c *sendServiceClient) GetAllConfigs(ctx context.Context, in *BaseRequest, opts ...grpc.CallOption) (SendService_GetAllConfigsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &SendService_ServiceDesc.Streams[1], "/judgment2store.SendService/GetAllConfigs", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &sendServiceGetAllConfigsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type SendService_GetAllConfigsClient interface {
+	Recv() (*SendConfigResponse, error)
+	grpc.ClientStream
+}
+
+type sendServiceGetAllConfigsClient struct {
+	grpc.ClientStream
+}
+
+func (x *sendServiceGetAllConfigsClient) Recv() (*SendConfigResponse, error) {
+	m := new(SendConfigResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
 // SendServiceServer is the server API for SendService service.
 // All implementations must embed UnimplementedSendServiceServer
 // for forward compatibility
@@ -814,6 +847,7 @@ type SendServiceServer interface {
 	DeleteConfig(context.Context, *IDRequest) (*BaseResponse, error)
 	GetConfigByID(context.Context, *IDRequest) (*SendConfigResponse, error)
 	GetConfigsByAgent(*AgentRequest, SendService_GetConfigsByAgentServer) error
+	GetAllConfigs(*BaseRequest, SendService_GetAllConfigsServer) error
 	mustEmbedUnimplementedSendServiceServer()
 }
 
@@ -835,6 +869,9 @@ func (UnimplementedSendServiceServer) GetConfigByID(context.Context, *IDRequest)
 }
 func (UnimplementedSendServiceServer) GetConfigsByAgent(*AgentRequest, SendService_GetConfigsByAgentServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetConfigsByAgent not implemented")
+}
+func (UnimplementedSendServiceServer) GetAllConfigs(*BaseRequest, SendService_GetAllConfigsServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetAllConfigs not implemented")
 }
 func (UnimplementedSendServiceServer) mustEmbedUnimplementedSendServiceServer() {}
 
@@ -942,6 +979,27 @@ func (x *sendServiceGetConfigsByAgentServer) Send(m *SendConfigResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _SendService_GetAllConfigs_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(BaseRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(SendServiceServer).GetAllConfigs(m, &sendServiceGetAllConfigsServer{stream})
+}
+
+type SendService_GetAllConfigsServer interface {
+	Send(*SendConfigResponse) error
+	grpc.ServerStream
+}
+
+type sendServiceGetAllConfigsServer struct {
+	grpc.ServerStream
+}
+
+func (x *sendServiceGetAllConfigsServer) Send(m *SendConfigResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
 // SendService_ServiceDesc is the grpc.ServiceDesc for SendService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -970,6 +1028,11 @@ var SendService_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "GetConfigsByAgent",
 			Handler:       _SendService_GetConfigsByAgent_Handler,
+			ServerStreams: true,
+		},
+		{
+			StreamName:    "GetAllConfigs",
+			Handler:       _SendService_GetAllConfigs_Handler,
 			ServerStreams: true,
 		},
 	},
