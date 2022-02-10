@@ -38,6 +38,12 @@ func (c *Client) GetAllAlertInfo() []model.HistoryInfo {
 // 若给定的参数值为其类型的零值，则表示该条件未设定
 // level 参数在此处的零值为"负数"
 func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, end int64) []model.HistoryInfo {
+	sql := "SELECT h.id, ip, local, name, value, threshold, method, level, start, duration " +
+		"FROM agent AS a, metric AS m, history AS h" +
+		"WHERE a.id=h.agentId AND m.id=h.metricId "
+	if ip != "" {
+		sql += "AND ip=" + ip + " "
+	}
 	return nil
 }
 
@@ -62,8 +68,15 @@ func (c *Client) DelCheckConfigByID(id int32) error {
 }
 
 // SaveAlertConfig 将告警配置保存到alert表中
-func (c *Client) SaveAlertConfig(alert *model.AlertConfig) error {
-	return nil
+func (c *Client) SaveAlertConfig(alert *model.AlertConfig) (int32, error) {
+	result, err := c.db.Exec("INSERT INTO ......")
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+
+	return int32(id), err
 }
 
 // UpdateAlertConfig 更新alert表中除ID、IP、Local外的所有字段

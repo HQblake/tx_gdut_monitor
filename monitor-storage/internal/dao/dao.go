@@ -87,7 +87,7 @@ func (dao *StorageDao) DelCheckConfigByID(id int32) error {
 	return dao.mysqlClient.DelCheckConfigByID(id)
 }
 
-func (dao *StorageDao) SaveAlertConfig(alert *model.AlertConfig) error {
+func (dao *StorageDao) SaveAlertConfig(alert *model.AlertConfig) (int32, error) {
 	return dao.mysqlClient.SaveAlertConfig(alert)
 }
 

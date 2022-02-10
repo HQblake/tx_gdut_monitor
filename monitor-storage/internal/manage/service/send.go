@@ -36,7 +36,7 @@ func (s *SendService) AddConfig(ctx context.Context, request *managepb.AddSendRe
 	alert := model.AlertConfigPool.Get().(*model.AlertConfig)
 	defer model.AlertConfigPool.Put(alert)
 	parseAlertCheckByRequest(request, alert)
-	err := s.dao.SaveAlertConfig(alert)
+	id, err := s.dao.SaveAlertConfig(alert)
 	if err != nil {
 		return &managepb.BaseResponse{
 			Code: managepb.ResponseCode_ERROR,
@@ -45,7 +45,7 @@ func (s *SendService) AddConfig(ctx context.Context, request *managepb.AddSendRe
 	}
 	return &managepb.BaseResponse{
 		Code: managepb.ResponseCode_SUCCESS,
-		Msg:  "SUCCESS",
+		Msg:  string(id),
 	}, nil
 }
 
