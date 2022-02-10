@@ -1,6 +1,9 @@
 admin:
   listen: 8080
-
+store:
+  listen: 8081
+alert:
+  listen: 8082
 rule:
   method: 1
   period: 5m

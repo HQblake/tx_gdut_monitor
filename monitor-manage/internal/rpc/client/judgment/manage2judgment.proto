@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/api/managepb;managepb";
+
+// 管理服务向判定服务发起agent判定规则更新请求
+service RuleUpdater  {
+  rpc Update (AgentRule) returns (Response) {}
+}
+
+// 请求结构
+message AgentRule {
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  map<string, MetricRule> Metrics = 3; // 所有指标的判定规则
+}
+
+message MetricRule{
+  int32 Method = 1; // 指标的聚合方式
+  string Period = 2; // 指标的聚合周期 eg. 格式如：5s、5m、5h、1h1m1s....
+  map<int32, double> Threshold = 3;// 阈值等级判定
+}
+
+// 响应
+message Response {
+    ResponseCode Code = 1;
+    string Msg = 2;
+}
+enum ResponseCode {
+  SUCCESS = 0;
+  ERROR = 1;
+}
