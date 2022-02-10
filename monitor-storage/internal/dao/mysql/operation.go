@@ -1,6 +1,9 @@
 package mysql
 
-import "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
+import (
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
+	"time"
+)
 
 // SaveAgentInfo 调用MySQL的存储过程
 // 传入参数：IP、Local、Port、Metric_Name，保存Agent信息
@@ -38,13 +41,62 @@ func (c *Client) GetAllAlertInfo() []model.HistoryInfo {
 // 若给定的参数值为其类型的零值，则表示该条件未设定
 // level 参数在此处的零值为"负数"
 func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, end int64) []model.HistoryInfo {
-	sql := "SELECT h.id, ip, local, name, value, threshold, method, level, start, duration " +
-		"FROM agent AS a, metric AS m, history AS h" +
-		"WHERE a.id=h.agentId AND m.id=h.metricId "
-	if ip != "" {
-		sql += "AND ip=" + ip + " "
+	if id <= 0 {
+		// 设定了history表的主键id，仅返回一条记录
+		sql := "SELECT h.id, a.ip, a.local, m.name, h.value, h.threshold, " +
+			"h.method, h.level, h.start, h.duration " +
+			"FROM ((history AS h LEFT JOIN agent AS a ON h.agentId=a.id) " +
+			"LEFT JOIN metric AS m ON h.metricId=m.id) " +
+			"WHERE h.id=?"
+		row, err := c.db.Query(sql, id)
+		if err != nil {
+
+		}
+		for row.Next() {
+
+		}
+
+		return nil
+	} else {
+		// 对设定了的条件进行判定
+		sql := "SELECT h.id, a.ip, a.local, m.name, h.value, h.threshold, " +
+			"h.method, h.level, h.start, h.duration " +
+			"FROM ((history AS h LEFT JOIN agent AS a ON h.agentId=a.id) " +
+			"LEFT JOIN metric AS m ON h.metricId=m.id) " +
+			"WHERE 1=1"
+		if ip != "" {
+			sql += " AND a.ip=" + ip
+		}
+		if local != "" {
+			sql += " AND a.local=" + local
+		}
+		if metric != "" {
+			sql += " AND m.name=" + metric
+		}
+		if level >= 0 {
+			sql += " AND h.level=" + string(level)
+		}
+		sql += " AND h.start >= ? AND h.start <= ?"
+
+		if begin <= 0 {
+			begin = 0
+		}
+		if end <= 0 {
+			end = time.Now().Unix()
+		}
+		if begin > end {
+			begin, end = end, begin
+		}
+
+		row, err := c.db.Query(sql, begin, end)
+		if err != nil {
+
+		}
+		for row.Next() {
+
+		}
+		return nil
 	}
-	return nil
 }
 
 // DelAlterInfo 根据ID删除告警信息
