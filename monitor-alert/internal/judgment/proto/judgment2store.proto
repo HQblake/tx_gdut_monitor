@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/judgment/storepb;storepb";
+
+service MetricService {
+  // 获取聚合数据
+  rpc GetAggregatedData(AggregatedRequest) returns (AggregatedResponse) {}
+
+  // 插入告警信息
+  rpc InsertAlertInfo(HistoryInfoRequest) returns (HistoryInfoResponse) {}
+}
+
+message HistoryInfoRequest {
+  string IP = 1;
+  string Local = 2;
+  string Metric = 3;
+  double Value = 4;
+  double Threshold = 5;
+  int32 Method = 6;
+  int32 Level = 7;
+  string Duration = 8;
+  int64 Start = 9;
+}
+
+message HistoryInfoResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+}
+
+
+message AggregatedRequest {
+  int32 Method = 1;
+  string Period = 2;
+  string Metric = 3;
+  double Value = 4;
+  string IP = 5;
+  string Local = 6;
+  string Port = 7;
+  int64 Timestamp = 8;
+  map<string, string> Dimensions = 9;
+}
+
+message AggregatedResponse {
+  ResponseCode Code = 1;
+  string Msg = 2;
+  double Result = 3;
+}
+
+enum ResponseCode {
+  SUCCESS = 0;
+  ERROR = 1;
+}
