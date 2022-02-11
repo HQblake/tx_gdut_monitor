@@ -3,3 +3,4 @@
 **/vendor/
 /go.mod
 /go.sum
+**/node_modules/
