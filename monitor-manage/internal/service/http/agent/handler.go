@@ -3,6 +3,7 @@ package agent
 import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/agent"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type Handler struct {
@@ -14,11 +15,51 @@ func NewHandler(service agent.IAgent) *Handler {
 	}
 }
 
+// GetAllAgent Get
 func (h *Handler) GetAllAgent(c *gin.Context) {
-	panic("implement me")
+	res, err := h.service.GetAllAgentInfo()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": "010001",
+			"msg":  "获取agent列表出错" + err.Error(),
+			"data": nil,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": "000000",
+		"msg":  "success",
+		"data": res,
+	})
+	return
 }
 
+// GetAgentInfo Get,query:ip,local
 func (h *Handler) GetAgentInfo(c *gin.Context) {
-	panic("implement me")
+	ip := c.Param("ip")
+	local := c.Param("local")
+	if ip == "" || local == "" {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "000001",
+			"msg":  "参数信息有误，请重试",
+			"data": nil,
+		})
+		return
+	}
+	res, err := h.service.GetAgentInfo(ip, local)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "010002",
+			"msg":  "获取agent信息出错",
+			"data": nil,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": "000000",
+		"msg":  "success",
+		"data": res,
+	})
+	return
 }
 

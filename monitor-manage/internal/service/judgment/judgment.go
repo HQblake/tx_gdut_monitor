@@ -8,7 +8,7 @@ import (
 type IJudgment interface {
 	GetConfigs(ip string, local string) ([]model.JudgmentConfig,map[string]model.JudgmentConfig, error)
 	// Update 更新判定服务配置，一方面更新数据库，一方面告知判定服务rpc
-	Update(config model.JudgmentConfig) error
+	Update(ID int32, IP string,Local string, Metric string, Method int32, Period string, Threshold string) error
 	// Del 删除指定id的配置
 	Del(ip string, local string, id int32) error
 }

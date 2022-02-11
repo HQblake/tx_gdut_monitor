@@ -51,7 +51,7 @@ type IJudgmentHandler interface {
 // ISendHandler 发送服务的管理http接口
 type ISendHandler interface {
 	// GetConfigs 获取指定agent的发送配置列表
-	GetConfigs(c *gin.Context)
+	GetSendConfigs(c *gin.Context)
 	// AddSendConfig  新增配置
 	AddSendConfig(c *gin.Context)
 	// UpdateSendConfig  更新发送服务配置

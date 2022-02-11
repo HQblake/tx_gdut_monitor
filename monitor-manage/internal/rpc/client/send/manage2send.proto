@@ -5,9 +5,9 @@ option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/inter
 
 service SendService {
   // 负责更新和新增
-  rpc Set(UpdateRequest) returns (Response);
-  rpc Del(DelRequest) returns (Response);
-  rpc Init(InitRequest) returns (Response);
+  rpc Set(UpdateRequest) returns (SendResponse);
+  rpc Del(DelRequest) returns (SendResponse);
+  rpc Init(InitRequest) returns (SendResponse);
 }
 
 
@@ -53,11 +53,11 @@ message InitRequest{
 
 
 
-message Response {
+message SendResponse {
+  enum ResponseCode {
+    SUCCESS = 0;
+    ERROR = 1;
+  }
   ResponseCode Code = 1;
   string Msg = 2;
-}
-enum ResponseCode {
-  SUCCESS = 0;
-  ERROR = 1;
 }

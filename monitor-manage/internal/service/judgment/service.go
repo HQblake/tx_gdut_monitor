@@ -63,15 +63,15 @@ func (s *Service) GetConfigs(ip string, local string) ([]model.JudgmentConfig,ma
 	return res, mres, nil
 }
 
-func (s *Service) Update(config model.JudgmentConfig) error {
+func (s *Service) Update(ID int32, IP string,Local string, Metric string, Method int32, Period string, Threshold string) error {
 	resp, err := s.store.UpdateConfig(context.Background(), &managepb.JudgmentEntry{
-		ID: config.ID,
-		IP: config.IP,
-		Local: config.Local,
-		Metric: config.Metric,
-		Method: config.Method,
-		Period: config.Period,
-		Threshold: config.Threshold,
+		ID: ID,
+		IP: IP,
+		Local: Local,
+		Metric: Metric,
+		Method: Method,
+		Period: Period,
+		Threshold: Threshold,
 	})
 	if err != nil {
 		return err
@@ -84,7 +84,7 @@ func (s *Service) Update(config model.JudgmentConfig) error {
 		if err != nil {
 			log.Printf("update judgment config trigger update error: %s", err.Error())
 		}
-	}(config.IP, config.Local)
+	}(IP, Local)
 	return nil
 }
 

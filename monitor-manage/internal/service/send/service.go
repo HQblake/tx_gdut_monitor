@@ -124,7 +124,7 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 		Config: &sendpb.ConfigEntry{
 			ConfigID: int32(id),
 			Conf: &sendpb.Config{
-				SendType: SendType,
+				SendType: sendpb.Type(SendType),
 				Config: Config,
 				Level: Level,
 			},
@@ -133,7 +133,7 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 	if err != nil {
 		return err
 	}
-	if res.GetCode() != sendpb.ResponseCode_SUCCESS {
+	if res.GetCode() != sendpb.SendResponse_SUCCESS {
 		return fmt.Errorf("set send config send service error %s", res.GetMsg())
 	}
 	return nil
@@ -149,7 +149,7 @@ func (s *Service) Update(id int32, IP string, Local string, SendType int32, Leve
 		Config: &sendpb.ConfigEntry{
 			ConfigID: id,
 			Conf: &sendpb.Config{
-				SendType: SendType,
+				SendType: sendpb.Type(SendType),
 				Config: Config,
 				Level: Level,
 			},
@@ -158,7 +158,7 @@ func (s *Service) Update(id int32, IP string, Local string, SendType int32, Leve
 	if err != nil {
 		return err
 	}
-	if res.GetCode() != sendpb.ResponseCode_SUCCESS {
+	if res.GetCode() != sendpb.SendResponse_SUCCESS {
 		return fmt.Errorf("set send config send service error %s", res.GetMsg())
 	}
 	resp, err := s.store.UpdateConfig(ctx, &managepb.SendEntry{
@@ -198,7 +198,7 @@ func (s *Service) Del(ip string, local string, id int32) error {
 	if err != nil {
 		return err
 	}
-	if res.GetCode() != sendpb.ResponseCode_SUCCESS {
+	if res.GetCode() != sendpb.SendResponse_SUCCESS {
 		return fmt.Errorf("del send config send service error %s", res.GetMsg())
 	}
 	return nil
@@ -216,7 +216,7 @@ func (s *Service) Init() {
 			entry :=  &sendpb.ConfigEntry{
 				ConfigID: config.ID,
 				Conf: &sendpb.Config{
-					SendType: config.SendType,
+					SendType: sendpb.Type(config.SendType),
 					Config: config.Config,
 					Level: config.Level,
 				},
@@ -238,7 +238,7 @@ func (s *Service) Init() {
 		if err != nil {
 			log.Println(err)
 		}
-		if resp.GetCode() != sendpb.ResponseCode_SUCCESS {
+		if resp.GetCode() != sendpb.SendResponse_SUCCESS {
 			log.Printf("init send service error %s", resp.GetMsg())
 		}
 	})
