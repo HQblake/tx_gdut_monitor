@@ -7,9 +7,12 @@ import (
 
 func TestReadConfig(t *testing.T) {
 	target := &config{
-		AdminConfig: &listenConfig{
-			Listen: "8080",
+		AdminConfig: &adminConfig{
+			Listen: ":8080",
+			ServerAddr: ":8083",
 		},
+		StoreConfig: &listenConfig{Listen: ":8081"},
+		AlertConfig: &listenConfig{Listen: ":8082"},
 		DefaultRule: &ruleConfig{
 			Method: 1,
 			Period: "5m",

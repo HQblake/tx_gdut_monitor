@@ -19,9 +19,9 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SendServiceClient interface {
 	// 负责更新和新增
-	Set(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error)
-	Del(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*Response, error)
-	Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*Response, error)
+	Set(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*SendResponse, error)
+	Del(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*SendResponse, error)
+	Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*SendResponse, error)
 }
 
 type sendServiceClient struct {
@@ -32,8 +32,8 @@ func NewSendServiceClient(cc grpc.ClientConnInterface) SendServiceClient {
 	return &sendServiceClient{cc}
 }
 
-func (c *sendServiceClient) Set(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*Response, error) {
-	out := new(Response)
+func (c *sendServiceClient) Set(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*SendResponse, error) {
+	out := new(SendResponse)
 	err := c.cc.Invoke(ctx, "/api.SendService/Set", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -41,8 +41,8 @@ func (c *sendServiceClient) Set(ctx context.Context, in *UpdateRequest, opts ...
 	return out, nil
 }
 
-func (c *sendServiceClient) Del(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*Response, error) {
-	out := new(Response)
+func (c *sendServiceClient) Del(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*SendResponse, error) {
+	out := new(SendResponse)
 	err := c.cc.Invoke(ctx, "/api.SendService/Del", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -50,8 +50,8 @@ func (c *sendServiceClient) Del(ctx context.Context, in *DelRequest, opts ...grp
 	return out, nil
 }
 
-func (c *sendServiceClient) Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*Response, error) {
-	out := new(Response)
+func (c *sendServiceClient) Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*SendResponse, error) {
+	out := new(SendResponse)
 	err := c.cc.Invoke(ctx, "/api.SendService/Init", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -64,9 +64,9 @@ func (c *sendServiceClient) Init(ctx context.Context, in *InitRequest, opts ...g
 // for forward compatibility
 type SendServiceServer interface {
 	// 负责更新和新增
-	Set(context.Context, *UpdateRequest) (*Response, error)
-	Del(context.Context, *DelRequest) (*Response, error)
-	Init(context.Context, *InitRequest) (*Response, error)
+	Set(context.Context, *UpdateRequest) (*SendResponse, error)
+	Del(context.Context, *DelRequest) (*SendResponse, error)
+	Init(context.Context, *InitRequest) (*SendResponse, error)
 	mustEmbedUnimplementedSendServiceServer()
 }
 
@@ -74,13 +74,13 @@ type SendServiceServer interface {
 type UnimplementedSendServiceServer struct {
 }
 
-func (UnimplementedSendServiceServer) Set(context.Context, *UpdateRequest) (*Response, error) {
+func (UnimplementedSendServiceServer) Set(context.Context, *UpdateRequest) (*SendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Set not implemented")
 }
-func (UnimplementedSendServiceServer) Del(context.Context, *DelRequest) (*Response, error) {
+func (UnimplementedSendServiceServer) Del(context.Context, *DelRequest) (*SendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Del not implemented")
 }
-func (UnimplementedSendServiceServer) Init(context.Context, *InitRequest) (*Response, error) {
+func (UnimplementedSendServiceServer) Init(context.Context, *InitRequest) (*SendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
 }
 func (UnimplementedSendServiceServer) mustEmbedUnimplementedSendServiceServer() {}
