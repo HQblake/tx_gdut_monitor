@@ -9,13 +9,14 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
+	"net"
 )
 var configPath string
 var debug bool
 
 func init() {
 	flag.StringVar(&configPath, "config", "./config.yml", "config path")
-	flag.BoolVar(&debug, "debug", false, "is debug")
+	flag.BoolVar(&debug, "debug", true, "is debug")
 }
 // 监控系统的入口程序,也是主程序入口，在此做各个模块的初始化处理
 func main() {
@@ -37,13 +38,20 @@ func main() {
 		log.Fatalln(err)
 	}
 	defer storeConn.Close()
+	l, err := net.Listen("tcp", configs.GetAdminServerAddr())
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer l.Close()
 
+	// 初始化管理服务
 	admin := service.Register(alertConn, storeConn)
-	//// 管理服务开启grpc通信
-	//judgpb.RegisterManageServiceServer(a.Service)
+
+	// 注册grpc服务
+	admin.RegisterService(l)
+
 	// 开启监听
 	log.Fatal(router(admin.ApiHandler).Run(configs.GetAdminListenAddr()))
-
 }
 
 func router(h *http.Handler) *gin.Engine {

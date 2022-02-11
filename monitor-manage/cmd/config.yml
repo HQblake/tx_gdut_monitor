@@ -1,12 +1,13 @@
 admin:
   listen: ":8080"
+  server: ":8083"
 store:
   listen: ":8081"
 alert:
   listen: ":8082"
 rule:
   method: 1
-  period: 5m
+  period: "5m"
   threshold:
     warn: 0.03
     error: 0.06
