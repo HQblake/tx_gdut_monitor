@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/configs"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/rpc/service/gen"
+	judgpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/rpc/service/gen"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/judgment"
 	"log"
 )
@@ -21,13 +21,13 @@ func NewService(judgment judgment.IJudgment) *Service {
 }
 
 // Get 配合check服务的GET需求
-func (s *Service) Get(ctx context.Context, request *judgpb.CheckRequest) (*judgpb.Response, error) {
+func (s *Service) Get(ctx context.Context, request *judgpb.CheckRequest) (*judgpb.CheckResponse, error) {
 	// 获取存储服务中对应agent的所有判定规则
 	res := make(map[string]*judgpb.MetricRule, len(request.GetMetrics()))
 	_, cfgs, err := s.judgment.GetConfigs(request.GetIP(), request.GetLocal())
 	if err != nil {
-		return &judgpb.Response{
-			Code: judgpb.ResponseCode_ERROR,
+		return &judgpb.CheckResponse{
+			Code: judgpb.CheckResponse_ERROR,
 			Msg: err.Error(),
 		},nil
 	}
@@ -53,8 +53,8 @@ func (s *Service) Get(ctx context.Context, request *judgpb.CheckRequest) (*judgp
 			}
 		}
 	}
-	return &judgpb.Response{
-		Code: judgpb.ResponseCode_SUCCESS,
+	return &judgpb.CheckResponse{
+		Code: judgpb.CheckResponse_SUCCESS,
 		Msg: "success",
 		Result: &judgpb.AgentRule{
 			IP: request.GetIP(),

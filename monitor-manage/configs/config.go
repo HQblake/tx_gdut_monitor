@@ -9,10 +9,14 @@ import (
 var cfg = new(config)
 
 type config struct {
-	AdminConfig *listenConfig `json:"admin" yaml:"admin"`
+	AdminConfig *adminConfig `json:"admin" yaml:"admin"`
 	StoreConfig *listenConfig `json:"store" yaml:"store"`
 	AlertConfig *listenConfig `json:"alert" yaml:"alert"`
 	DefaultRule *ruleConfig   `json:"rule" yaml:"rule"`
+}
+type adminConfig struct {
+	Listen string `json:"listen" yaml:"listen"`
+	ServerAddr string `json:"server" yaml:"server"`
 }
 
 type listenConfig struct {
@@ -38,6 +42,9 @@ func GetDefaultConfig() *config {
 
 func GetAdminListenAddr() string {
 	return cfg.AdminConfig.Listen
+}
+func GetAdminServerAddr() string {
+	return cfg.AdminConfig.ServerAddr
 }
 
 func GetStoreConnAddr() string {

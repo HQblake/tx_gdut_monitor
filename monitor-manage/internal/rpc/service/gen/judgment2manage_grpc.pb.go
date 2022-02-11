@@ -18,7 +18,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ManageServiceClient interface {
-	Get(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*Response, error)
+	Get(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error)
 }
 
 type manageServiceClient struct {
@@ -29,8 +29,8 @@ func NewManageServiceClient(cc grpc.ClientConnInterface) ManageServiceClient {
 	return &manageServiceClient{cc}
 }
 
-func (c *manageServiceClient) Get(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*Response, error) {
-	out := new(Response)
+func (c *manageServiceClient) Get(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*CheckResponse, error) {
+	out := new(CheckResponse)
 	err := c.cc.Invoke(ctx, "/api.ManageService/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (c *manageServiceClient) Get(ctx context.Context, in *CheckRequest, opts ..
 // All implementations must embed UnimplementedManageServiceServer
 // for forward compatibility
 type ManageServiceServer interface {
-	Get(context.Context, *CheckRequest) (*Response, error)
+	Get(context.Context, *CheckRequest) (*CheckResponse, error)
 	mustEmbedUnimplementedManageServiceServer()
 }
 
@@ -50,7 +50,7 @@ type ManageServiceServer interface {
 type UnimplementedManageServiceServer struct {
 }
 
-func (UnimplementedManageServiceServer) Get(context.Context, *CheckRequest) (*Response, error) {
+func (UnimplementedManageServiceServer) Get(context.Context, *CheckRequest) (*CheckResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedManageServiceServer) mustEmbedUnimplementedManageServiceServer() {}

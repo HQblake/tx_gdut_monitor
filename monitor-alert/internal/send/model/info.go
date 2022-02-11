@@ -12,16 +12,14 @@ type Info struct {
 	Start     string  `json:"start"`     // 开始时间
 }
 var methodType = map[int32]string{
-	0: "计数",
-	1: "总和",
-	2: "平均值",
-	3: "中位数",
-	4: "积分",
-	5: "众数",
-	6: "极值",
-	7: "标准差",
-	8: "最大值",
-	9: "最小值",
+	0: "总和",
+	1: "平均值",
+	2: "中位数",
+	3: "积分",
+	4: "极值",
+	5: "标准差",
+	6: "最大值",
+	7: "最小值",
 }
 // ParseMethod 解析聚合方式
 func (i *Info) ParseMethod(method int32) {
