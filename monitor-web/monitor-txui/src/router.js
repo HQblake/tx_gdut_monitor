@@ -1,5 +1,5 @@
 /*
- * @Description: 
+ * @Description:
  * @Autor: yzq
  * @Date: 2022-02-10 16:05:05
  * @LastEditors: yzq
@@ -42,6 +42,6 @@ export default new Router({
       path: '/warnListChart',
       name: 'warnListChart',
       component: WarnListChart
-    },
+    }
   ]
 })

@@ -1,5 +1,5 @@
 <!--
- * @Description: 
+ * @Description:
  * @Autor: yzq
  * @Date: 2022-02-10 18:32:28
  * @LastEditors: yzq
@@ -7,7 +7,7 @@
 
 <template>
   <div class="header_container">
-   
+
     <el-menu
       :default-active="activeIndex"
       class="el-menu-demo"
@@ -30,21 +30,21 @@
 
 <script>
 export default {
-  name: "HeadTop",
-  data() {
+  name: 'HeadTop',
+  data () {
     return {
-      activeIndex: "",
+      activeIndex: ''
       // baseImgPath,
-    };
+    }
   },
-  created() {},
+  created () {},
   computed: {},
   methods: {
-    handleSelect(key, keyPath) {
-      console.log(key, keyPath);
-    },
-  },
-};
+    handleSelect (key, keyPath) {
+      console.log(key, keyPath)
+    }
+  }
+}
 </script>
 
 <style >
