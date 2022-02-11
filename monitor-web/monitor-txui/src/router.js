@@ -10,6 +10,7 @@ import Home from './views/Home.vue'
 import About from './views/About.vue'
 import WarnConfig from './views/WarnConfig'
 import Warning from './views/Warning'
+import WarnListChart from './views/WarnListChart'
 
 Vue.use(Router)
 
@@ -36,6 +37,11 @@ export default new Router({
       path: '/warning',
       name: 'warning',
       component: Warning
+    },
+    {
+      path: '/warnListChart',
+      name: 'warnListChart',
+      component: WarnListChart
     },
   ]
 })

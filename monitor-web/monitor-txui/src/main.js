@@ -11,6 +11,8 @@ import store from './store'
 import './registerServiceWorker'
 import * as echarts from 'echarts';
 import './plugins/element.js'
+import less from 'less'
+Vue.use(less)
 // import ElementUI from 'element-ui';
 // import 'element-ui/lib/theme-chalk/index.css';
 

@@ -6,7 +6,9 @@
 -->
 <template>
   <div class="warnConfig">
-    告警配置
+    <div class='headline'>
+      <h3 > 告警配置 </h3>
+    </div>
   </div>
 </template>
 

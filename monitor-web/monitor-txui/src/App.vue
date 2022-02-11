@@ -28,7 +28,7 @@ export default {
 };
 </script>
 
-<style>
+<style lang='less'>
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   text-align: center;
@@ -41,8 +41,8 @@ export default {
 }
 .headline {
   text-align: left;
-  width: 100%;
   padding-left: 20px;
+  padding-bottom: 20px;
 }
 .headline h3 {
   font-size: 25px;
@@ -50,15 +50,7 @@ export default {
 .container {
   width: 100vw;
   height: 100vh;
+  padding: 0px;
 }
-.el-aside {
 
-}
-.el-main {
-  text-align: center;
-  line-height: 160px;
-}
-.el-table__header-wrapper{
- 
-}
 </style>
