@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Url from '@config/url'
+import {Url} from '@/configs/url'
 import qs from 'qs'
 
 axios.defaults.timeout = 5000 // 响应时间
@@ -14,19 +14,19 @@ axios.interceptors.request.use((config) => {
   }
   return config
 }, (error) => {
-  console.log('错误的传参')
   return Promise.reject(error)
 })
 
 // 返回状态判断(添加响应拦截器)
 axios.interceptors.response.use((res) => {
   // 对响应数据做些事
-  if (!res.data.success) {
-    return Promise.resolve(res)
+  if (res.status == 200) {
+    if (res.data.code == '000000') {
+        return Promise.resolve(res.data)
+    }
   }
-  return res
+  return Promise.reject(res.data)
 }, (error) => {
-  console.log('网络异常')
   return Promise.reject(error)
 })
 
