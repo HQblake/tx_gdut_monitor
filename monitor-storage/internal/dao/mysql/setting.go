@@ -14,3 +14,5 @@ type MySQLSetting struct {
 	SingularTable   bool
 	SkipTransaction bool
 }
+
+
