@@ -23,6 +23,7 @@
       </div> -->
       <el-menu-item index="/">首页</el-menu-item>
       <el-menu-item index="/warnConfig">告警配置</el-menu-item>
+      <el-menu-item index="/sendConfig">发送配置</el-menu-item>
       <el-menu-item index="/warning">告警信息</el-menu-item>
     </el-menu>
   </div>

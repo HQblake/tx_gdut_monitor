@@ -9,8 +9,11 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import About from './views/About.vue'
 import WarnConfig from './views/WarnConfig'
+import SendConfig from './views/SendConfig'
 import Warning from './views/Warning'
 import WarnListChart from './views/WarnListChart'
+import warnDetail from './views/WarnDetail'
+import sendDetail from './views/SendDetail'
 
 Vue.use(Router)
 
@@ -34,6 +37,11 @@ export default new Router({
       component: WarnConfig
     },
     {
+      path: '/sendConfig',
+      name: 'sendConfig',
+      component: SendConfig
+    },
+    {
       path: '/warning',
       name: 'warning',
       component: Warning
@@ -42,6 +50,16 @@ export default new Router({
       path: '/warnListChart',
       name: 'warnListChart',
       component: WarnListChart
+    },
+    {
+      path: '/warn/:ip/:local',
+      name: 'warnDetail',
+      component: warnDetail
+    },
+    {
+      path: '/send/:ip/:local',
+      name: 'sendDetail',
+      component: sendDetail
     }
   ]
 })

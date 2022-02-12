@@ -1,5 +1,5 @@
 import axios from 'axios'
-import {Url} from '@/configs/url'
+import { Url } from '@/configs/url'
 import qs from 'qs'
 
 axios.defaults.timeout = 5000 // 响应时间
@@ -22,7 +22,7 @@ axios.interceptors.response.use((res) => {
   // 对响应数据做些事
   if (res.status == 200) {
     if (res.data.code == '000000') {
-        return Promise.resolve(res.data)
+      return Promise.resolve(res.data)
     }
   }
   return Promise.reject(res.data)

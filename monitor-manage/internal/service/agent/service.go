@@ -29,7 +29,7 @@ func (s *Service) GetAllAgentInfo() ([]model.AgentInfo, error) {
 			break
 		}
 		if err != nil {
-			log.Printf("ggrpc get all agent info error %v", err)
+			log.Printf("grpc get all agent info error %v", err)
 			continue
 		}
 		if resp.Code != managepb.ResponseCode_SUCCESS{
