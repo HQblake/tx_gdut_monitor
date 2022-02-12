@@ -1,5 +1,5 @@
 <!--
- * @Description: 
+ * @Description:
  * @Autor: yzq
  * @Date: 2022-02-10 16:05:05
  * @LastEditors: yzq
@@ -97,87 +97,86 @@
           </el-table-column>
         </el-table>
     </div>
-       
-      
+
   </div>
 </template>
 
 <script>
 export default {
-  name: "warning",
+  name: 'warning',
   components: {},
-  data() {
+  data () {
     return {
       dialogVisible: false,
-      search: "",
+      search: '',
       tableData: [
         {
           id: 1,
-          tabName: "cpu使用",
-          level: "严重",
-          startTime: "2022-02-10 18:00:00",
+          tabName: 'cpu使用',
+          level: '严重',
+          startTime: '2022-02-10 18:00:00',
           outliers: 85,
           threshold: 80,
-          during: 30,
+          during: 30
         },
         {
           id: 2,
-          tabName: "cpu使用",
-          level: "严重",
-          startTime: "2022-02-10 18:00:00",
+          tabName: 'cpu使用',
+          level: '严重',
+          startTime: '2022-02-10 18:00:00',
           outliers: 85,
           threshold: 80,
-          during: 30,
+          during: 30
         },
         {
           id: 3,
-          tabName: "cpu使用",
-          level: "中等",
-          startTime: "2022-02-10 18:00:00",
+          tabName: 'cpu使用',
+          level: '中等',
+          startTime: '2022-02-10 18:00:00',
           outliers: 85,
           threshold: 80,
-          during: 30,
-        },
-      ],
-    };
+          during: 30
+        }
+      ]
+    }
   },
   methods: {
-    deleteData(index, row) {
-      this.dialogVisible = false;
-      console.log(index);
-      console.log(row);
+    deleteData (index, row) {
+      this.dialogVisible = false
+      console.log(index)
+      console.log(row)
 
-      this.tableData.splice(index, 1);
+      this.tableData.splice(index, 1)
       // console.log(this.tableData);
     },
-    openDelete(index, row) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+    openDelete (index, row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.deleteData(index, row);
+          this.deleteData(index, row)
           this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+            type: 'success',
+            message: '删除成功!'
+          })
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
-    handleEdit(index, row) {
-      console.log(index, row);
+    handleEdit (index, row) {
+      console.log(index, row)
     },
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
-  },
-};
+    handleDelete (index, row) {
+      console.log(index, row)
+    }
+  }
+}
 </script>
 
 <style>

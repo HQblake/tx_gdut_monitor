@@ -1,5 +1,5 @@
 <!--
- * @Description: 
+ * @Description:
  * @Autor: yzq
  * @Date: 2022-02-10 16:05:05
  * @LastEditors: yzq
@@ -16,16 +16,17 @@
 </template>
 
 <script>
-import HeadTop from "./components/headTop.vue";
-import HelloWorld from "./components/HelloWorld.vue";
+import HeadTop from './components/headTop.vue'
+import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: "app",
+  name: 'app',
   components: {
+    // eslint-disable-next-line vue/no-unused-components
     HelloWorld,
-    HeadTop,
-  },
-};
+    HeadTop
+  }
+}
 </script>
 
 <style lang='less'>

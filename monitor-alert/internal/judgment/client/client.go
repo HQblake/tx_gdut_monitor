@@ -2,7 +2,7 @@ package client
 
 import (
 	"context"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/proto/managepb"
+	managepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/proto/managepb"
 	storepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/proto/storagepb"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
@@ -68,7 +68,7 @@ func (c *Client) GetAgentRule(ip, local string, metrics []string) model.AgentRul
 	}
 
 	agent := model.AgentRule{}
-	if resp.Code == managepb.ResponseCode_ERROR {
+	if resp.Code == managepb.CheckResponse_ERROR {
 		log.Println(resp.Msg)
 	} else {
 		agent.IP = resp.Result.IP

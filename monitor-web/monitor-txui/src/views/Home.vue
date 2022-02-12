@@ -1,5 +1,5 @@
 <!--
- * @Description: 
+ * @Description:
  * @Autor: yzq
  * @Date: 2022-02-10 16:05:05
  * @LastEditors: yzq
@@ -9,7 +9,7 @@
     <div class='headline'>
       <h3 > 主机列表 </h3>
     </div>
-    
+
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
