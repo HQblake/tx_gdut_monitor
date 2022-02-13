@@ -37,39 +37,74 @@
           <template slot-scope="scope">
             <el-button type="primary"
               size="mini"
-              @click="handleEdit(scope.row)">编辑</el-button>
+              @click="showEdit(scope.row)">编辑配置</el-button>
               <template v-if="scope.row.id != -1">
-              <el-button type="warning"
+              <el-button type="danger"
                 size="mini"
-                @click="handleDel(scope.row)">删除</el-button>
+                @click="handleDel(scope.row)">删除配置</el-button>
+              </template>
+              <template v-else>
+              <el-button type="info" disabled
+                size="mini"
+                >默认配置</el-button>
               </template>
           </template>
         </el-table-column>
       </el-table>
 
     </div>
+    <el-dialog title="配置编辑" :visible.sync="dialogFormVisible">
+  <el-form>
+    <el-form-item required>
+      <el-col :span="3">主机:</el-col>
+      <el-col :span="9"><el-input v-model="ip" disabled></el-input></el-col>
+      <el-col :span="3">区域:</el-col>
+      <el-col :span="9"><el-input v-model="local" disabled></el-input></el-col>
+    </el-form-item>
+    <el-form-item required>
+      <el-col :span="3">指标类型:</el-col><el-col :span="9"><el-input v-model="metric" disabled></el-input></el-col>
+      <el-col :span="3">聚合周期:</el-col><el-col :span="9"><el-input v-model="period"></el-input></el-col>
+    </el-form-item>
+    <el-form-item required>
+       <el-col :span="3">聚合方式:</el-col>
+       <el-col :span="21">
+         <el-select v-model="method" placeholder="请选择聚合方式">
+          <el-option v-for="(item, key) in methodList" :key="key" :label="item" :value="key"></el-option>
+        </el-select>
+       </el-col>
+    </el-form-item>
+    <el-form-item v-for="(item, key) in threshold" :key="key">
+      <el-col :span="3">{{item.label}}阈值:</el-col><el-col :span="21"><el-input v-model="item.value"></el-input></el-col>
+    </el-form-item>
+    <p class="tip">设置告警阈值, 留空则不监控</p>
+  </el-form>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="dialogFormVisible = false">取 消</el-button>
+    <el-button type="primary" @click="handleEdit()">确 定</el-button>
+  </div>
+</el-dialog>
   </div>
 
 </template>
 
 <script>
-import { ParseMethod, CheckMethod } from '@/tools/method'
-import { GetAgentRule, UpdateRule, DelRule } from '@/api/judgement'
+import { ParseMethod, CheckMethod, MethodType } from '@/tools/method'
+import { ParseObj, CheckThreshold, StringObj } from '@/tools/level'
+import { GetAgentRule, UpdateRule, DelRule } from '@/api/judgment'
 export default {
   name: 'warnDetail',
   components: {
   },
   data () {
     return {
+      id: -1,
       ip: '',
       local: '',
       metric: '',
-      method: 1,
+      method: MethodType[1],
       period: '5m',
-      warn: undefined,
-      info: undefined,
-      error: undefined,
-      panic: undefined,
+      threshold: {},
+      dialogFormVisible: false,
       tableData: [
         {
           id: -1,
@@ -78,7 +113,7 @@ export default {
           metric: 'cpu利用率',
           method: 1,
           period: '5m',
-          threshold: "{'warn':0.01, 'panic': 0.02}"
+          threshold: `{"0":0.01, "1": 0.02}`
         },
         {
           id: 11,
@@ -87,7 +122,7 @@ export default {
           metric: 'mem',
           method: 2,
           period: '5m',
-          threshold: "{'warn':0.01, 'panic': 0.02}"
+          threshold: `{}`
         },
         {
           id: 12,
@@ -96,7 +131,7 @@ export default {
           metric: 'rate',
           method: 3,
           period: '5m',
-          threshold: "{'warn':0.01, 'panic': 0.02}"
+          threshold: `{}`
         },
         {
           id: 13,
@@ -105,7 +140,7 @@ export default {
           metric: 'cpu利用率',
           method: 0,
           period: '5m',
-          threshold: "{'warn':0.01, 'panic': 0.02}"
+          threshold: `{"1":0.01, "2": 0.02}`
         },
         {
           id: 14,
@@ -114,10 +149,12 @@ export default {
           metric: 'cpu利用率',
           method: 1,
           period: '5m',
-          threshold: "{'warn':0.01, 'panic': 0.02}"
+          threshold: `{"3":0.01}`
         }
       ],
-      search: ''
+      search: '',
+      formLabelWidth: '120px',
+      methodList: MethodType
     }
   },
 
@@ -128,10 +165,7 @@ export default {
     this.id = -1
     this.method = 1
     this.period = '5m'
-    this.warn = undefined
-    this.info = undefined
-    this.error = undefined
-    this.panic = undefined
+    this.threshold = {}
     GetAgentRule(this.ip, this.local)
       .then(data => {
         this.tableData = data.data
@@ -147,7 +181,7 @@ export default {
   methods: {
     check () {
       // 检查必要的信息
-      if (this.ip == '' || this.local == '' || this.metric == '' || this.period == '') {
+      if (!this.ip || !this.local || !this.metric || !this.period) {
         this.$alert('操作有误, 请重试~')
         return false
       }
@@ -157,7 +191,7 @@ export default {
         return false
       }
       // 检查告警类型
-      if(!this.warn && !this.panic && !this.info && !this.error) {
+      if(!CheckThreshold(this.threshold)) {
         this.$alert('至少需要设置一个告警阈值, 请重试~')
         return false
       }
@@ -165,23 +199,22 @@ export default {
     },
     showEdit (row) {
       this.metric = row.metric
-      this.method = row.method
+      this.method = MethodType[row.method]
       this.period = row.period
       this.id = row.id
       // 清空告警类型，方便判断整合
-      this.warn = undefined
-      this.info = undefined
-      this.error = undefined
-      this.panic = undefined
+      this.threshold = ParseObj(row.threshold)
       // 显示可编辑表单
+      this.dialogFormVisible = true
     },
-    handleEdit (row) {
+    handleEdit () {
       if (!this.check()) {
         return
       }
-      UpdateRule(this.ip, this.local, this.id)
+      UpdateRule(this.ip, this.local, this.id, this.method, this.metric, this.period, StringObj(this.threshold))
         .then(data => {
-          this.$alert('删除成功')
+          this.$alert('更新成功')
+          this.$router.go(0)
         })
         .catch(err => {
           if (err.msg) {
@@ -189,13 +222,14 @@ export default {
           } else {
             this.$alert(err)
           }
+          this.$router.go(0)
         })
-      this.$router.go(0)
     },
     handleDel (row) {
       DelRule(this.ip, this.local, row.id)
         .then(data => {
           this.$alert('删除成功')
+          this.$router.go(0)
         })
         .catch(err => {
           if (err.msg) {
@@ -203,8 +237,8 @@ export default {
           } else {
             this.$alert(err)
           }
+          this.$router.go(0)
         })
-      this.$router.go(0)
     },
     formateMethod (row, column, cellValue) {
       return ParseMethod(cellValue)
@@ -220,5 +254,12 @@ export default {
 .table-container{
   padding: 0 50px;
   margin: 0 auto;
+}
+.el-select {
+  width: 100%;
+}
+.tip {
+  font-size: 8px;
+  text-align: right;
 }
 </style>
