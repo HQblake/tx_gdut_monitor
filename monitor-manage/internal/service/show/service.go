@@ -25,16 +25,15 @@ func NewService(alertClient managepb.HistoryServiceClient, metricClient managepb
 	}
 }
 
+// 获取截止目前为止所有的告警信息
 func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 	var err error
-	// 获取告警服务中所有的告警信息
 	stream, err := s.alertClient.GetAllAlertInfo(context.Background(), &managepb.BaseRequest{})
 	if err != nil {
 		return nil, err
 	}
 	var resp *managepb.AlertResponse
 	res := make([]model.HistoryInfo, 0, 10)
-	// 遍历获取指定metric的规则，没有则用默认规则代替
 	for {
 		resp, err = stream.Recv()
 		if err == io.EOF {
@@ -54,7 +53,7 @@ func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 			Ip:        config.GetIP(),
 			Local:     config.GetLocal(),
 			Metric:    config.GetMetric(),
-			Value:     config.Value(),
+			Value:     config.GetValue(),
 			Method:    config.GetMethod(),
 			Level:     config.GetLevel(),
 			Threshold: config.GetThreshold(),
@@ -66,6 +65,155 @@ func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 	return res, nil
 }
 
-func (s *Service) GetMetricsInOneDay(ip string, local string, metric string) []model.MetricsInfo {
-	panic("implement me")
+// 根据告警等级查看当天的所有告警信息
+func (s *Service) GetWarnInfoWithLevel(level int32) ([]model.HistoryInfo, error) {
+	var err error
+	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{Level: level})
+	if err != nil {
+		return nil, err
+	}
+	var resp *managepb.AlertResponse
+	res := make([]model.HistoryInfo, 0, 10)
+	for {
+		resp, err = stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Printf("grpc get historyAlert rule error %v", err)
+			continue
+		}
+		if resp.Code != managepb.ResponseCode_SUCCESS {
+			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
+			continue
+		}
+		config := resp.GetResult()
+		conf := model.HistoryInfo{
+			Id:        config.GetID(),
+			Ip:        config.GetIP(),
+			Local:     config.GetLocal(),
+			Metric:    config.GetMetric(),
+			Value:     config.GetValue(),
+			Method:    config.GetMethod(),
+			Level:     config.GetLevel(),
+			Threshold: config.GetThreshold(),
+			Start:     config.GetStart(),
+			Duration:  config.GetDuration(),
+		}
+		res = append(res, conf)
+	}
+	return res, nil
+}
+
+// 查看某天的所有告警信息
+func (s *Service) GetWarnInfoWithTimestamp(timeStamp int64) ([]model.HistoryInfo, error) {
+	var err error
+	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{Begin: timeStamp})
+	if err != nil {
+		return nil, err
+	}
+	var resp *managepb.AlertResponse
+	res := make([]model.HistoryInfo, 0, 10)
+	for {
+		resp, err = stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Printf("grpc get historyAlert rule error %v", err)
+			continue
+		}
+		if resp.Code != managepb.ResponseCode_SUCCESS {
+			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
+			continue
+		}
+		config := resp.GetResult()
+		conf := model.HistoryInfo{
+			Id:        config.GetID(),
+			Ip:        config.GetIP(),
+			Local:     config.GetLocal(),
+			Metric:    config.GetMetric(),
+			Value:     config.GetValue(),
+			Method:    config.GetMethod(),
+			Level:     config.GetLevel(),
+			Threshold: config.GetThreshold(),
+			Start:     config.GetStart(),
+			Duration:  config.GetDuration(),
+		}
+		res = append(res, conf)
+	}
+	return res, nil
+}
+
+// 根据agentId(ip + local)获取当前主机所有的告警信息
+func (s *Service) GetWarnInfoWithId(ip string, local string) ([]model.HistoryInfo, error) {
+	var err error
+	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{IP: ip, Local: local})
+	if err != nil {
+		return nil, err
+	}
+	var resp *managepb.AlertResponse
+	res := make([]model.HistoryInfo, 0, 10)
+	for {
+		resp, err = stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Printf("grpc get historyAlert rule error %v", err)
+			continue
+		}
+		if resp.Code != managepb.ResponseCode_SUCCESS {
+			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
+			continue
+		}
+		config := resp.GetResult()
+		conf := model.HistoryInfo{
+			Id:        config.GetID(),
+			Ip:        config.GetIP(),
+			Local:     config.GetLocal(),
+			Metric:    config.GetMetric(),
+			Value:     config.GetValue(),
+			Method:    config.GetMethod(),
+			Level:     config.GetLevel(),
+			Threshold: config.GetThreshold(),
+			Start:     config.GetStart(),
+			Duration:  config.GetDuration(),
+		}
+		res = append(res, conf)
+	}
+	return res, nil
+}
+
+// 根据开始时间和数据量限制获取指定条数的指标数据
+func (s *Service) GetMetricsWithTime(ip string, local string, metric string, begin int64, limit int32) ([]model.MetricsInfo, error) {
+	var err error
+	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{IP: ip, Local: local, Metric: metric, Begin: begin, Limit: limit})
+	if err != nil {
+		return nil, err
+	}
+	var resp *managepb.MetricResponse
+	res := make([]model.MetricsInfo, 0, 10)
+	for {
+		resp, err = stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Printf("grpc get historyAlert rule error %v", err)
+			continue
+		}
+		if resp.Code != managepb.ResponseCode_SUCCESS {
+			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
+			continue
+		}
+		config := resp.GetResult()
+		conf := model.MetricsInfo{
+			Timestamp: config.GetTimestamp(),
+			Metric:    config.GetMetric(),
+			Value:     config.GetValue(),
+		}
+		res = append(res, conf)
+	}
+	return res, nil
 }
