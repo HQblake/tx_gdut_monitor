@@ -48,7 +48,7 @@
 
 <script>
 import { GetAllSendAgent } from '@/api/agent'
-import { PaerseSendtype } from '@/tools/sendType'
+import { ParseSendtype } from '@/tools/sendType'
 export default {
   name: 'sendConfig',
   components: {
@@ -120,7 +120,7 @@ export default {
     formateSend (row, column, cellValue) {
       var arr = []
       for (var j = 0; j < cellValue.length; j++) {
-        arr.push(PaerseSendtype(cellValue[j]))
+        arr.push(ParseSendtype(cellValue[j]))
       }
       return arr.join(' , ').toString()
     },

@@ -6,7 +6,7 @@
     <div class="table-container">
       <el-row>
           <el-col :span="18"><div>&nbsp;</div></el-col>
-          <el-col :span="6">    
+          <el-col :span="6">
             <div>
               <el-input
               v-model="search"

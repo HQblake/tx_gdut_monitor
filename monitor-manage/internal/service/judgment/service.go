@@ -48,6 +48,12 @@ func (s *Service) GetConfigs(ip string, local string) (map[string]model.Judgment
 			continue
 		}
 		config := resp.GetResult()
+		var threshold map[int32]float64
+		err = json.Unmarshal([]byte(config.Threshold), &threshold)
+		if err != nil {
+			log.Printf("grpc get judgment json parse threshold rule error %v", err)
+			continue
+		}
 		conf := model.JudgmentConfig{
 			ID: config.GetID(),
 			IP: config.GetIP(),
@@ -55,7 +61,7 @@ func (s *Service) GetConfigs(ip string, local string) (map[string]model.Judgment
 			Metric: config.GetMetric(),
 			Method: config.GetMethod(),
 			Period: config.GetPeriod(),
-			Threshold: config.GetThreshold(),
+			Threshold: threshold,
 		}
 		res[config.GetMetric()] = conf
 	}
@@ -73,19 +79,14 @@ func (s *Service) GetConfigsWithMetrics(ip string, local string, metrics []strin
 		if _, ok := cfgs[m]; ok {
 			res = append(res, cfgs[m])
 		}else {
-			b, err := json.Marshal(defaultRule.Threshold)
-			if err != nil {
-				log.Printf("judgment default rule json parse error: %s", err.Error())
-				continue
-			}
 			res = append(res, model.JudgmentConfig{
-				ID: 0,
+				ID: -1,
 				IP: ip,
 				Local: local,
 				Metric: m,
 				Method: defaultRule.Method,
 				Period: defaultRule.Period,
-				Threshold: string(b),
+				Threshold: defaultRule.Threshold,
 			})
 		}
 	}
@@ -145,16 +146,10 @@ func (s *Service) TriggerUpdate(ip string, local string) error {
 		Metrics: make(map[string]*managepb2.MetricRule),
 	}
 	for key, config := range list {
-		var threshold map[int32]float64
-		err = json.Unmarshal([]byte(config.Threshold), &threshold)
-		if err != nil {
-			log.Printf("grpc get judgment json parse threshold rule error %v", err)
-			continue
-		}
 		agent.Metrics[key] = &managepb2.MetricRule{
 			Method: config.Method,
 			Period: config.Period,
-			Threshold: threshold,
+			Threshold: config.Threshold,
 		}
 	}
 	resp, err := s.judgment.Update(context.Background(), agent)

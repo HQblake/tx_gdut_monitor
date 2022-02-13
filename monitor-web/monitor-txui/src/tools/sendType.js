@@ -4,10 +4,18 @@ var sendType = {
   2: 'nsq',
   3: 'http'
 }
-export function PaerseSendtype (t) {
+export function ParseSendtype (t) {
   let v = sendType[t]
   if (v) {
     return v
   }
   return 'unknown'
+}
+
+export function CheckType (m) {
+  let v = sendType[m]
+  if (v) {
+    return true
+  }
+  return false
 }

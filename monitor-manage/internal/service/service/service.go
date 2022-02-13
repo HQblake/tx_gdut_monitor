@@ -2,10 +2,8 @@ package service
 
 import (
 	"context"
-	"encoding/json"
 	judgpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/rpc/service/gen"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/judgment"
-	"log"
 )
 
 type Service struct {
@@ -31,16 +29,10 @@ func (s *Service) Get(ctx context.Context, request *judgpb.CheckRequest) (*judgp
 		},nil
 	}
 	for _, cfg := range cfgs {
-		var threshold map[int32]float64
-		err = json.Unmarshal([]byte(cfg.Threshold), &threshold)
-		if err != nil {
-			log.Printf("grpc get judgment json parse threshold rule error %v", err)
-			continue
-		}
 		res[cfg.Metric] = &judgpb.MetricRule{
 			Method: cfg.Method,
 			Period: cfg.Period,
-			Threshold: threshold,
+			Threshold: cfg.Threshold,
 		}
 	}
 	return &judgpb.CheckResponse{
