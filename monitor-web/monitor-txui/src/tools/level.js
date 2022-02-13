@@ -13,35 +13,41 @@ export var LevelMap = {
 }
 
 export function ParseObj (threshold) {
-    let levelObj = Parse(threshold)
-    let obj = {}
-    Object.keys(LevelType).forEach(function (key) {
-        obj[LevelType[key]] = {
-            "label": LevelType[key],
-            "value": levelObj[key] ? levelObj[key] : ''
-        }
-    })
-    return obj
-  }
+  let levelObj = Parse(threshold)
+  let obj = {}
+  Object.keys(LevelType).forEach(function (key) {
+    obj[LevelType[key]] = {
+      'label': LevelType[key],
+      'value': levelObj[key] ? levelObj[key] : ''
+    }
+  })
+  return obj
+}
 
-  export function StringObj (threshold) {
-    let obj = {}
-    Object.keys(threshold).forEach(function (key) {
-        if(threshold[key].value) {
-            obj[LevelMap[key]] = threshold[key].value
-        }
-      
-    })
-    return Stringfy(obj)
-  }
+export function StringObj (threshold) {
+  let obj = {}
+  Object.keys(threshold).forEach(function (key) {
+    if (threshold[key].value) {
+      obj[LevelMap[key]] = threshold[key].value
+    }
+  })
+  return Stringfy(obj)
+}
 
-  export function CheckThreshold (threshold) {
-      let flag = false
-    Object.keys(LevelType).forEach(function (key) {
-        if(threshold[LevelType[key]].value){
-            flag = true
-        }
-    })
-    return flag
-  }
+export function CheckThreshold (threshold) {
+  let flag = false
+  Object.keys(LevelType).forEach(function (key) {
+    if (threshold[LevelType[key]].value) {
+      flag = true
+    }
+  })
+  return flag
+}
 
+export function ParseLevel (m) {
+    let v = LevelType[m]
+    if (v) {
+      return v
+    }
+    return 'unknown'
+  }

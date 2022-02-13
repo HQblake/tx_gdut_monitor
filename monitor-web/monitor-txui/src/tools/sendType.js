@@ -1,11 +1,18 @@
-var sendType = {
+export var SendType = {
   0: 'email',
   1: 'kafka',
   2: 'nsq',
   3: 'http'
 }
+export var SendMap = {
+  'email': 0,
+  'kafka': 1,
+  'nsq': 2,
+  'http': 3
+}
+
 export function ParseSendtype (t) {
-  let v = sendType[t]
+  let v = SendType[t]
   if (v) {
     return v
   }
@@ -13,7 +20,7 @@ export function ParseSendtype (t) {
 }
 
 export function CheckType (m) {
-  let v = sendType[m]
+  let v = SendMap[m]
   if (v) {
     return true
   }

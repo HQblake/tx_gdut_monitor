@@ -101,7 +101,7 @@ export default {
       ip: '',
       local: '',
       metric: '',
-      method: MethodType[1],
+      method: 1,
       period: '5m',
       threshold: {},
       dialogFormVisible: false,
@@ -191,7 +191,7 @@ export default {
         return false
       }
       // 检查告警类型
-      if(!CheckThreshold(this.threshold)) {
+      if (!CheckThreshold(this.threshold)) {
         this.$alert('至少需要设置一个告警阈值, 请重试~')
         return false
       }
@@ -199,7 +199,7 @@ export default {
     },
     showEdit (row) {
       this.metric = row.metric
-      this.method = MethodType[row.method]
+      this.method = row.method
       this.period = row.period
       this.id = row.id
       // 清空告警类型，方便判断整合
@@ -222,7 +222,7 @@ export default {
           } else {
             this.$alert(err)
           }
-          this.$router.go(0)
+          // this.$router.go(0)
         })
     },
     handleDel (row) {
