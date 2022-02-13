@@ -1,24 +1,25 @@
-package receive
+package service
 
 import (
 	"context"
 	"fmt"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
-	receivepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive/proto"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive/receivepb"
 	"google.golang.org/grpc/peer"
 	"strings"
 )
 
 // ReceiveService 告警系统——判定服务模块
 type ReceiveService struct {
+	judgment judgment.IJudgment
 	receivepb.UnimplementedReportServerServer
 }
 
-func (s *ReceiveService) Report(ctx context.Context, in *receivepb.ReportReq) (out *receivepb.ReportRsp, err error) {
-	var agentreport model.AgentReport //封装AgentReport结构
-	p, _ := peer.FromContext(ctx)     //获取Agent的IP地址和端口号 形式为IP:PORT
+func (s *ReceiveService) Report(ctx context.Context, in *receivepb.ReportReq) (*receivepb.ReportRsp, error) {
+	agentreport := model.AgentReportPool.Get().(*model.AgentReport)
+	defer model.AgentReportPool.Put(agentreport)
+	p, _ := peer.FromContext(ctx) //获取Agent的IP地址和端口号 形式为IP:PORT
 	//fmt.Println(p.Addr.String())  //打印Agent的IP地址和端口号
 	str := strings.Split(p.Addr.String(), ":")
 	agentreport.IP = str[0]                   //封装IP
@@ -34,10 +35,14 @@ func (s *ReceiveService) Report(ctx context.Context, in *receivepb.ReportReq) (o
 	for k, str := range agentreport.Metrics {
 		fmt.Println(k, ":", str)
 	}
-	judgment.NewService(global.Setting, global.Send).Check(&agentreport)
 	//此区域之前已经封装好AgentReport结构，后面可写入判定模块的代码
+	s.judgment.Check(agentreport)
 
 	return &receivepb.ReportRsp{Code: receivepb.ResponseCode_SUCCESS, Msg: "成功返回"}, nil
+}
+
+func NewService(judgment judgment.IJudgment) *ReceiveService {
+	return &ReceiveService{judgment: judgment}
 }
 
 //func main() { //此为服务端主函数

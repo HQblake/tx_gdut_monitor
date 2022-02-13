@@ -171,5 +171,5 @@ var SendService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "manage2send.proto",
+	Metadata: "manage2send.receivepb",
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.19.3
-// source: judgment2store.proto
+// source: judgment2store.receivepb
 
 package storepb
 
@@ -38,7 +38,7 @@ func NewMetricServiceClient(cc grpc.ClientConnInterface) MetricServiceClient {
 
 func (c *metricServiceClient) GetAggregatedData(ctx context.Context, in *AggregatedRequest, opts ...grpc.CallOption) (*AggregatedResponse, error) {
 	out := new(AggregatedResponse)
-	err := c.cc.Invoke(ctx, "/proto.MetricService/GetAggregatedData", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/receivepb.MetricService/GetAggregatedData", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (c *metricServiceClient) GetAggregatedData(ctx context.Context, in *Aggrega
 
 func (c *metricServiceClient) InsertAlertInfo(ctx context.Context, in *HistoryInfoRequest, opts ...grpc.CallOption) (*HistoryInfoResponse, error) {
 	out := new(HistoryInfoResponse)
-	err := c.cc.Invoke(ctx, "/proto.MetricService/InsertAlertInfo", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/receivepb.MetricService/InsertAlertInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +98,7 @@ func _MetricService_GetAggregatedData_Handler(srv interface{}, ctx context.Conte
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.MetricService/GetAggregatedData",
+		FullMethod: "/receivepb.MetricService/GetAggregatedData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MetricServiceServer).GetAggregatedData(ctx, req.(*AggregatedRequest))
@@ -116,7 +116,7 @@ func _MetricService_InsertAlertInfo_Handler(srv interface{}, ctx context.Context
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.MetricService/InsertAlertInfo",
+		FullMethod: "/receivepb.MetricService/InsertAlertInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MetricServiceServer).InsertAlertInfo(ctx, req.(*HistoryInfoRequest))
@@ -128,7 +128,7 @@ func _MetricService_InsertAlertInfo_Handler(srv interface{}, ctx context.Context
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var MetricService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.MetricService",
+	ServiceName: "receivepb.MetricService",
 	HandlerType: (*MetricServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -141,5 +141,5 @@ var MetricService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "judgment2store.proto",
+	Metadata: "judgment2store.receivepb",
 }

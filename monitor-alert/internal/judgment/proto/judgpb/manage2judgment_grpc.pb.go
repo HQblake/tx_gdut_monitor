@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.19.3
-// source: manage2judgment.proto
+// source: manage2judgment.receivepb
 
 package judgpb
 
@@ -35,7 +35,7 @@ func NewRuleUpdaterClient(cc grpc.ClientConnInterface) RuleUpdaterClient {
 
 func (c *ruleUpdaterClient) Update(ctx context.Context, in *AgentRule, opts ...grpc.CallOption) (*Response, error) {
 	out := new(Response)
-	err := c.cc.Invoke(ctx, "/proto.RuleUpdater/Update", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/receivepb.RuleUpdater/Update", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func _RuleUpdater_Update_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/proto.RuleUpdater/Update",
+		FullMethod: "/receivepb.RuleUpdater/Update",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RuleUpdaterServer).Update(ctx, req.(*AgentRule))
@@ -92,7 +92,7 @@ func _RuleUpdater_Update_Handler(srv interface{}, ctx context.Context, dec func(
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var RuleUpdater_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "proto.RuleUpdater",
+	ServiceName: "receivepb.RuleUpdater",
 	HandlerType: (*RuleUpdaterServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -101,5 +101,5 @@ var RuleUpdater_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "manage2judgment.proto",
+	Metadata: "manage2judgment.receivepb",
 }

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.19.3
-// source: judgment2store.proto
+// source: judgment2store.receivepb
 
 package storepb
 
@@ -182,7 +182,7 @@ type HistoryInfoResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Code ResponseCode `protobuf:"varint,1,opt,name=Code,proto3,enum=proto.ResponseCode" json:"Code,omitempty"`
+	Code ResponseCode `protobuf:"varint,1,opt,name=Code,proto3,enum=receivepb.ResponseCode" json:"Code,omitempty"`
 	Msg  string       `protobuf:"bytes,2,opt,name=Msg,proto3" json:"Msg,omitempty"`
 }
 
@@ -348,7 +348,7 @@ type AggregatedResponse struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Code   ResponseCode `protobuf:"varint,1,opt,name=Code,proto3,enum=proto.ResponseCode" json:"Code,omitempty"`
+	Code   ResponseCode `protobuf:"varint,1,opt,name=Code,proto3,enum=receivepb.ResponseCode" json:"Code,omitempty"`
 	Msg    string       `protobuf:"bytes,2,opt,name=Msg,proto3" json:"Msg,omitempty"`
 	Result float64      `protobuf:"fixed64,3,opt,name=Result,proto3" json:"Result,omitempty"`
 }
@@ -495,21 +495,21 @@ func file_judgment2store_proto_rawDescGZIP() []byte {
 var file_judgment2store_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_judgment2store_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_judgment2store_proto_goTypes = []interface{}{
-	(ResponseCode)(0),           // 0: proto.ResponseCode
-	(*HistoryInfoRequest)(nil),  // 1: proto.HistoryInfoRequest
-	(*HistoryInfoResponse)(nil), // 2: proto.HistoryInfoResponse
-	(*AggregatedRequest)(nil),   // 3: proto.AggregatedRequest
-	(*AggregatedResponse)(nil),  // 4: proto.AggregatedResponse
-	nil,                         // 5: proto.AggregatedRequest.DimensionsEntry
+	(ResponseCode)(0),           // 0: receivepb.ResponseCode
+	(*HistoryInfoRequest)(nil),  // 1: receivepb.HistoryInfoRequest
+	(*HistoryInfoResponse)(nil), // 2: receivepb.HistoryInfoResponse
+	(*AggregatedRequest)(nil),   // 3: receivepb.AggregatedRequest
+	(*AggregatedResponse)(nil),  // 4: receivepb.AggregatedResponse
+	nil,                         // 5: receivepb.AggregatedRequest.DimensionsEntry
 }
 var file_judgment2store_proto_depIdxs = []int32{
-	0, // 0: proto.HistoryInfoResponse.Code:type_name -> proto.ResponseCode
-	5, // 1: proto.AggregatedRequest.Dimensions:type_name -> proto.AggregatedRequest.DimensionsEntry
-	0, // 2: proto.AggregatedResponse.Code:type_name -> proto.ResponseCode
-	3, // 3: proto.MetricService.GetAggregatedData:input_type -> proto.AggregatedRequest
-	1, // 4: proto.MetricService.InsertAlertInfo:input_type -> proto.HistoryInfoRequest
-	4, // 5: proto.MetricService.GetAggregatedData:output_type -> proto.AggregatedResponse
-	2, // 6: proto.MetricService.InsertAlertInfo:output_type -> proto.HistoryInfoResponse
+	0, // 0: receivepb.HistoryInfoResponse.Code:type_name -> receivepb.ResponseCode
+	5, // 1: receivepb.AggregatedRequest.Dimensions:type_name -> receivepb.AggregatedRequest.DimensionsEntry
+	0, // 2: receivepb.AggregatedResponse.Code:type_name -> receivepb.ResponseCode
+	3, // 3: receivepb.MetricService.GetAggregatedData:input_type -> receivepb.AggregatedRequest
+	1, // 4: receivepb.MetricService.InsertAlertInfo:input_type -> receivepb.HistoryInfoRequest
+	4, // 5: receivepb.MetricService.GetAggregatedData:output_type -> receivepb.AggregatedResponse
+	2, // 6: receivepb.MetricService.InsertAlertInfo:output_type -> receivepb.HistoryInfoResponse
 	5, // [5:7] is the sub-list for method output_type
 	3, // [3:5] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name

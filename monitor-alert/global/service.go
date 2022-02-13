@@ -8,7 +8,7 @@ import (
 
 // 对告警系统内部的所有服务模块进行注册
 var (
-	Receive   *receive.ReceiveService
+	Receive   receive.IReceive
 	Judgement judgment.IJudgment
 	Send      send.ISend
 )
