@@ -1,39 +1,53 @@
 <template>
-  <div class="container">
+  <div>
     <div class='headline'>
       <h3 > 告警配置 </h3>
     </div>
-      <div>
-      <el-table
-    :data="tableData"
-    height="250"
-    border
-    style="width: 100%">
+    <div class="table-container">
+  <el-table
+    :data="tableData.filter(data => !search || (data.local.toLowerCase().includes(search.toLowerCase()) || data.ip.toLowerCase().includes(search.toLowerCase())))" fit>
     <el-table-column
-      type="index"
-      label="id"
-      :index="id">
+      label="Host"
+      :formatter="formateAgent">
     </el-table-column>
     <el-table-column
-      prop="date"
-      label="日期">
+      prop="local"
+      label="区域">
     </el-table-column>
     <el-table-column
-      prop="name"
-      label="姓名">
+    :formatter="formateMetric"
+      prop="metric"
+      label="监控指标">
     </el-table-column>
     <el-table-column
-      prop="address"
-      label="地址">
+      :formatter="formateLive"
+      prop="islive"
+      width="100"
+      label="是否存活">
+    </el-table-column>
+    <el-table-column
+      align="center">
+      <template slot="header" slot-scope="scope">
+        <el-input
+          v-model="search"
+          size="mini"
+          placeholder="输入区域或ip关键字搜索"/>
+      </template>
+      <template slot-scope="scope">
+        <el-button type="success"
+          size="mini"
+          @click="handleEdit(scope.row)">Edit</el-button>
+      </template>
     </el-table-column>
   </el-table>
+
   </div>
   </div>
 
 </template>
 
 <script>
-
+import { GetAllAgent } from '@/api/agent'
 export default {
   name: 'warnConfig',
   components: {
@@ -41,48 +55,92 @@ export default {
   data () {
     return {
       tableData: [{
-        ip: 1,
-        local: '2016-05-03',
-        : '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        ip: '127.0.0.1',
+        port: '2016-05-03',
+        local: '北京',
+        islive: true,
+        metric: ['cpu利用率', 'mem']
       }, {
-        id: 2,
-        date: '2016-05-02',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        ip: '127.0.0.2',
+        port: '2016-05-03',
+        local: '上海',
+        islive: false,
+        metric: ['cpu利用率', 'mem']
       }, {
-        id: 3,
-        date: '2016-05-04',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        ip: '127.0.0.1',
+        port: '2016-05-03',
+        local: '北京',
+        islive: true,
+        metric: ['cpu利用率', 'mem']
       }, {
-        id: 4,
-        date: '2016-05-01',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        ip: '127.0.0.1',
+        port: '2016-05-03',
+        local: '北京',
+        islive: true,
+        metric: ['cpu利用率', 'mem']
       }, {
-        id: 5,
-        date: '2016-05-08',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        ip: '127.0.0.1',
+        port: '2016-05-03',
+        local: '北京',
+        islive: true,
+        metric: ['cpu利用率', 'mem']
       }, {
-        id: 6,
-        date: '2016-05-06',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
+        ip: '127.0.0.1',
+        port: '2016-05-03',
+        local: '北京',
+        islive: true,
+        metric: ['cpu利用率', 'mem']
       }, {
-        id: 7,
-        date: '2016-05-07',
-        name: '王小虎',
-        address: '上海市普陀区金沙江路 1518 弄'
-      }]
+        ip: '127.0.0.1',
+        port: '2016-05-03',
+        local: '北京',
+        islive: true,
+        metric: ['cpu利用率', 'mem']
+      }],
+      search: ''
     }
   },
   created () {
+    GetAllAgent().then(data => {
+      this.tableData = data.data
+    })
+      .catch(err => {
+        if (err.msg) {
+          this.$alert(err.msg)
+          return
+        }
+        this.$alert(err)
+      })
   },
   methods: {
+    handleEdit (row) {
+      this.$router.push('/warn/' + row.ip + '/' + row.local)
+    },
+    formateMetric (row, column, cellValue) {
+      return cellValue.join(' , ').toString()
+    },
+    formateAgent (row, column, cellValue) {
+      if (row.port) {
+        return row.ip + ':' + row.port
+      }
+      return row.ip
+    },
+    formateLive (row, column, cellValue) {
+      if (cellValue) {
+        return '是'
+      }
+      return '否'
+    }
+
   }
 }
 </script>
 <style lang='less'>
+.headline {
+  padding: 10px 50px;
+}
+.table-container{
+  padding: 0 50px;
+  margin: 0 auto;
+}
 </style>

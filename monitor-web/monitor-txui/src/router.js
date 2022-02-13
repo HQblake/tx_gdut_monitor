@@ -32,12 +32,12 @@ export default new Router({
       component: About
     },
     {
-      path: '/warnConfig',
+      path: '/warn',
       name: 'warnConfig',
       component: WarnConfig
     },
     {
-      path: '/sendConfig',
+      path: '/send',
       name: 'sendConfig',
       component: SendConfig
     },
