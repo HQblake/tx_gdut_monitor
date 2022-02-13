@@ -21,7 +21,7 @@
     </el-table-column>
     <el-table-column
       :formatter="formateLive"
-      prop="islive"
+      prop="is_live"
       width="100"
       label="是否存活">
     </el-table-column>
