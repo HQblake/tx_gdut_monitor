@@ -34,6 +34,24 @@ func (h *Handler) GetAllAgent(c *gin.Context) {
 	return
 }
 
+func (h *Handler) GetAllAgentSendInfo(c *gin.Context) {
+	res, err := h.service.GetAllAgentSendInfo()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code": "010001",
+			"msg":  "获取agent列表出错" + err.Error(),
+			"data": nil,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": "000000",
+		"msg":  "success",
+		"data": res,
+	})
+	return
+}
+
 // GetAgentInfo Get,query:ip,local
 func (h *Handler) GetAgentInfo(c *gin.Context) {
 	ip := c.Param("ip")
