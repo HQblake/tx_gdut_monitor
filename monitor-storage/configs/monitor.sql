@@ -11,7 +11,7 @@
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 13/02/2022 11:25:53
+ Date: 13/02/2022 11:34:24
 */
 
 SET NAMES utf8mb4;
@@ -70,7 +70,7 @@ CREATE TABLE `check`  (
   `metricId` int NOT NULL COMMENT '指标类型ID',
   `method` tinyint NOT NULL COMMENT '聚合方式，1为平均，2为求和等',
   `period` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '聚合周期',
-  `threshold` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '判定的阈值规则，JSON字符串类型',
+  `threshold` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '判定的阈值规则，JSON字符串类型',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `select1`(`metricId`) USING BTREE,
   INDEX `select2`(`agentId`) USING BTREE,
@@ -91,7 +91,7 @@ CREATE TABLE `history`  (
   `method` tinyint NOT NULL COMMENT '聚合方式',
   `level` tinyint NOT NULL COMMENT '告警等级',
   `duration` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '告警持续时间',
-  `start` int NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '开始时间',
+  `start` int NOT NULL COMMENT '开始时间',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `history_agent`(`agentId`) USING BTREE,
   INDEX `history_metric`(`metricId`) USING BTREE,
