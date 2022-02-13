@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
 type Handler struct {
 	IAgentHandler
 	IJudgmentHandler
@@ -22,10 +21,10 @@ type Handler struct {
 
 func NewHandler(agent agent.IAgent, judgment judgment.IJudgment, send send.ISend, show show.IShow) *Handler {
 	return &Handler{
-		IAgentHandler: agent2.NewHandler(agent),
+		IAgentHandler:    agent2.NewHandler(agent),
 		IJudgmentHandler: judgment2.NewHandler(judgment),
-		ISendHandler: send2.NewHandler(send),
-		IShowHandler: show2.NewHandler(show),
+		ISendHandler:     send2.NewHandler(send),
+		IShowHandler:     show2.NewHandler(show),
 	}
 }
 
@@ -38,7 +37,6 @@ type IAgentHandler interface {
 	// GetAgentInfo 获取指定Agent的信息
 	GetAgentInfo(c *gin.Context)
 }
-
 
 // IJudgmentHandler 判定服务的管理http接口
 type IJudgmentHandler interface {
@@ -64,6 +62,14 @@ type ISendHandler interface {
 
 // IShowHandler 视图显示的http接口，自青补充
 type IShowHandler interface {
-	GetMetricsInOneDay(c *gin.Context)
+	// GetWarnInfo 获取告警信息列表
+	GetWarnInfo(c *gin.Context)
+	// GetWarnInfoWithId 根据id获取告警信息
+	GetWarnInfoWithId(c *gin.Context)
+	// GetWarnInfoWithParams 根据其他参数获取告警信息
+	GetWarnInfoWithParams(c *gin.Context)
+	// GetMetricsWithTime 获取主机指标数据
+	GetMetricsWithTime(c *gin.Context)
+	// 删除指定id的告警信息
+	DelWarnInfo(c *gin.Context)
 }
-

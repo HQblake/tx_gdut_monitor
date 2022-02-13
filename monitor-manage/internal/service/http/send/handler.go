@@ -1,15 +1,17 @@
 package send
 
 import (
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/send"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
+
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/send"
+	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
 	service send.ISend
 }
+
 func NewHandler(service send.ISend) *Handler {
 	return &Handler{
 		service: service,
@@ -18,7 +20,7 @@ func NewHandler(service send.ISend) *Handler {
 func (h *Handler) GetSendConfigs(c *gin.Context) {
 	ip := c.Param("ip")
 	local := c.Param("local")
-	if ip == "" || local == ""{
+	if ip == "" || local == "" {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "000001",
 			"msg":  "参数信息有误，请重试",
@@ -30,7 +32,7 @@ func (h *Handler) GetSendConfigs(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "030001",
-			"msg":  "获取agent发送配置信息出错"  + err.Error(),
+			"msg":  "获取agent发送配置信息出错" + err.Error(),
 			"data": nil,
 		})
 		return
@@ -67,7 +69,7 @@ func (h *Handler) AddSendConfig(c *gin.Context) {
 	ip := c.Param("ip")
 	local := c.Param("local")
 	config := c.PostForm("config")
-	if ip == "" || local == "" || config == ""{
+	if ip == "" || local == "" || config == "" {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "000001",
 			"msg":  "参数信息有误，请重试",
@@ -93,7 +95,7 @@ func (h *Handler) AddSendConfig(c *gin.Context) {
 
 func (h *Handler) UpdateSendConfig(c *gin.Context) {
 	id := c.Param("id")
-	updateId , err := strconv.Atoi(id)
+	updateId, err := strconv.Atoi(id)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "000001",
@@ -125,7 +127,7 @@ func (h *Handler) UpdateSendConfig(c *gin.Context) {
 	ip := c.Param("ip")
 	local := c.Param("local")
 	config := c.PostForm("config")
-	if ip == "" || local == "" || config == ""{
+	if ip == "" || local == "" || config == "" {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "000001",
 			"msg":  "参数信息有误，请重试",
@@ -153,7 +155,7 @@ func (h *Handler) DelSendConfig(c *gin.Context) {
 	ip := c.Param("ip")
 	local := c.Param("local")
 
-	if ip == "" || local == ""{
+	if ip == "" || local == "" {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "000001",
 			"msg":  "参数信息有误，请重试",
@@ -162,11 +164,11 @@ func (h *Handler) DelSendConfig(c *gin.Context) {
 		return
 	}
 	id := c.Param("id")
-	delId , err := strconv.Atoi(id)
+	delId, err := strconv.Atoi(id)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "000001",
-			"msg":  "参数id信息有误，请重试"  + err.Error(),
+			"msg":  "参数id信息有误，请重试" + err.Error(),
 			"data": nil,
 		})
 		return
@@ -175,7 +177,7 @@ func (h *Handler) DelSendConfig(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "030004",
-			"msg":  "删除agent发送配置出错"  + err.Error(),
+			"msg":  "删除agent发送配置出错" + err.Error(),
 			"data": nil,
 		})
 		return
@@ -186,4 +188,3 @@ func (h *Handler) DelSendConfig(c *gin.Context) {
 	})
 	return
 }
-

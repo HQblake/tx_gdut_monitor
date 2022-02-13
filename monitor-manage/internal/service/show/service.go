@@ -2,6 +2,7 @@ package show
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"log"
 
@@ -65,10 +66,10 @@ func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 	return res, nil
 }
 
-// 根据告警等级查看当天的所有告警信息
-func (s *Service) GetWarnInfoWithLevel(level int32) ([]model.HistoryInfo, error) {
+// 根据id获取当前告警信息
+func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error) {
 	var err error
-	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{Level: level})
+	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{ID: id})
 	if err != nil {
 		return nil, err
 	}
@@ -80,11 +81,11 @@ func (s *Service) GetWarnInfoWithLevel(level int32) ([]model.HistoryInfo, error)
 			break
 		}
 		if err != nil {
-			log.Printf("grpc get historyAlert rule error %v", err)
+			log.Printf("grpc get history rule error %v", err)
 			continue
 		}
 		if resp.Code != managepb.ResponseCode_SUCCESS {
-			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
+			log.Printf("grpc get history rule error %v", resp.Msg)
 			continue
 		}
 		config := resp.GetResult()
@@ -105,10 +106,10 @@ func (s *Service) GetWarnInfoWithLevel(level int32) ([]model.HistoryInfo, error)
 	return res, nil
 }
 
-// 查看某天的所有告警信息
-func (s *Service) GetWarnInfoWithTimestamp(timeStamp int64) ([]model.HistoryInfo, error) {
+// 根据参数灵活查询告警信息
+func (s *Service) GetWarnInfoWithParams(ip string, local string, metric string, level int32, begin int64, end int64) ([]model.HistoryInfo, error) {
 	var err error
-	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{Begin: timeStamp})
+	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{IP: ip, Local: local, Level: level, Metric: metric, Begin: begin, End: end})
 	if err != nil {
 		return nil, err
 	}
@@ -120,51 +121,11 @@ func (s *Service) GetWarnInfoWithTimestamp(timeStamp int64) ([]model.HistoryInfo
 			break
 		}
 		if err != nil {
-			log.Printf("grpc get historyAlert rule error %v", err)
+			log.Printf("grpc get history rule error %v", err)
 			continue
 		}
 		if resp.Code != managepb.ResponseCode_SUCCESS {
-			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
-			continue
-		}
-		config := resp.GetResult()
-		conf := model.HistoryInfo{
-			Id:        config.GetID(),
-			Ip:        config.GetIP(),
-			Local:     config.GetLocal(),
-			Metric:    config.GetMetric(),
-			Value:     config.GetValue(),
-			Method:    config.GetMethod(),
-			Level:     config.GetLevel(),
-			Threshold: config.GetThreshold(),
-			Start:     config.GetStart(),
-			Duration:  config.GetDuration(),
-		}
-		res = append(res, conf)
-	}
-	return res, nil
-}
-
-// 根据agentId(ip + local)获取当前主机所有的告警信息
-func (s *Service) GetWarnInfoWithId(ip string, local string) ([]model.HistoryInfo, error) {
-	var err error
-	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{IP: ip, Local: local})
-	if err != nil {
-		return nil, err
-	}
-	var resp *managepb.AlertResponse
-	res := make([]model.HistoryInfo, 0, 10)
-	for {
-		resp, err = stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Printf("grpc get historyAlert rule error %v", err)
-			continue
-		}
-		if resp.Code != managepb.ResponseCode_SUCCESS {
-			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
+			log.Printf("grpc get history rule error %v", resp.Msg)
 			continue
 		}
 		config := resp.GetResult()
@@ -216,4 +177,20 @@ func (s *Service) GetMetricsWithTime(ip string, local string, metric string, beg
 		res = append(res, conf)
 	}
 	return res, nil
+}
+
+// 根据id删除告警信息
+func (s *Service) DelWarnInfo(id int32) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	resp, err := s.alertClient.DelAlterInfo(ctx, &managepb.IDRequest{
+		ID: id,
+	})
+	if err != nil {
+		return err
+	}
+	if resp.GetCode() != managepb.ResponseCode_SUCCESS {
+		return fmt.Errorf("del send config store service error %s", resp.GetMsg())
+	}
+	return nil
 }
