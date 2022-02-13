@@ -4,44 +4,44 @@
       <h3 > 发送配置 </h3>
     </div>
     <div class="table-container">
-  <el-table
-    :data="tableData.filter(data => !search || (data.local.toLowerCase().includes(search.toLowerCase()) || data.ip.toLowerCase().includes(search.toLowerCase())))" fit>
-    <el-table-column
-      label="Host"
-      :formatter="formateAgent">
-    </el-table-column>
-    <el-table-column
-      prop="local"
-      label="区域">
-    </el-table-column>
-    <el-table-column
-    :formatter="formateSend"
-      prop="send"
-      label="配置类型">
-    </el-table-column>
-    <el-table-column
-      :formatter="formateLive"
-      prop="is_live"
-      width="100"
-      label="是否存活">
-    </el-table-column>
-    <el-table-column
-      align="center">
-      <template slot="header" slot-scope="scope">
-        <el-input
-          v-model="search"
-          size="mini"
-          placeholder="输入区域或ip关键字搜索"/>
-      </template>
-      <template slot-scope="scope">
-        <el-button type="success"
-          size="mini"
-          @click="handleEdit(scope.row)">Edit</el-button>
-      </template>
-    </el-table-column>
-  </el-table>
+      <el-table
+        :data="tableData.filter(data => !search || (data.local.toLowerCase().includes(search.toLowerCase()) || data.ip.toLowerCase().includes(search.toLowerCase())))" fit>
+        <el-table-column
+          label="Host"
+          :formatter="formateAgent">
+        </el-table-column>
+        <el-table-column
+          prop="local"
+          label="区域">
+        </el-table-column>
+        <el-table-column
+        :formatter="formateSend"
+          prop="send"
+          label="配置类型">
+        </el-table-column>
+        <el-table-column
+          :formatter="formateLive"
+          prop="is_live"
+          width="100"
+          label="是否存活">
+        </el-table-column>
+        <el-table-column
+          align="center">
+          <template slot="header" slot-scope="scope">
+            <el-input
+              v-model="search"
+              size="mini"
+              placeholder="输入区域或ip关键字搜索"/>
+          </template>
+          <template slot-scope="scope">
+            <el-button type="success"
+              size="mini"
+              @click="handleEdit(scope.row)">Edit</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
 
-  </div>
+    </div>
   </div>
 
 </template>
