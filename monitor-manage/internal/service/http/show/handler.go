@@ -27,7 +27,7 @@ func (h *Handler) GetMetricsInOneDay(c *gin.Context) {
 		})
 		return
 	}
-	res := h.service.GetMetricsInOneDay(ip, local, metric)
+	res, _ := h.service.GetWarnInfo()
 	c.JSON(http.StatusOK, gin.H{
 		"code": "000000",
 		"msg":  "success",

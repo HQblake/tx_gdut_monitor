@@ -23,7 +23,7 @@ type Handler struct {
 func NewHandler(agent agent.IAgent, judgment judgment.IJudgment, send send.ISend, show show.IShow) *Handler {
 	return &Handler{
 		IAgentHandler: agent2.NewHandler(agent),
-		IJudgmentHandler: judgment2.NewHandler(judgment),
+		IJudgmentHandler: judgment2.NewHandler(judgment, agent),
 		ISendHandler: send2.NewHandler(send),
 		IShowHandler: show2.NewHandler(show),
 	}
