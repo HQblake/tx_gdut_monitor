@@ -1,6 +1,7 @@
 package judgment
 
 import (
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/agent"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/judgment"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -9,11 +10,13 @@ import (
 
 type Handler struct {
 	service judgment.IJudgment
+	agent agent.IAgent
 }
 
-func NewHandler(service judgment.IJudgment) *Handler {
+func NewHandler(service judgment.IJudgment, agent agent.IAgent) *Handler {
 	return &Handler{
 		service: service,
+		agent: agent,
 	}
 }
 
@@ -28,7 +31,16 @@ func (h *Handler) GetAllRule(c *gin.Context) {
 		})
 		return
 	}
-	res, _, err := h.service.GetConfigs(ip, local)
+	agentInfo, err := h.agent.GetAgentInfo(ip, local)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "020003",
+			"msg":  "获取agent信息出错",
+			"data": nil,
+		})
+		return
+	}
+	res, err := h.service.GetConfigsWithMetrics(ip, local, agentInfo.Metric)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "020001",

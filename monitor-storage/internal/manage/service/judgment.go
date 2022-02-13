@@ -37,7 +37,7 @@ func (j *JudgmentService) UpdateConfig(ctx context.Context, entry *managepb.Judg
 	check := model.CheckConfigPool.Get().(*model.CheckConfig)
 	defer model.CheckConfigPool.Put(check)
 	parseCheckConfig(entry, check)
-	err := j.dao.UpdateCheckConfig(check)
+	id, err := j.dao.UpdateCheckConfig(check)
 	if err != nil {
 		return &managepb.BaseResponse{
 			Code: managepb.ResponseCode_ERROR,
@@ -46,7 +46,7 @@ func (j *JudgmentService) UpdateConfig(ctx context.Context, entry *managepb.Judg
 	}
 	return &managepb.BaseResponse{
 		Code: managepb.ResponseCode_SUCCESS,
-		Msg:  "SUCCESS",
+		Msg:  string(id),
 	}, nil
 }
 

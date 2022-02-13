@@ -21,7 +21,7 @@
     </el-table-column>
     <el-table-column
       :formatter="formateLive"
-      prop="islive"
+      prop="is_live"
       width="100"
       label="是否存活">
     </el-table-column>
@@ -58,43 +58,43 @@ export default {
         ip: '127.0.0.1',
         port: '2016-05-03',
         local: '北京',
-        islive: true,
+        is_live: true,
         metric: ['cpu利用率', 'mem']
       }, {
         ip: '127.0.0.2',
         port: '2016-05-03',
         local: '上海',
-        islive: false,
+        is_live: false,
         metric: ['cpu利用率', 'mem']
       }, {
         ip: '127.0.0.1',
         port: '2016-05-03',
         local: '北京',
-        islive: true,
+        is_live: true,
         metric: ['cpu利用率', 'mem']
       }, {
         ip: '127.0.0.1',
         port: '2016-05-03',
         local: '北京',
-        islive: true,
+        is_live: true,
         metric: ['cpu利用率', 'mem']
       }, {
         ip: '127.0.0.1',
         port: '2016-05-03',
         local: '北京',
-        islive: true,
+        is_live: true,
         metric: ['cpu利用率', 'mem']
       }, {
         ip: '127.0.0.1',
         port: '2016-05-03',
         local: '北京',
-        islive: true,
+        is_live: true,
         metric: ['cpu利用率', 'mem']
       }, {
         ip: '127.0.0.1',
         port: '2016-05-03',
         local: '北京',
-        islive: true,
+        is_live: true,
         metric: ['cpu利用率', 'mem']
       }],
       search: ''

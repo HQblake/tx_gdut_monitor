@@ -1,104 +1,64 @@
-<!--
- * @Description:
- * @Autor: yzq
- * @Date: 2022-02-10 16:05:05
- * @LastEditors: yzq
--->
 <template>
   <div class="home">
     <div class='headline'>
       <h3 > 主机列表 </h3>
     </div>
-    <el-table
-        :data="
-          tableData.filter(
-            (data) =>
-              !search || data.level.toLowerCase().includes(search.toLowerCase())
-          )
-        "
-        :header-cell-style="{ height: '100px' }"
-        style="width: 100%"
-      >
-        <el-table-column
-          label="对象"
-          prop="id"
-          align="center"
-          header-aligh="center"
-        >
-        </el-table-column>
-        <el-table-column
-          label="告警内容"
-          prop="tabName"
-          align="center"
-          header-aligh="center"
-        >
-        </el-table-column>
-        <el-table-column
-          label="级别"
-          prop="level"
-          align="center"
-          header-aligh="center"
-        >
-        </el-table-column>
-        <el-table-column
-          label="开始时间"
-          prop="startTime"
-          align="center"
-          header-aligh="center"
-        >
-        </el-table-column>
-        <!-- <el-table-column label="指标" prop="5" > </el-table-column> -->
-        <el-table-column
-          label="异常值"
-          prop="outliers"
-          align="center"
-          header-aligh="center"
-        >
-        </el-table-column>
-        <el-table-column
-          label="阈值"
-          prop="threshold"
-          align="center"
-          header-aligh="center"
-        >
-        </el-table-column>
-        <el-table-column
-          label="持续时间"
-          prop="during"
-          align="center"
-          header-aligh="center"
-        >
-        </el-table-column>
-
-        <el-table-column align="center">
-          <template slot="header" slot-scope="scope">
-            <el-input
+    <div class="table-container">
+      <el-row>
+          <el-col :span="18"><div>&nbsp;</div></el-col>
+          <el-col :span="6">
+            <div>
+              <el-input
               v-model="search"
               size="mini"
-              placeholder="输入关键字搜索"
-            />
-          </template>
+              placeholder="输入区域或ip关键字搜索"/>
+            </div>
+          </el-col>
+      </el-row>
+
+      <el-table
+        :data="tableData.filter(data => !search || (data.local.toLowerCase().includes(search.toLowerCase()) || data.ip.toLowerCase().includes(search.toLowerCase())))" fit>
+        <el-table-column
+          label="Host"
+          :formatter="formateAgent">
+        </el-table-column>
+        <el-table-column
+          label="区域"
+          prop="local">
+        </el-table-column>
+        <el-table-column
+          :formatter="formateLive"
+          prop="is_live"
+          width="100"
+          label="是否存活">
+        </el-table-column>
+        <el-table-column
+          align="center"
+          label="agent管理">
           <template slot-scope="scope">
-            <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
-              >Edit</el-button
-            >
-            <!-- deleteData(scope.$index, scope.row) -->
-            <el-button
+            <el-button type="primary"
               size="mini"
-              type="danger"
-              @click="openDelete(scope.$index, scope.row)"
-              >Delete</el-button
-            >
+              @click="handleWarn(scope.row)">告警规则管理</el-button>
+            <el-button type="warning"
+              size="mini"
+              @click="handleSend(scope.row)">发送配置管理</el-button>
+            <el-button type="danger"
+              size="mini"
+              @click="handleHistory(scope.row)">告警历史详情</el-button>
           </template>
         </el-table-column>
       </el-table>
+
+    </div>
+    <!-- <img alt="Vue logo" src="../assets/logo.png">
+    <HelloWorld msg="Welcome to Your Vue.js App"/> -->
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
-
+// // @ is an alias to /src
+// import HelloWorld from '@/components/HelloWorld.vue'
+import { GetAllAgent } from '@/api/agent'
 export default {
   name: 'home',
   data() {
@@ -160,7 +120,85 @@ export default {
     },
   },
   components: {
-    HelloWorld
+    // HelloWorld
+  },
+  data () {
+    return {
+      tableData: [{
+        ip: '127.0.0.1',
+        port: '80',
+        local: '北京',
+        is_live: true
+      }, {
+        ip: '127.0.0.2',
+        port: '80',
+        local: '上海',
+        is_live: false
+      }, {
+        ip: '127.0.0.1',
+        port: '80',
+        local: '北京',
+        is_live: true
+      }, {
+        ip: '127.0.0.1',
+        port: '80',
+        local: '北京',
+        is_live: true
+      }, {
+        ip: '127.0.0.1',
+        port: '80',
+        local: '北京',
+        is_live: true
+      }, {
+        ip: '127.0.0.1',
+        port: '80',
+        local: '北京',
+        is_live: true
+      }, {
+        ip: '127.0.0.1',
+        port: '80',
+        local: '北京',
+        is_live: true
+      }],
+      search: ''
+    }
+  },
+  created () {
+    GetAllAgent().then(data => {
+      this.tableData = data.data
+    })
+      .catch(err => {
+        if (err.msg) {
+          this.$alert(err.msg)
+          return
+        }
+        this.$alert(err)
+      })
+  },
+  methods: {
+    handleWarn (row) {
+      this.$router.push('/warn/' + row.ip + '/' + row.local)
+    },
+    handleSend (row) {
+      this.$router.push('/send/' + row.ip + '/' + row.local)
+    },
+    handleHistory (row) {
+      // 待定
+      this.$router.push('/send/' + row.ip + '/' + row.local)
+    },
+    formateAgent (row, column, cellValue) {
+      if (row.port) {
+        return row.ip + ':' + row.port
+      }
+      return row.ip
+    },
+    formateLive (row, column, cellValue) {
+      if (cellValue) {
+        return '是'
+      }
+      return '否'
+    }
+
   }
 }
 </script>

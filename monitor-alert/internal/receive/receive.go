@@ -1,6 +1,27 @@
 package receive
 
-// ReceiveService 告警系统——判定服务模块
-type ReceiveService struct{}
+import (
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive/receivepb"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive/service"
+	"google.golang.org/grpc"
+)
 
-// 为告警系统的其他服务提供调用 ReceiveService 服务相应功能的接口
+type IReceive interface {
+	// RegisterService 注册rpc服务
+	RegisterService(ser *grpc.Server)
+}
+
+type server struct {
+	proxy *service.ReceiveService
+}
+
+func (s *server) RegisterService(ser *grpc.Server) {
+	receivepb.RegisterReportServerServer(ser, s.proxy)
+}
+
+func NewService(judgment judgment.IJudgment) *server {
+	return &server{
+		proxy: service.NewService(judgment),
+	}
+}

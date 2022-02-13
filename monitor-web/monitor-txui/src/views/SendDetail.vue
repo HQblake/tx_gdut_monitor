@@ -28,4 +28,11 @@ export default {
 }
 </script>
 <style lang='less'>
+.headline {
+  padding: 10px 50px;
+}
+.table-container{
+  padding: 0 50px;
+  margin: 0 auto;
+}
 </style>

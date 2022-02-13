@@ -79,7 +79,7 @@ func (dao *StorageDao) GetCheckConfigsByIPAndLocal(ip, local string) []model.Che
 	return dao.mysqlClient.GetCheckConfigsByIPAndLocal(ip, local)
 }
 
-func (dao *StorageDao) UpdateCheckConfig(check *model.CheckConfig) error {
+func (dao *StorageDao) UpdateCheckConfig(check *model.CheckConfig) (int32, error) {
 	return dao.mysqlClient.UpdateCheckConfig(check)
 }
 

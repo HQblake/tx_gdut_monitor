@@ -197,14 +197,27 @@ func (c *Client) GetCheckConfigsByIPAndLocal(ip, local string) []model.CheckConf
 }
 
 // UpdateCheckConfig 更新check表中除ID、IP、Local、Metric外的所有字段
-func (c *Client) UpdateCheckConfig(check *model.CheckConfig) error {
-	_, err := c.db.Exec("UPDATE `check` SET method=?, period=?, threshold=? WHERE id=?",
-		check.Method, check.Period, check.Threshold, check.ID)
-	if err != nil {
-		log.Println(err)
-		return err
+func (c *Client) UpdateCheckConfig(check *model.CheckConfig) (int32, error) {
+	if check.ID < 0 {
+		// ID < 0 说明agent新增了判定指标，需增加默认配置
+		res, err := c.db.Exec("INSERT INTO `check`(agentId, metricId, method, period, threshold) "+
+			"VALUES((SELECT id FORM agent WHERE ip=? AND local=?), (SELECT id FROM metric WHERE name=?), ?, ?, ?)",
+			check.IP, check.Local, check.Metric, check.Method, check.Period, check.Threshold)
+		if err != nil {
+			log.Println(err)
+			return 0, err
+		}
+		id, err := res.LastInsertId()
+		return int32(id), err
+	} else {
+		_, err := c.db.Exec("UPDATE `check` SET method=?, period=?, threshold=? WHERE id=?",
+			check.Method, check.Period, check.Threshold, check.ID)
+		if err != nil {
+			log.Println(err)
+			return 0, err
+		}
+		return check.ID, nil
 	}
-	return nil
 }
 
 // DelCheckConfigByID 根据ID删除check表中的记录

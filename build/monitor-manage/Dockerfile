@@ -10,10 +10,10 @@ RUN go env -w GOPROXY=https://goproxy.cn,direct
 # 拷贝源代码到镜像中，这一步后续考虑换成拉取git项目
 # 假设当前目录已经在宿主机的tx_monitor目录下了,路径的明确很重要
 
-COPY . /go/src/tx_monitor
+COPY . /go/src/tx_gdut_monitor
 # 编译
 # 工作目录
-WORKDIR /go/src/tx_monitor/monitor-manage
+WORKDIR /go/src/tx_gdut_monitor/monitor-manage
 RUN go install ./monitor-manage/...
 
 # 阶段二：生成最终镜像

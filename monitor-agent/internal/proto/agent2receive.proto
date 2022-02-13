@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package receive;
+
+option go_package="gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive/receivepb";
+
+
+
+// 上报服务
+service ReportServer {
+  // Report
+  rpc Report(ReportReq) returns(ReportRsp) {}
+}
+
+// 上报参数
+message ReportReq {
+  int64 Timestamp = 1; 					// unix时间戳，单位s，如：1642125600
+  string IP = 2;                //Agent的IP地址
+  string Port = 3;              //Agent的端口号
+  string Local = 4;             //Agent的区域
+  map<string,double> Metric = 5; 						// 指标，如: "cpu_rate":21%
+  map<string, string> Dimensions = 6; 	// 其余维度
+  //double value = 4;						// 上报值，如: 0.89
+}
+
+//返回结构
+message ReportRsp {
+  ResponseCode Code = 1; 	// 返回码
+  string Msg = 2; 	// 返回消息
+}
+
+
+enum ResponseCode {
+  SUCCESS = 0;
+  ERROR = 1;
+}

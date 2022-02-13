@@ -8,5 +8,5 @@ type JudgmentConfig struct {
 	Metric string `json:"metric"`
 	Method int32 `json:"method"`
 	Period string `json:"period"`
-	Threshold string `json:"threshold"`
+	Threshold map[int32]float64 `json:"threshold"`
 }

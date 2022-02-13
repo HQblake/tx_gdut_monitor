@@ -9,6 +9,7 @@ export function GetAgentRule (ip, local) {
 // 更新agent的指定id判定规则信息
 export function UpdateRule (ip, local, id, method, metric, period, threshold) {
   let url = '/judgment/update/' + ip + '/' + local + '/' + id
+  console.log(ip, local, id, method, metric, period, threshold)
   return fetchPost(url, {
     'method': method,
     'metric': metric,

@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.19.1
-// source: manage2send.proto
+// source: manage2send.receivepb
 
 package sendpb
 

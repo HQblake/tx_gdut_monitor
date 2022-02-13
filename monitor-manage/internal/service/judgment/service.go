@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/configs"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/model"
 	managepb2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/rpc/client/judgment/gen"
 	managepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/rpc/client/store/gen"
@@ -23,16 +24,15 @@ func NewService(store managepb.JudgmentServiceClient, judgment managepb2.RuleUpd
 	}
 }
 
-func (s *Service) GetConfigs(ip string, local string) ([]model.JudgmentConfig,map[string]model.JudgmentConfig, error) {
+func (s *Service) GetConfigs(ip string, local string) (map[string]model.JudgmentConfig, error) {
 	var err error
 	// 获取存储服务中对应agent的所有判定规则
 	stream, err := s.store.GetConfigsByAgent(context.Background(), &managepb.AgentRequest{IP: ip, Local: local})
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 	var resp *managepb.JudgmentConfigResponse
-	res := make([]model.JudgmentConfig, 0, 10)
-	mres := make(map[string]model.JudgmentConfig)
+	res := make(map[string]model.JudgmentConfig)
 	// 遍历获取指定metric的规则，没有则用默认规则代替
 	for {
 		resp, err = stream.Recv()
@@ -48,6 +48,12 @@ func (s *Service) GetConfigs(ip string, local string) ([]model.JudgmentConfig,ma
 			continue
 		}
 		config := resp.GetResult()
+		var threshold map[int32]float64
+		err = json.Unmarshal([]byte(config.Threshold), &threshold)
+		if err != nil {
+			log.Printf("grpc get judgment json parse threshold rule error %v", err)
+			continue
+		}
 		conf := model.JudgmentConfig{
 			ID: config.GetID(),
 			IP: config.GetIP(),
@@ -55,12 +61,36 @@ func (s *Service) GetConfigs(ip string, local string) ([]model.JudgmentConfig,ma
 			Metric: config.GetMetric(),
 			Method: config.GetMethod(),
 			Period: config.GetPeriod(),
-			Threshold: config.GetThreshold(),
+			Threshold: threshold,
 		}
-		res = append(res, conf)
-		mres[config.GetMetric()] = conf
+		res[config.GetMetric()] = conf
 	}
-	return res, mres, nil
+	return res, nil
+}
+
+func (s *Service) GetConfigsWithMetrics(ip string, local string, metrics []string) ([]model.JudgmentConfig, error) {
+	res := make([]model.JudgmentConfig, 0, len(metrics))
+	cfgs, err := s.GetConfigs(ip, local)
+	if err != nil {
+		return nil, err
+	}
+	defaultRule := configs.GetDefaultRule()
+	for _, m := range metrics {
+		if _, ok := cfgs[m]; ok {
+			res = append(res, cfgs[m])
+		}else {
+			res = append(res, model.JudgmentConfig{
+				ID: -1,
+				IP: ip,
+				Local: local,
+				Metric: m,
+				Method: defaultRule.Method,
+				Period: defaultRule.Period,
+				Threshold: defaultRule.Threshold,
+			})
+		}
+	}
+	return res, nil
 }
 
 func (s *Service) Update(ID int32, IP string,Local string, Metric string, Method int32, Period string, Threshold string) error {
@@ -106,7 +136,7 @@ func (s *Service) Del(ip string, local string, id int32) error {
 }
 
 func (s *Service) TriggerUpdate(ip string, local string) error {
-	_, list, err := s.GetConfigs(ip, local)
+	list, err := s.GetConfigs(ip, local)
 	if err != nil {
 		return err
 	}
@@ -116,16 +146,10 @@ func (s *Service) TriggerUpdate(ip string, local string) error {
 		Metrics: make(map[string]*managepb2.MetricRule),
 	}
 	for key, config := range list {
-		var threshold map[int32]float64
-		err = json.Unmarshal([]byte(config.Threshold), &threshold)
-		if err != nil {
-			log.Printf("grpc get judgment json parse threshold rule error %v", err)
-			continue
-		}
 		agent.Metrics[key] = &managepb2.MetricRule{
 			Method: config.Method,
 			Period: config.Period,
-			Threshold: threshold,
+			Threshold: config.Threshold,
 		}
 	}
 	resp, err := s.judgment.Update(context.Background(), agent)

@@ -27,7 +27,7 @@ axios.interceptors.response.use((res) => {
   }
   return Promise.reject(res.data)
 }, (error) => {
-  return Promise.reject( { msg: error.message } )
+  return Promise.reject({ msg: error.message })
 })
 
 // 返回一个Promise(发送post请求)
