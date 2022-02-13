@@ -23,6 +23,6 @@ func main() {
 	server := grpc.NewServer()
 	global.JudgmentService.RegisterJudgmentService(server)
 	global.ManageService.RegisterManageService(server)
-	lis, _ := net.Listen("tcp", ":")
+	lis, _ := net.Listen(global.Setting.Hosts.Network, global.Setting.Hosts.Server)
 	server.Serve(lis)
 }

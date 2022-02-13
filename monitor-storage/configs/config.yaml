@@ -26,3 +26,6 @@ MySQL:     # MySQL配置
   MaxIdleConns: 10
   MaxOpenConns: 10
   MaxLifetime: 3
+Hosts:
+  Network: tcp
+  Server: 127.0.0.1:8081
