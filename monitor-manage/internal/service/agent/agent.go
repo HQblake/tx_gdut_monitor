@@ -6,6 +6,7 @@ import (
 
 type IAgent interface {
 	GetAllAgentInfo() ([]model.AgentInfo, error)
+	GetAllAgentSendInfo() ([]model.AgentSendInfo, error)
 	GetAgentInfo(ip string, local string) (*model.AgentInfo, error)
 }
 

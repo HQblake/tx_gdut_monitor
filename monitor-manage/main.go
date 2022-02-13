@@ -64,6 +64,7 @@ func router(h *http.Handler) *gin.Engine {
 	// agent
 	agent := r.Group("/agent")
 	agent.GET("/list", h.GetAllAgent)
+	agent.GET("/sendList", h.GetAllAgentSendInfo)
 	agent.GET("/info/:ip/:local", h.GetAgentInfo)
 
 	// judgment

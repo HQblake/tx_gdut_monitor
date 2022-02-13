@@ -22,10 +22,10 @@ type Admin struct {
 }
 
 func Register(alertConn, storeConn *grpc.ClientConn) *Admin {
-	agentService := agent.NewService(managepb.NewAgentServiceClient(storeConn))
 	judgmentService := judgment.NewService(managepb.NewJudgmentServiceClient(storeConn), managepb2.NewRuleUpdaterClient(alertConn))
 	sendService := send.NewService(sendpb.NewSendServiceClient(alertConn), managepb.NewSendServiceClient(storeConn))
 	showService := show.NewService(managepb.NewHistoryServiceClient(storeConn), managepb.NewMetricServiceClient(storeConn))
+	agentService := agent.NewService(managepb.NewAgentServiceClient(storeConn), sendService)
 	a :=  &Admin{
 		service: service.NewService(judgmentService),
 		ApiHandler: http.NewHandler(agentService, judgmentService, sendService, showService),

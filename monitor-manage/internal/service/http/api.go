@@ -33,6 +33,8 @@ func NewHandler(agent agent.IAgent, judgment judgment.IJudgment, send send.ISend
 type IAgentHandler interface {
 	// GetAllAgent 获取所有的存活agent
 	GetAllAgent(c *gin.Context)
+	// GetAllAgentSendInfo 获取所有的存活agent
+	GetAllAgentSendInfo(c *gin.Context)
 	// GetAgentInfo 获取指定Agent的信息
 	GetAgentInfo(c *gin.Context)
 }
