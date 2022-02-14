@@ -102,6 +102,12 @@ func (h *Http) send()  {
 		if h.formatType == "json" {
 			request.Header.Set("Content-Type", "application/json")
 		}
+		if h.formatType == "line" {
+			request.Header.Set("Content-Type", "application/plain")
+		}
+		if h.formatType == "html" {
+			request.Header.Set("Content-Type", "application/html")
+		}
 		response, err := h.client.Do(request)
 		if err != nil {
 			log.Printf("send request error :%s \n", err.Error())

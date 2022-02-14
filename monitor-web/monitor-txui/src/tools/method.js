@@ -27,7 +27,6 @@ export function ParseMethod (m) {
   return 'unknown'
 }
 
-
 export function CheckMethod (m) {
   let v = MethodType[m]
   if (v) {

@@ -61,10 +61,10 @@
 import { GetAllAgent } from '@/api/agent'
 export default {
   name: 'home',
-  data() {
+  data () {
     return {
       dialogVisible: false,
-      search: "",
+      search: '',
       tableData: [
         {
           id: 1,
@@ -80,44 +80,44 @@ export default {
           id: 3,
           ip: '127.0.0.3',
           local: 'beijing'
-        },
-      ],
+        }
+      ]
     }
   },
-   methods: {
-    deleteData(index, row) {
-      this.dialogVisible = false;
-      console.log(index);
-      console.log(row);
+  methods: {
+    deleteData (index, row) {
+      this.dialogVisible = false
+      console.log(index)
+      console.log(row)
 
-      this.tableData.splice(index, 1);
+      this.tableData.splice(index, 1)
     },
-    openDelete(index, row) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+    openDelete (index, row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.deleteData(index, row);
+          this.deleteData(index, row)
           this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+            type: 'success',
+            message: '删除成功!'
+          })
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
-    handleEdit(index, row) {
-      console.log(index, row);
+    handleEdit (index, row) {
+      console.log(index, row)
     },
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
+    handleDelete (index, row) {
+      console.log(index, row)
+    }
   },
   components: {
     // HelloWorld
@@ -202,7 +202,6 @@ export default {
   }
 }
 </script>
-
 
 <style>
 .el-table__header tr,

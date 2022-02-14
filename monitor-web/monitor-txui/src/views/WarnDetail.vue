@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { ParseMethod, CheckMethod, MethodType } from '@/tools/method'
+import { ParseMethod, CheckMethod, MethodType, MethodMap } from '@/tools/method'
 import { ParseObj, CheckThreshold, StringObj } from '@/tools/level'
 import { GetAgentRule, UpdateRule, DelRule } from '@/api/judgment'
 export default {
@@ -153,7 +153,6 @@ export default {
         }
       ],
       search: '',
-      formLabelWidth: '120px',
       methodList: MethodType
     }
   },
@@ -199,7 +198,7 @@ export default {
     },
     showEdit (row) {
       this.metric = row.metric
-      this.method = row.method
+      this.method = ParseMethod(row.method)
       this.period = row.period
       this.id = row.id
       // 清空告警类型，方便判断整合
@@ -208,6 +207,9 @@ export default {
       this.dialogFormVisible = true
     },
     handleEdit () {
+      if (!CheckMethod(this.method)) {
+        this.method = MethodMap[this.method]
+      }
       if (!this.check()) {
         return
       }
@@ -222,7 +224,7 @@ export default {
           } else {
             this.$alert(err)
           }
-          // this.$router.go(0)
+          this.$router.go(0)
         })
     },
     handleDel (row) {

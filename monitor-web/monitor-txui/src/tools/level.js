@@ -45,9 +45,16 @@ export function CheckThreshold (threshold) {
 }
 
 export function ParseLevel (m) {
-    let v = LevelType[m]
-    if (v) {
-      return v
-    }
-    return 'unknown'
+  let v = LevelType[m]
+  if (v) {
+    return v
   }
+  return 'unknown'
+}
+export function CheckLevel (m) {
+  let v = LevelType[m]
+  if (v) {
+    return true
+  }
+  return false
+}

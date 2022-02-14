@@ -20,7 +20,7 @@ export function ParseSendtype (t) {
 }
 
 export function CheckType (m) {
-  let v = SendMap[m]
+  let v = SendType[m]
   if (v) {
     return true
   }

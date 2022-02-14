@@ -7,6 +7,7 @@ export function GetSendConfigs (ip, local) {
 }
 
 export function AddSendConfig (ip, local, sendType, level, config) {
+  console.log(ip, local, sendType, level, config)
   let url = '/send/info/' + ip + '/' + local
   return fetchPost(url, {
     'sendType': sendType,
@@ -17,6 +18,7 @@ export function AddSendConfig (ip, local, sendType, level, config) {
 
 // 更新agent的指定id判定规则信息
 export function UpdateSendConfig (ip, local, id, sendType, level, config) {
+  console.log(ip, local, id, sendType, level, config)
   let url = '/send/update/' + ip + '/' + local + '/' + id
   return fetchPost(url, {
     'sendType': sendType,
