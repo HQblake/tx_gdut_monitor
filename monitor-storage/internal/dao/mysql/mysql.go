@@ -28,5 +28,6 @@ func NewClient(s *MySQLSetting) *Client {
 	db.SetConnMaxLifetime(time.Duration(s.MaxLifetime) * time.Minute)
 	db.SetMaxOpenConns(s.MaxOpenConns)
 	db.SetMaxIdleConns(s.MaxIdleConns)
+	defer log.Println("MySQL Connection Succeeded")
 	return &Client{db}
 }

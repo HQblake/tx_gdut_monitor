@@ -7,6 +7,7 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive/receivepb"
 	"google.golang.org/grpc/peer"
+	"log"
 	"strings"
 )
 
@@ -27,14 +28,11 @@ func (s *ReceiveService) Report(ctx context.Context, in *receivepb.ReportReq) (*
 	agentreport.Metrics = in.Metric           //封装指标Map
 	agentreport.Timestamp = in.GetTimestamp() //封装时间戳
 	agentreport.Local = in.Local              //封装区域
-	//打印相应数据信息
-	fmt.Println("Agent IP:", agentreport.IP)
-	fmt.Println("Agent Port:", agentreport.Port)
-	fmt.Println("Agent Location:", agentreport.Local)
-	fmt.Println("TimeStamp:", agentreport.Timestamp)
 	for k, str := range agentreport.Metrics {
 		fmt.Println(k, ":", str)
 	}
+	log.Printf("Agent reports data: %v\n", *agentreport)
+
 	//此区域之前已经封装好AgentReport结构，后面可写入判定模块的代码
 	s.judgment.Check(agentreport)
 

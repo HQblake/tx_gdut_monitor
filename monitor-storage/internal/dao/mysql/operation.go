@@ -14,6 +14,7 @@ func (c *Client) SaveAgentInfo(metric *model.Metric) error {
 	if err != nil {
 		return err
 	}
+	log.Printf("SaveAgentInfo: %v\n", *metric)
 	return nil
 }
 
@@ -28,6 +29,7 @@ func (c *Client) SaveAlertInfo(history *model.HistoryInfo) error {
 		log.Println(err)
 		return err
 	}
+	log.Printf("SaveAlertInfo: %v\n", *history)
 	return nil
 }
 
@@ -44,9 +46,10 @@ func (c *Client) GetAllAgentInfo() []model.AgentInfo {
 	for rows.Next() {
 		rows.Scan(&agent.ID, &agent.IP, &agent.Local, &agent.Port, &agent.IsLive)
 		res = append(res, agent)
-		log.Println(agent)
 	}
 	defer rows.Close()
+
+	log.Printf("GetAllAgentInfo: Found %d records\n", len(res))
 	return res
 }
 
@@ -61,6 +64,8 @@ func (c *Client) GetAgentInfoByIPAndLocal(ip, local string) model.AgentInfo {
 		rows.Scan(&agent.ID, &agent.IP, &agent.Local, &agent.Port, &agent.IsLive)
 	}
 	defer rows.Close()
+
+	log.Printf("GetAgentInfoByIPAndLocal(%s, %s): %v\n", ip, local, agent)
 	return agent
 }
 
@@ -81,6 +86,8 @@ func (c *Client) GetMetricsByIPAndLocal(ip, local string) []string {
 		res = append(res, tempName)
 	}
 	defer rows.Close()
+
+	log.Printf("GetMetricsByIPAndLocal(%s, %s): %v\n", ip, local, res)
 	return res
 
 }
@@ -101,6 +108,8 @@ func (c *Client) GetAllAlertInfo() []model.HistoryInfo {
 		res = append(res, history)
 	}
 	defer rows.Close()
+
+	log.Printf("GetAllAlertInfo: Found %d records\n", len(res))
 	return res
 }
 
@@ -164,6 +173,9 @@ func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, 
 			res = append(res, alert)
 		}
 	}
+
+	log.Printf("GetAlertInfo(%d, %s, %s, %s, %d, %d, %d): Found %d records\n",
+		id, ip, local, metric, level, begin, end, len(res))
 	return res
 }
 
@@ -174,6 +186,7 @@ func (c *Client) DelAlterInfo(id int32) error {
 		log.Println(res)
 		return err
 	}
+	log.Printf("DelAlterInfo(%d)\n", id)
 	return nil
 }
 
@@ -193,6 +206,8 @@ func (c *Client) GetCheckConfigsByIPAndLocal(ip, local string) []model.CheckConf
 		res = append(res, check)
 	}
 	defer rows.Close()
+
+	log.Printf("GetCheckConfigsByIPAndLocal(%s, %s): Found %d records\n", ip, local, len(res))
 	return res
 }
 
@@ -208,6 +223,8 @@ func (c *Client) UpdateCheckConfig(check *model.CheckConfig) (int32, error) {
 			return 0, err
 		}
 		id, err := res.LastInsertId()
+
+		log.Printf("UpdateCheckConfig: INSERT-%d-%v\n", id, *check)
 		return int32(id), err
 	} else {
 		_, err := c.db.Exec("UPDATE `check` SET method=?, period=?, threshold=? WHERE id=?",
@@ -216,6 +233,7 @@ func (c *Client) UpdateCheckConfig(check *model.CheckConfig) (int32, error) {
 			log.Println(err)
 			return 0, err
 		}
+		log.Printf("UpdateCheckConfig: UPDATE-%v\n", *check)
 		return check.ID, nil
 	}
 }
@@ -227,6 +245,7 @@ func (c *Client) DelCheckConfigByID(id int32) error {
 		log.Println(err)
 		return err
 	}
+	log.Printf("DelCheckConfigByID(%d)\n", id)
 	return nil
 }
 
@@ -240,6 +259,7 @@ func (c *Client) SaveAlertConfig(alert *model.AlertConfig) (int32, error) {
 		return -1, err
 	}
 	id, err := affect.LastInsertId()
+	log.Printf("SaveAlertConfig: %d-%v\n", id, *alert)
 	return int32(id), err
 }
 
@@ -251,6 +271,7 @@ func (c *Client) UpdateAlertConfig(alert *model.AlertConfig) error {
 		log.Println(err)
 		return err
 	}
+	log.Printf("UpdateAlertConfig: %v\n", *alert)
 	return nil
 }
 
@@ -261,6 +282,7 @@ func (c *Client) DelAlertConfigByID(id int32) error {
 		log.Println(err)
 		return err
 	}
+	log.Printf("DelAlertConfigByID(%d)\n", id)
 	return nil
 }
 
@@ -276,6 +298,7 @@ func (c *Client) GetAlertConfigByID(id int32) model.AlertConfig {
 		rows.Scan(&alert.ID, &alert.IP, &alert.Local, &alert.SendType, &alert.Level, &alert.Config)
 	}
 	defer rows.Close()
+	log.Printf("GetAlertConfigByID(%d): %v\n", id, alert)
 	return alert
 }
 
@@ -295,6 +318,8 @@ func (c *Client) GetAlertConfigByIPAndLocal(ip, local string) []model.AlertConfi
 		res = append(res, alert)
 	}
 	defer rows.Close()
+
+	log.Printf("GetAlertConfigByIPAndLocal(%s, %s): Found %d records\n", ip, local, len(res))
 	return res
 
 }
@@ -314,5 +339,7 @@ func (c *Client) GetAllAlertConfig() []model.AlertConfig {
 		res = append(res, alert)
 	}
 	defer rows.Close()
+
+	log.Printf("GetAllAlertConfig: Found %d records\n", len(res))
 	return res
 }

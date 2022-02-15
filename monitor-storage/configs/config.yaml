@@ -1,7 +1,7 @@
 InfluxDB:   # InfluxDB配置
-  URL: http://127.0.0.1:8086
-  ORG: personal
-  Token: FTGYhVo9DwF5v56ZxFC4j56R4TE-L6scyeO5jBf-eHsKPjj7O1dRl5dz2sDf65DuKUl-vlvt3exVrzuMBWKzig==
+  URL: http://81.71.165.211:8086/
+  ORG: tx-monitor
+  Token: ohwL8Jc2vEUKL3AsytCXtuA35_MimZI9w2NLE3ARhYksk8_jWQ1phl9srfaGfv_K1tA7H2X30Aet0jdH7OD2Uw==
   Bucket: metric
   BatchSize: 20   # 批处理数量
   LogLevel: 0
@@ -18,8 +18,8 @@ InfluxDB:   # InfluxDB配置
 MySQL:     # MySQL配置
   DBType: mysql
   Username: root
-  Password: root
-  Host: 127.0.0.1:3306
+  Password: tx-monitor-gdut-group2
+  Host: 81.71.165.211:3307
   DBName: monitor
   Charset: utf8mb4
   ParseTime: True
@@ -28,4 +28,4 @@ MySQL:     # MySQL配置
   MaxLifetime: 3
 Hosts:
   Network: tcp
-  Server: 127.0.0.1:8081
+  Server: 127.0.0.1:8080

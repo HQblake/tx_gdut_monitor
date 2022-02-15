@@ -9,6 +9,7 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
+	"log"
 )
 
 type Service struct {
@@ -35,9 +36,12 @@ func (s *Service) Check(agent *model.AgentReport) error {
 	rule := model.AgentRulePool.Get().(*model.AgentRule)
 	*rule = s.cache.GetRuleByIPAndLocal(agent.IP, agent.Local, metrics, s.client)
 	defer model.AgentRulePool.Put(rule)
+	log.Printf("Judgment rules: %v\n", *rule)
 
 	// 从协程池中提取worker完成各个指标的判定
 	alert := s.worker.Finish(agent, rule, s.client)
+	log.Printf("Judgment result: %v\n", alert)
+
 	return s.send.Send(&alert)
 }
 

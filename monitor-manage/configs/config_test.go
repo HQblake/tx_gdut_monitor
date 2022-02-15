@@ -8,7 +8,7 @@ import (
 func TestReadConfig(t *testing.T) {
 	target := &config{
 		AdminConfig: &adminConfig{
-			Listen: ":8080",
+			Listen:     ":8080",
 			ServerAddr: ":8083",
 		},
 		StoreConfig: &listenConfig{Listen: ":8081"},
@@ -17,13 +17,13 @@ func TestReadConfig(t *testing.T) {
 			Method: 1,
 			Period: "5m",
 			Threshold: map[string]float64{
-				"warn": 0.03,
+				"warn":  0.03,
 				"error": 0.06,
 				"panic": 0.08,
 			},
 		},
 	}
-	err := InitConfig("./config.yml")
+	err := InitConfig("./config.yaml")
 	if err != nil {
 		t.Errorf("init config error %v", err)
 	}

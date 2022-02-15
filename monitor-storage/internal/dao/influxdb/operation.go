@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
+	"log"
 	"time"
 )
 
@@ -13,6 +14,7 @@ func (c *Client) SaveMatricData(metric *model.Metric) error {
 	tags, fields := parseTagsAndFileds(metric)
 	c.writeAPI.WritePoint(influxdb2.NewPoint(metric.Name, tags, fields, time.Unix(metric.Timestamp, 0)))
 	c.writeAPI.Flush()
+	log.Printf("SaveMatricData: %v\n", *metric)
 	return nil
 }
 
@@ -37,11 +39,15 @@ func (c *Client) GetAggregatedData(metric *model.Metric, period string, method i
 		return 0, err
 	}
 
+	var value float64
 	if result.Next() {
-		return result.Record().Value().(float64), nil
+		value = result.Record().Value().(float64)
 	} else {
-		return metric.Value, nil
+		value = metric.Value
 	}
+
+	log.Printf("GetAggregatedData(%v, %s, %s, %d): %f\n", *metric, period, Methods[method].English, timestamp)
+	return value, nil
 }
 
 func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop int64,
@@ -80,6 +86,9 @@ func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop
 			Timestamp: result.Record().Time().Unix(),
 		})
 	}
+
+	log.Printf("GetMetricData(%s, %s, %s, %s, %s, %d, %d, %d): Found %d records\n",
+		ip, local, metricName, period, Methods[method].English, start, stop, limit, len(metrics))
 	return metrics, nil
 }
 

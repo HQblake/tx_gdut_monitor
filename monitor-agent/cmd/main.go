@@ -12,7 +12,7 @@ import (
 )
 
 func main() { //Agent端的主程序
-	err := setting.InitConfig("configs/config.yml") //读取配置文件
+	err := setting.InitConfig("configs/config.yaml") //读取配置文件
 	if err != nil {
 		fmt.Println(err)
 	}

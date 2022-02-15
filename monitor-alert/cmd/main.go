@@ -11,13 +11,12 @@ import (
 	"net"
 )
 
-var config string
-
 func init() {
+	var config string
 	flag.StringVar(&config, "config", "configs/config.yaml", "告警系统配置文件")
 	flag.Parse()
 
-	setupSetting()
+	setupSetting(config)
 	setupService()
 }
 
@@ -35,7 +34,7 @@ func main() {
 	server.Serve(lis)
 }
 
-func setupSetting() {
+func setupSetting(config string) {
 	global.Setting, _ = setting.NewSetting(config)
 }
 

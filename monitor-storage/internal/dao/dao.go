@@ -5,6 +5,7 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/dao/mysql"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/pkg/setting"
+	"log"
 )
 
 type StorageDao struct {
@@ -21,6 +22,7 @@ func NewStorageDao(s *setting.Setting) *StorageDao {
 		s.ReadSection("InfluxDB", influxdbSetting)
 		s.ReadSection("MySQL", mysqlSetting)
 		dao = &StorageDao{influxdb.NewClient(influxdbSetting), mysql.NewClient(mysqlSetting)}
+		log.Println("数据库加载完毕")
 	}
 	return dao
 }

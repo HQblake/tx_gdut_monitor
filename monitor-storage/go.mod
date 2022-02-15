@@ -3,23 +3,19 @@ module gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage
 go 1.17
 
 require (
+	github.com/go-sql-driver/mysql v1.6.0
 	github.com/influxdata/influxdb-client-go/v2 v2.7.0
 	github.com/spf13/viper v1.10.1
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
-	gorm.io/driver/mysql v1.2.3
-	gorm.io/gorm v1.22.5
 )
 
 require (
 	github.com/deepmap/oapi-codegen v1.8.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.4 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.3 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect

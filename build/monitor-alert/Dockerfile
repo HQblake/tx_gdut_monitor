@@ -11,26 +11,26 @@ RUN apk upgrade
 RUN apk add git
 
 # 从Git中将项目源码加载至镜像中
-# COPY ./monitor-manage /go/src/monitor-manage
+# COPY ./monitor-alert /go/src/monitor-alert
 RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /git
-RUN mv /git/monitor-manage /go/src/
+RUN mv /git/monitor-alert /go/src/
 
 # 编译
 # 工作目录
-WORKDIR /go/src/monitor-manage
+WORKDIR /go/src/monitor-alert
 RUN go install ./...
-RUN mv /go/bin/cmd /go/bin/manage
+RUN mv /go/bin/cmd /go/bin/alert
 
 # # 阶段二：生成最终镜像
 FROM alpine:latest
 
 # 系统默认配置文件加载到指定目录中
-COPY --from=builder /go/src/monitor-manage/configs/config.yaml /data/manage/configs
+COPY --from=builder /go/src/monitor-alert/configs /data/alert/configs
 
-COPY --from=builder /go/bin/manage /bin/manage
+COPY --from=builder /go/bin/alert /bin/alert
 # 也可以考虑拷贝一个默认的配置文件
-VOLUME ["/data/manage"]
+VOLUME ["/data/alert"]
 # 服务端口暴露
-EXPOSE 8082 8083
+EXPOSE 8081
 # 设置服务入口
-CMD ["/bin/manage", "-config", "/data/manage/configs/config.yaml"]
+CMD ["/bin/alert", "-config", "/data/alert/configs/config.yaml"]

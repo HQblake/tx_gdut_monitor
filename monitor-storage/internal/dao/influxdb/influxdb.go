@@ -3,6 +3,7 @@ package influxdb
 import (
 	"github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
+	"log"
 	"time"
 )
 
@@ -28,5 +29,6 @@ func NewClient(s *InfluxDBSetting) *Client {
 	option.SetRetryBufferLimit(uint(s.RetryBufferLimit))
 	option.SetUseGZip(s.UseGZip)
 	client := influxdb2.NewClientWithOptions(s.URL, s.Token, option)
+	defer log.Println("InfluxDB Connection Succeeded")
 	return &Client{client.WriteAPI(s.ORG, s.Bucket), client.QueryAPI(s.ORG), s.Bucket}
 }
