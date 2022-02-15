@@ -1,44 +1,48 @@
 package main
 
 import (
+	"flag"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"google.golang.org/grpc"
-	"log"
 	"net"
 )
 
+var config string
+
+func init() {
+	flag.StringVar(&config, "config", "configs/config.yaml", "告警系统配置文件")
+	flag.Parse()
+
+	setupSetting()
+	setupService()
+}
+
 func main() {
-	l, err := net.Listen("tcp",":8082")
-	if err != nil {
-		log.Fatal(err)
-	}
-	ser := grpc.NewServer()
+	server := grpc.NewServer()
+	// 注册发送服务
+	global.Send.RegisterService(server)
+	// 注册判定服务
+	global.Judgement.RegisterService(server)
+	// 注册接入服务
+	global.Receive.RegisterService(server)
 
-	// 告警系统程序启动入口
+	// 启动端口监听
+	lis, _ := net.Listen(global.Setting.Hosts.Network, global.Setting.Hosts.Server)
+	server.Serve(lis)
+}
 
-	// 初始化接收模块
+func setupSetting() {
+	global.Setting, _ = setting.NewSetting(config)
+}
 
-	// 初始化判定模块
-
-	// 初始化发送模块,入参是供管理模块调用的grpc地址
-	s := send.NewService()
-	// 发送模块的功能接口（由判定模块看情况调用）
-	//s.Send()
-	// 注册rpc服务
-	s.RegisterService(ser)
-	err = ser.Serve(l)
-	if err != nil {
-		log.Println("grpc server:", err)
-		ser.Stop()
-		return
-	}
-	ser.Stop()
-
-
-
-	// 暂时堵塞以便其他模块接入测试，之后将会是接收模块开启监听，堵塞主程序
-	select {
-
-	}
-
+func setupService() {
+	// 服务加载顺序：先加载发送服务、再加载判定服务、最后加载接入服务
+	global.Send = send.NewService()
+	global.Judgement = judgment.NewService(global.Setting, global.Send)
+	global.Receive = receive.NewService(global.Judgement)
+	// 加载接入服务待实现
 }

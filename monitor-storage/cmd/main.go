@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/global"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/global/service"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/pkg/setting"
@@ -10,8 +11,12 @@ import (
 )
 
 func init() {
+	var config string
+	flag.StringVar(&config, "config", "configs/config.yaml", "存储系统配置文件")
+	flag.Parse()
+
 	var err error
-	global.Setting, err = setting.NewSetting()
+	global.Setting, err = setting.NewSetting(config)
 	if err != nil {
 		log.Fatalln(err)
 	}
