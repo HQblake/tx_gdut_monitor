@@ -11,7 +11,7 @@ docker run -d -p 8081:8081 -v /home/f/Docker/monitor/data/alert:/data --name ale
 
 # 运行 monitor-manage
 docker build -t monitor-manage:1.0 --force-rm=true ./build/monitor-manage
-docker run -d -p 8082-8083:8082-8083 -v /home/monitor/data/manage:/data --name manage --net monitor monitor-manage:1.0
+docker run -d -p 8082:8082 -p 8088:8083 -v /home/monitor/data/manage:/data --name manage --net monitor monitor-manage:1.0
 
 # 运行 monitor-agent
 docker build -t monitor-agent:1.0 --force-rm=true ./build/monitor-agent

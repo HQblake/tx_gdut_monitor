@@ -16,3 +16,7 @@ docker run -d -p 8082-8083:8082-8083 -v /mnt/f/Docker/monitor/data/manage:/data 
 # 运行 monitor-agent
 docker build -t monitor-agent:1.0 --force-rm=true ./build/monitor-agent
 docker run -d -p 8084:8084 -v /mnt/f/Docker/monitor/data/agent:/data --name agent --net monitor monitor-agent:1.0
+
+# 运行ui模块
+docker build -t monitor-web:1.0 --force-rm=true ./build/monitor-web
+docker run -d -p 8085:80 --name web --net monitor monitor-web:1.0
