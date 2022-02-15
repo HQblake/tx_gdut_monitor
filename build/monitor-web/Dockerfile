@@ -1,7 +1,7 @@
 # 启动编译环境
 # 阶段一：用中间镜像进行编译
 FROM alpine:latest AS builder
-
+RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.15/main/ > /etc/apk/repositories
 # 配置编译环境
 # RUN command
 RUN apk update
@@ -18,4 +18,3 @@ FROM nginx:latest
 # 将dist文件中的内容复制到 /usr/share/nginx/html/ 这个目录下面
 COPY --from=builder /home/monitor/monitor-web/monitor-txui/dist/  /usr/share/nginx/html/
 EXPOSE 80
-
