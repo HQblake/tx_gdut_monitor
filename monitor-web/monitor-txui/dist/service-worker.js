@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.a711eb2c71610c1ad88f4e0e84240602.js"
+  "/precache-manifest.6dfa086e91776e611a38a07ca8e53fde.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "monitor-txui"});
