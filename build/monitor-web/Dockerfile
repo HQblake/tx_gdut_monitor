@@ -9,8 +9,9 @@ RUN apk upgrade
 RUN apk add git
 RUN apk add nodejs
 RUN apk add npm
-WORKDIR /home
-RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git monitor
+
+RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /home/monitor
+WORKDIR /home/monitor/monitor-web/monitor-txui
 RUN cd /home/monitor/monitor-web/monitor-txui
 RUN npm install
 RUN npm run build
