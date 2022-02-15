@@ -25,7 +25,7 @@ RUN mv /go/bin/cmd /go/bin/alert
 FROM alpine:latest
 
 # 系统默认配置文件加载到指定目录中
-COPY --from=builder /go/src/monitor-alert/configs /data/alert/configs
+COPY --from=builder /go/src/monitor-alert/configs/config.yaml /data/alert/configs/config.yaml
 
 COPY --from=builder /go/bin/alert /bin/alert
 # 也可以考虑拷贝一个默认的配置文件

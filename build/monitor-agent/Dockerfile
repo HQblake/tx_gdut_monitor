@@ -25,7 +25,7 @@ RUN mv /go/bin/cmd /go/bin/agent
 FROM alpine:latest
 
 # 系统默认配置文件加载到指定目录中
-COPY --from=builder /go/src/monitor-agent/configs /data/agent/configs
+COPY --from=builder /go/src/monitor-agent/configs/config.yaml /data/agent/configs/config.yaml
 
 COPY --from=builder /go/bin/agent /bin/agent
 # 也可以考虑拷贝一个默认的配置文件

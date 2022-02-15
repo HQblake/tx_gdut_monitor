@@ -25,7 +25,7 @@ RUN mv /go/bin/cmd /go/bin/storage
 FROM alpine:latest
 
 # 系统默认配置文件加载到指定目录中
-COPY --from=builder /go/src/monitor-storage/configs /data/storage/configs
+COPY --from=builder /go/src/monitor-storage/configs/config.yaml /data/storage/configs/config.yaml
 
 COPY --from=builder /go/bin/storage /bin/storage
 # 也可以考虑拷贝一个默认的配置文件
