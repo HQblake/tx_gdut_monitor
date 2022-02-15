@@ -1,4 +1,4 @@
-export var Url = 'http://127.0.0.1:8088'
+export var Url = 'http://119.91.150.124:8083'
 
 export default {
   Url

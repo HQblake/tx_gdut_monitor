@@ -1,0 +1,11 @@
+agent:
+  interval: 5
+  metric:
+    - cpu_rate
+    - mem_rate
+  dimension:
+    - ip_address
+  location: beijing
+connect:
+  host: 127.0.0.1
+  port: 8081
