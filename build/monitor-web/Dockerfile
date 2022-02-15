@@ -7,8 +7,8 @@ RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.15/main/ > /etc/apk/repositorie
 RUN apk update
 RUN apk upgrade
 RUN apk add git
-apk add nodejs
-apk add npm
+RUN apk add nodejs
+RUN apk add npm
 WORKDIR /home
 RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git monitor
 RUN cd /home/monitor/monitor-web/monitor-txui
