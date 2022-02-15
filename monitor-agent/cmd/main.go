@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-agent/internal/model"
 	receivepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-agent/internal/proto"
@@ -11,8 +12,16 @@ import (
 	"time"
 )
 
+var config string
+
+func init() {
+	flag.StringVar(&config, "config", "./configs/config.yaml", "Agent系统配置文件")
+	flag.Parse()
+}
+
 func main() { //Agent端的主程序
-	err := setting.InitConfig("configs/config.yaml") //读取配置文件
+
+	err := setting.InitConfig(config) //读取配置文件
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -53,8 +62,4 @@ func main() { //Agent端的主程序
 		req, _ := client.Report(context.Background(), &receivepb.ReportReq{Timestamp: unixtime, Metric: Metrics, Local: local})
 		fmt.Println(req.GetMsg()) //打印返回结果
 	}
-	//unixtime := time.Now().Unix()
-	//fmt.Println(unixtime)
-	//req, _ := client.Report(context.Background(), &report2.ReportReq{Timestamp: unixtime, Metric: Metrics, Local: local})
-	//fmt.Println(req.GetMsg())
 }
