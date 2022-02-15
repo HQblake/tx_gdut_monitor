@@ -18,5 +18,5 @@ RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /
 
 FROM nginx:latest
 # 将dist文件中的内容复制到 /usr/share/nginx/html/ 这个目录下面
-COPY /home/monitor/monitor-web/monitor-txui/dist/  /usr/share/nginx/html/
+COPY --from=builder  /home/monitor/monitor-web/monitor-txui/dist/  /usr/share/nginx/html/
 EXPOSE 80
