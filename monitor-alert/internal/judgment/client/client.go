@@ -31,7 +31,7 @@ func (c *Client) GetAggregation(metric string, agent *model.AgentReport, rule *m
 	if err != nil {
 		log.Println(err)
 	}
-	if resp.Code == storepb.ResponseCode_ERROR {
+	if resp.Code == storepb.BaseResponseCode_ERRORCODE {
 		log.Println(err)
 	}
 	return resp.Result
@@ -52,7 +52,7 @@ func (c *Client) SaveAlert(metric string, alert *model.AlertInfo) {
 	if err != nil {
 		log.Println(err)
 	}
-	if resp.Code == storepb.ResponseCode_ERROR {
+	if resp.Code == storepb.BaseResponseCode_ERRORCODE {
 		log.Println(resp.Msg)
 	}
 }

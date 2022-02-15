@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.2.0
 // - protoc             v3.19.3
-// source: judgment2manage.receivepb
+// source: judgment2manage.proto
 
 package judgpb
 
@@ -101,5 +101,5 @@ var ManageService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "judgment2manage.receivepb",
+	Metadata: "judgment2manage.proto",
 }

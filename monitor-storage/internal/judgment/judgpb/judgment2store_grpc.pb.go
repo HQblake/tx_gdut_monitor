@@ -4,7 +4,7 @@
 // - protoc             v3.19.3
 // source: judgment2store.proto
 
-package judgpb
+package storepb
 
 import (
 	context "context"

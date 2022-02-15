@@ -8,6 +8,7 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"google.golang.org/grpc"
+	"log"
 	"net"
 )
 
@@ -17,6 +18,7 @@ func init() {
 	flag.Parse()
 
 	setupSetting(config)
+	log.Println("配置文件加载完成")
 	setupService()
 }
 
@@ -41,7 +43,9 @@ func setupSetting(config string) {
 func setupService() {
 	// 服务加载顺序：先加载发送服务、再加载判定服务、最后加载接入服务
 	global.Send = send.NewService()
+	log.Println("发送服务加载完成")
 	global.Judgement = judgment.NewService(global.Setting, global.Send)
+	log.Println("判定服务加载完成")
 	global.Receive = receive.NewService(global.Judgement)
-	// 加载接入服务待实现
+	log.Println("接入服务加载完成")
 }

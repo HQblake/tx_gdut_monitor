@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.27.1
 // 	protoc        v3.19.3
-// source: manage2judgment.receivepb
+// source: manage2judgment.proto
 
 package judgpb
 
@@ -199,7 +199,7 @@ type Response struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Code ResponseCode `protobuf:"varint,1,opt,name=Code,proto3,enum=receivepb.ResponseCode" json:"Code,omitempty"`
+	Code ResponseCode `protobuf:"varint,1,opt,name=Code,proto3,enum=proto.ResponseCode" json:"Code,omitempty"`
 	Msg  string       `protobuf:"bytes,2,opt,name=Msg,proto3" json:"Msg,omitempty"`
 }
 
@@ -312,20 +312,20 @@ func file_manage2judgment_proto_rawDescGZIP() []byte {
 var file_manage2judgment_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_manage2judgment_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_manage2judgment_proto_goTypes = []interface{}{
-	(ResponseCode)(0),  // 0: receivepb.ResponseCode
-	(*AgentRule)(nil),  // 1: receivepb.AgentRule
-	(*MetricRule)(nil), // 2: receivepb.MetricRule
-	(*Response)(nil),   // 3: receivepb.Response
-	nil,                // 4: receivepb.AgentRule.MetricsEntry
-	nil,                // 5: receivepb.MetricRule.ThresholdEntry
+	(ResponseCode)(0),  // 0: proto.ResponseCode
+	(*AgentRule)(nil),  // 1: proto.AgentRule
+	(*MetricRule)(nil), // 2: proto.MetricRule
+	(*Response)(nil),   // 3: proto.Response
+	nil,                // 4: proto.AgentRule.MetricsEntry
+	nil,                // 5: proto.MetricRule.ThresholdEntry
 }
 var file_manage2judgment_proto_depIdxs = []int32{
-	4, // 0: receivepb.AgentRule.Metrics:type_name -> receivepb.AgentRule.MetricsEntry
-	5, // 1: receivepb.MetricRule.Threshold:type_name -> receivepb.MetricRule.ThresholdEntry
-	0, // 2: receivepb.Response.Code:type_name -> receivepb.ResponseCode
-	2, // 3: receivepb.AgentRule.MetricsEntry.value:type_name -> receivepb.MetricRule
-	1, // 4: receivepb.RuleUpdater.Update:input_type -> receivepb.AgentRule
-	3, // 5: receivepb.RuleUpdater.Update:output_type -> receivepb.Response
+	4, // 0: proto.AgentRule.Metrics:type_name -> proto.AgentRule.MetricsEntry
+	5, // 1: proto.MetricRule.Threshold:type_name -> proto.MetricRule.ThresholdEntry
+	0, // 2: proto.Response.Code:type_name -> proto.ResponseCode
+	2, // 3: proto.AgentRule.MetricsEntry.value:type_name -> proto.MetricRule
+	1, // 4: proto.RuleUpdater.Update:input_type -> proto.AgentRule
+	3, // 5: proto.RuleUpdater.Update:output_type -> proto.Response
 	5, // [5:6] is the sub-list for method output_type
 	4, // [4:5] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

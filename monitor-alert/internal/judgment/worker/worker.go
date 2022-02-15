@@ -19,7 +19,7 @@ type Worker struct {
 func NewWorker(s *setting.Setting, judg JudgFunc) *Worker {
 	ws := WorkersSetting{}
 	err := s.ReadSection("Workers", &ws)
-	if err == nil {
+	if err != nil {
 		log.Fatalln(err)
 	}
 
@@ -44,7 +44,7 @@ func NewWorker(s *setting.Setting, judg JudgFunc) *Worker {
 func (w *Worker) Finish(agent *model.AgentReport, rule *model.AgentRule, client *client.Client) model.AlertInfo {
 	var wg sync.WaitGroup
 	alert := model.AlertInfoPool.Get().(*model.AlertInfo)
-	alert.IP, alert.Local = agent.IP, agent.Local
+	alert.IP, alert.Local, alert.Metrics = agent.IP, agent.Local, make(map[string]model.MetricInfo)
 	for k, _ := range agent.Metrics {
 		wg.Add(1)
 		_ = w.workers.Invoke(task{k, agent, rule, alert, client, &wg, w.judgment})

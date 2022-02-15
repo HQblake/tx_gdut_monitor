@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/dao"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/judgment/judgpb"
+	judgpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/judgment/judgpb"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/pkg/setting"
 )
@@ -20,15 +20,15 @@ func (m *MetricService) GetAggregatedData(ctx context.Context, request *judgpb.A
 	// 1. 执行事务处理，获取聚合结果
 	value, err := m.dao.GetAggregatedData(request.Period, request.Method, metric)
 	if err != nil {
-		return &judgpb.AggregatedResponse{Code: judgpb.ResponseCode_ERROR, Msg: err.Error()}, err
+		return &judgpb.AggregatedResponse{Code: judgpb.BaseResponseCode_ERRORCODE, Msg: err.Error()}, err
 	}
 
 	// 2. 在MySQL中进行相关记录
 	err = m.dao.SaveAgentInfo(metric)
 	if err != nil {
-		return &judgpb.AggregatedResponse{Code: judgpb.ResponseCode_ERROR, Msg: err.Error()}, err
+		return &judgpb.AggregatedResponse{Code: judgpb.BaseResponseCode_ERRORCODE, Msg: err.Error()}, err
 	}
-	return &judgpb.AggregatedResponse{Code: judgpb.ResponseCode_SUCCESS, Msg: "SUCCESS", Result: value}, nil
+	return &judgpb.AggregatedResponse{Code: judgpb.BaseResponseCode_SUCCESSCODE, Msg: "SUCCESS", Result: value}, nil
 }
 
 func (m *MetricService) InsertAlertInfo(ctx context.Context, request *judgpb.HistoryInfoRequest) (*judgpb.HistoryInfoResponse, error) {
@@ -37,9 +37,9 @@ func (m *MetricService) InsertAlertInfo(ctx context.Context, request *judgpb.His
 	parseHistory(request, history)
 	err := m.dao.SaveAlertInfo(history)
 	if err != nil {
-		return &judgpb.HistoryInfoResponse{Code: judgpb.ResponseCode_ERROR, Msg: err.Error()}, err
+		return &judgpb.HistoryInfoResponse{Code: judgpb.BaseResponseCode_ERRORCODE, Msg: err.Error()}, err
 	}
-	return &judgpb.HistoryInfoResponse{Code: judgpb.ResponseCode_SUCCESS, Msg: "SUCCESS"}, nil
+	return &judgpb.HistoryInfoResponse{Code: judgpb.BaseResponseCode_SUCCESSCODE, Msg: "SUCCESS"}, nil
 }
 
 func NewService(s *setting.Setting) *MetricService {

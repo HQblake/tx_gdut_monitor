@@ -21,8 +21,20 @@ type Service struct {
 }
 
 func (s *Service) Update(ctx context.Context, rule *judgpb.AgentRule) (*judgpb.Response, error) {
-	//TODO implement me
-	panic("implement me")
+	ruleTemp := model.AgentRulePool.Get().(*model.AgentRule)
+	defer model.AgentRulePool.Put(ruleTemp)
+	parseAgentRule(rule, ruleTemp)
+	err := s.cache.SetRuleByID(rule.IP, rule.Local, ruleTemp)
+	if err != nil {
+		return &judgpb.Response{
+			Code: judgpb.ResponseCode_ERROR,
+			Msg:  err.Error(),
+		}, err
+	}
+	return &judgpb.Response{
+		Code: judgpb.ResponseCode_SUCCESS,
+		Msg:  err.Error(),
+	}, nil
 }
 
 func (s *Service) Check(agent *model.AgentReport) error {
@@ -65,4 +77,17 @@ func judgment(metric string, agent *model.AgentReport, rule *model.AgentRule, cl
 		}
 	}
 	return
+}
+
+func parseAgentRule(rule *judgpb.AgentRule, temp *model.AgentRule) {
+	temp.IP = rule.IP
+	temp.Local = rule.Local
+	temp.Metrics = make(map[string]model.MetricRule)
+	for k, v := range rule.Metrics {
+		temp.Metrics[k] = model.MetricRule{
+			Method:    v.Method,
+			Period:    v.Period,
+			Threshold: v.Threshold,
+		}
+	}
 }
