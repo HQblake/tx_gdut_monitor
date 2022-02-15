@@ -1,0 +1,31 @@
+InfluxDB:   # InfluxDB配置
+  URL: http://81.71.165.211:8086/
+  ORG: tx-monitor
+  Token: ohwL8Jc2vEUKL3AsytCXtuA35_MimZI9w2NLE3ARhYksk8_jWQ1phl9srfaGfv_K1tA7H2X30Aet0jdH7OD2Uw==
+  Bucket: metric
+  BatchSize: 20   # 批处理数量
+  LogLevel: 0
+  FlushIntervalMs: 1000     # 单位为ms
+  RetryInterval: 5000
+  MaxRetryIntervalMs: 125000  # 单位为ms
+  MaxRetries: 5
+  MaxRetryTime: 180000
+  ExponentialBase: 2
+  UseGZip: False
+  RetryBufferLimit: 50000
+  Precision: 1      # 单位为ns
+  HttpRequestTimeout: 20  # 单位为s
+MySQL:     # MySQL配置
+  DBType: mysql
+  Username: root
+  Password: tx-monitor-gdut-group2
+  Host: 81.71.165.211:3307
+  DBName: monitor
+  Charset: utf8mb4
+  ParseTime: True
+  MaxIdleConns: 10
+  MaxOpenConns: 10
+  MaxLifetime: 3
+Hosts:
+  Network: tcp
+  Server: ':8080'

@@ -1,0 +1,14 @@
+admin:
+  listen: "127.0.0.1:8083"
+  server: "127.0.0.1:8082"
+store:
+  listen: "storage:8080"
+alert:
+  listen: "alert:8081"
+rule:
+  method: 1
+  period: "5m"
+  threshold:
+    warn: 0.03
+    error: 0.06
+    panic: 0.08

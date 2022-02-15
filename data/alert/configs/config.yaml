@@ -1,0 +1,15 @@
+Workers:
+  Capacity: 10000       # 协程池容量
+  ExpiryDuration: 30s   # 协程过期时间，过期后的协程会被清理
+  Nonblocking: false    # 非阻塞提交，默认否，任务无worker执行时阻塞，当为true时，无worker则立即返回nil
+  PreAlloc: false       # 内存预分配，是否初始化Pool的时候分配worker资源
+  MaxBlockingTasks: 0   # 最大阻塞任务数，默认0，任务阻塞直到分配到worker；当非0时，达到最大任务数，不执行任务并返回overload
+Redis:
+  Host: 81.71.165.211:6379
+  Password: tx-monitor-gdut-group2
+  DB: 1
+Hosts:
+  Network: tcp
+  Server: ':8081'
+  ManageClient: 'manage:8082'
+  StorageClient: 'storage:8080'
