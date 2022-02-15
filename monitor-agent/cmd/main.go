@@ -44,8 +44,8 @@ func main() { //Agent端的主程序
 	client := receivepb.NewReportServerClient(coon) //注册服务
 	unixtime := time.Now().Unix()                   //获取当前时间戳
 	for _, str := range metrics {
-		f := model.GlobalMetrics[str] //从全局Map中获取取得对应指标值的函数
-		Metrics[str] = f()            //将指标值填入Map
+		f := model.GlobalMetrics[str]     //从全局Map中获取取得对应指标值的函数
+		Metrics[str] = f() / float64(100) //将指标值填入Map
 		fmt.Println(str, ":", Metrics[str])
 	}
 	//发起grpc请求，上报数据
@@ -54,8 +54,8 @@ func main() { //Agent端的主程序
 	for range time.Tick(time.Duration(interval) * time.Second) { //定时器，以大小为Internal的固定时间间隔重复上报数据
 		unixtime := time.Now().Unix() //获取当前时间戳
 		for _, str := range metrics {
-			f := model.GlobalMetrics[str] //从全局Map中获取取得对应指标值的函数
-			Metrics[str] = f()            //将指标值填入Map
+			f := model.GlobalMetrics[str]     //从全局Map中获取取得对应指标值的函数
+			Metrics[str] = f() / float64(100) //将指标值填入Map
 			fmt.Println(str, ":", Metrics[str])
 		}
 		//发起grpc请求，上报数据

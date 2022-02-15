@@ -46,7 +46,7 @@ func (c *Client) GetAggregatedData(metric *model.Metric, period string, method i
 		value = metric.Value
 	}
 
-	log.Printf("GetAggregatedData(%v, %s, %s, %d): %f\n", *metric, period, Methods[method].English, timestamp)
+	log.Printf("GetAggregatedData(%v, %s, %s, %d): %f\n", *metric, period, Methods[method].English, timestamp, value)
 	return value, nil
 }
 
