@@ -1,19 +1,19 @@
 import { fetchGet, fetchPost } from '@/request.js'
 
-export function GetWarnList (ip, local, metric, begin, limit) {
+export function GetMetricsWithTime (ip, local, metric, begin, limit) {
   console.log(ip, local, metric, begin, limit);
   let url = "warn/metrics/" + ip + "/" + local + "/" + metric + "/" + begin + "/" + limit
   return fetchGet(url, {})
 }
 
 // 获取所有告警信息
-export function GetWarnList () {
+export function GetWarnInfo () {
   let url = "warn/warnList"
   return fetchGet(url, {})
 }
 
 // 根据id获取告警信息
-export function GetWarnList (id) {
+export function GetWarnInfoWithId (id) {
   console.log(id)
   let url = "warn/warnId/" + id
   return fetchGet(url, {})

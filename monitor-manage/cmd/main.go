@@ -2,21 +2,22 @@ package main
 
 import (
 	"flag"
+	"log"
+	"net"
+
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/configs"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/http"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"log"
-	"net"
 )
 
 var configPath string
 var debug bool
 
 func init() {
-	flag.StringVar(&configPath, "config", "./configs/config.yaml", "config path")
+	flag.StringVar(&configPath, "config", "../configs/config.yaml", "config path")
 	flag.BoolVar(&debug, "debug", true, "is debug")
 }
 
@@ -97,11 +98,11 @@ func Cors() gin.HandlerFunc {
 		method := c.Request.Method
 		// 正式环境最好限制源
 		c.Header("Access-Control-Allow-Origin", "*")
-	    c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
-	    c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-	    c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
-	    c.Header("Access-Control-Allow-Credentials", "true")
-		
+		c.Header("Access-Control-Allow-Headers", "Content-Type,AccessToken,X-CSRF-Token, Authorization, Token")
+		c.Header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+		c.Header("Access-Control-Expose-Headers", "Content-Length, Access-Control-Allow-Origin, Access-Control-Allow-Headers, Content-Type")
+		c.Header("Access-Control-Allow-Credentials", "true")
+
 		if method == "OPTIONS" {
 			c.JSON(200, "ok!")
 		}

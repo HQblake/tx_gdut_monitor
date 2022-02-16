@@ -23,7 +23,7 @@ func (h *Handler) GetWarnInfo(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040001",
-			"msg":  "获取警告列表有误",
+			"msg":  "获取警告列表有误" + err.Error(),
 			"data": nil,
 		})
 		return
