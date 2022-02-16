@@ -6,6 +6,7 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/manage/managepb"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/pkg/setting"
+	"strconv"
 )
 
 type SendService struct {
@@ -45,7 +46,7 @@ func (s *SendService) AddConfig(ctx context.Context, request *managepb.AddSendRe
 	}
 	return &managepb.BaseResponse{
 		Code: managepb.ResponseCode_SUCCESS,
-		Msg:  string(id),
+		Msg:  strconv.Itoa(int(id)),
 	}, nil
 }
 

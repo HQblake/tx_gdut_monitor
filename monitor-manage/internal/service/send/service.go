@@ -114,6 +114,7 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 	if resp.GetCode() != managepb.ResponseCode_SUCCESS {
 		return fmt.Errorf("add send config store service error %s", resp.GetMsg())
 	}
+	fmt.Println(resp.GetMsg())
 	id, err := strconv.Atoi(resp.GetMsg())
 	if err != nil {
 		return err
@@ -210,6 +211,7 @@ func (s *Service) Init() {
 		if err != nil {
 			log.Println(err)
 		}
+
 		res := make(map[string]*sendpb.InitConfig)
 		for _, config := range list {
 			agent := fmt.Sprintf("%s-%s", config.IP, config.Local)
@@ -232,6 +234,7 @@ func (s *Service) Init() {
 				res[agent].Config = append(res[agent].Config, entry)
 			}
 		}
+		fmt.Printf("begin init, %+v", res)
 		resp, err := s.send.Init(context.Background(), &sendpb.InitRequest{
 			Config: res,
 		})

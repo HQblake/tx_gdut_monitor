@@ -8,7 +8,7 @@ export function GetSendConfigs (ip, local) {
 
 export function AddSendConfig (ip, local, sendType, level, config) {
   console.log(ip, local, sendType, level, config)
-  let url = '/send/info/' + ip + '/' + local
+  let url = '/send/add/' + ip + '/' + local
   return fetchPost(url, {
     'sendType': sendType,
     'level': level,

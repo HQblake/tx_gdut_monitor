@@ -48,6 +48,7 @@ func (s *Service) RegisterService(ser *grpc.Server) {
 }
 
 func (s *Service) Send(alert *model.AlertInfo) error {
+	fmt.Printf("开始告警：%+v",alert)
 	outputs := s.agents.GetOutputs(fmt.Sprintf("%s-%s", alert.IP, alert.Local))
 	for _, info := range alert.Metrics {
 		// 考虑开协程去分别处理
