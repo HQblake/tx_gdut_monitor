@@ -1,3 +1,9 @@
+<!--
+ * @Description: 
+ * @Autor: yzq
+ * @Date: 2022-02-16 14:28:12
+ * @LastEditors: yzq
+-->
 <template>
   <div class="about">
     <div class='headline'>
@@ -22,3 +28,8 @@ export default {
   }
 }
 </script>
+
+<style lang="less">
+
+  
+</style>

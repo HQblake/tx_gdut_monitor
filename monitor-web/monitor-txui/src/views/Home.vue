@@ -17,9 +17,12 @@
       </el-row>
 
       <el-table
-        :data="tableData.filter(data => !search )" 
-      
-        >
+        :data="tableData.filter(data => !search 
+              || data.ip == search.toLowerCase()
+              || (data.ip.toString() + data.port.toString()) == search.toLowerCase()
+              || data.local.toLowerCase().includes(search.toLowerCase())
+              || (data.is_live ? '是' : '否') == search.toLowerCase())
+      ">
 
         <el-table-column
           label="Host"
@@ -75,35 +78,9 @@
 import { GetAllAgent } from '@/api/agent'
 export default {
   name: 'home',
-  data () {
-    return {
-      dialogVisible: false,
-      search: '',
-      tableData: [
-        {
-          id: 1,
-          ip: '127.0.0.1',
-          local: 'beijing'
-        },
-        {
-          id: 2,
-          ip: '127.0.0.2',
-          local: 'beijing'
-        },
-        {
-          id: 3,
-          ip: '127.0.0.3',
-          local: 'beijing'
-        }
-      ]
-    }
-  },
   methods: {
     deleteData (index, row) {
       this.dialogVisible = false
-      console.log(index)
-      console.log(row)
-
       this.tableData.splice(index, 1)
     },
     openDelete (index, row) {
@@ -138,11 +115,13 @@ export default {
   },
   data () {
     return {
+      dialogVisible: false,
+      search: '',
       tableData: [{
         ip: '127.0.0.1',
         port: '80',
         local: '北京',
-        is_live: true
+        is_live: false
       }, {
         ip: '127.0.0.2',
         port: '80',
@@ -155,7 +134,7 @@ export default {
         is_live: true
       }, {
         ip: '127.0.0.1',
-        port: '80',
+        port: '81',
         local: '北京',
         is_live: true
       }, {
@@ -178,16 +157,16 @@ export default {
     }
   },
   created () {
-    GetAllAgent().then(data => {
-      this.tableData = data.data
-    })
-      .catch(err => {
-        if (err.msg) {
-          this.$alert(err.msg)
-          return
-        }
-        this.$alert(err)
-      })
+  //   GetAllAgent().then(data => {
+  //     this.tableData = data.data
+  //   })
+  //     .catch(err => {
+  //       if (err.msg) {
+  //         this.$alert(err.msg)
+  //         return
+  //       }
+  //       this.$alert(err)
+  //     })
   },
   methods: {
     handleWarn (row) {
@@ -212,9 +191,9 @@ export default {
     },
     formateLive (row, column, cellValue) {
       if (cellValue) {
-        return '是'
+        return "是"
       }
-      return '否'
+      return "否"
     }
 
   }

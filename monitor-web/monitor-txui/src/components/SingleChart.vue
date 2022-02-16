@@ -76,7 +76,7 @@ export default {
           label: '24h'
         }
       ],
-      selector: '120',
+      selector: '30',
       timePickerValue : [],
       // value1: [new Date(), new Date()],
       elId: null,
