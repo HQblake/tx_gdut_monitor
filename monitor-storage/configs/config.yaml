@@ -16,7 +16,7 @@ InfluxDB:   # InfluxDB配置
   Precision: 1      # 单位为ns
   HttpRequestTimeout: 20  # 单位为s
 MySQL:     # MySQL配置
-  DBType: mysql
+  DBType: monitor-mysql
   Username: root
   Password: tx-monitor-gdut-group2
   Host: 81.71.165.211:3307
