@@ -14,6 +14,7 @@ import Warning from './views/Warning'
 import WarnListChart from './views/WarnListChart'
 import warnDetail from './views/WarnDetail'
 import sendDetail from './views/SendDetail'
+import showDetail from './views/Show'
 
 Vue.use(Router)
 
@@ -60,6 +61,11 @@ export default new Router({
       path: '/send/:ip/:local',
       name: 'sendDetail',
       component: sendDetail
+    },
+    {
+      path: '/show/:ip/:local',
+      name: 'showDetail',
+      component: showDetail
     }
   ]
 })

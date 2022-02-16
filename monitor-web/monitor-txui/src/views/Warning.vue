@@ -14,7 +14,7 @@
         :data="
           tableData.filter(
             (data) =>
-              !search || data.level.toLowerCase().includes(search.toLowerCase())
+              !search || data.level.toLowerCase().includes(search.toLowerCase()) || data.level.toLowerCase().includes(search.toLowerCase())
           )
         "
         :header-cell-style="{ height: '100px' }"
@@ -42,6 +42,7 @@
         >
         </el-table-column>
         <el-table-column
+          min-width="100px"
           label="开始时间"
           prop="startTime"
           align="center"
@@ -71,15 +72,15 @@
         >
         </el-table-column>
 
-        <el-table-column align="center">
+        <el-table-column align="center" min-width='100px'>
           <template slot="header" slot-scope="scope">
             <el-input
               v-model="search"
               size="mini"
-              placeholder="输入关键字搜索"
+              placeholder="输入级别关键字进行搜索 "
             />
           </template>
-          <template slot-scope="scope">
+          <template slot-scope="scope" >
             <el-button size="mini" @click="handleEdit(scope.$index, scope.row)"
               >Edit</el-button
             >

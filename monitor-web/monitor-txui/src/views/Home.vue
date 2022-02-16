@@ -17,23 +17,34 @@
       </el-row>
 
       <el-table
-        :data="tableData.filter(data => !search || (data.local.toLowerCase().includes(search.toLowerCase()) || data.ip.toLowerCase().includes(search.toLowerCase())))" fit>
+        :data="tableData.filter(data => !search )" 
+      
+        >
+
         <el-table-column
           label="Host"
+          align="center"
+          header-aligh="center"
           :formatter="formateAgent">
         </el-table-column>
         <el-table-column
           label="区域"
+          align="center"
+          header-aligh="center"
           prop="local">
         </el-table-column>
         <el-table-column
           :formatter="formateLive"
           prop="is_live"
           width="100"
+          align="center"
+          header-aligh="center"
           label="是否存活">
         </el-table-column>
         <el-table-column
           align="center"
+          header-aligh="center"
+          min-width = '200px'
           label="agent管理">
           <template slot-scope="scope">
             <el-button type="primary"
@@ -45,6 +56,9 @@
             <el-button type="danger"
               size="mini"
               @click="handleHistory(scope.row)">告警历史详情</el-button>
+            <el-button type="info"
+              size="mini"
+              @click="handleShow(scope.row)">数据详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -185,6 +199,9 @@ export default {
     handleHistory (row) {
       // 待定
       this.$router.push('/send/' + row.ip + '/' + row.local)
+    },
+    handleShow (row) {
+      this.$router.push('/show/' + row.ip + '/' + row.local)
     },
     formateAgent (row, column, cellValue) {
       if (row.port) {

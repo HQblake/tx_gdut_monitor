@@ -8,7 +8,8 @@
   <div>
     <div class="nav">
       <div class="subNav">
-        <el-select v-model="selector" placeholder="时长">
+        
+        <el-select v-model="selector" placeholder="时长" class='select'>
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -309,7 +310,6 @@ export default {
 .nav {
   width: 100vw;
   height: 100px;
-  margin: auto;
 }
 .subNav {
   display: flex;
@@ -320,5 +320,8 @@ export default {
 .block{
   margin-left: 10px;
   margin-right: 10px;
+}
+.select{
+  width: 200px;
 }
 </style>
