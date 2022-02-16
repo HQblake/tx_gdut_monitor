@@ -18,4 +18,5 @@ RUN npm run build
 FROM nginx:latest
 # 将dist文件中的内容复制到 /usr/share/nginx/html/ 这个目录下面
 COPY --from=builder  /home/monitor/monitor-web/monitor-txui/dist/  /usr/share/nginx/html/
+VOLUME ["/usr/share/nginx/html/static"]
 EXPOSE 80
