@@ -53,12 +53,12 @@ export default new Router({
       component: WarnListChart
     },
     {
-      path: '/warn/:ip/:local',
+      path: '/warn/detail',
       name: 'warnDetail',
       component: warnDetail
     },
     {
-      path: '/send/:ip/:local',
+      path: '/send/detail',
       name: 'sendDetail',
       component: sendDetail
     },

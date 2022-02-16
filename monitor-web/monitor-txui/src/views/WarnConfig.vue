@@ -114,7 +114,7 @@ export default {
   },
   methods: {
     handleEdit (row) {
-      this.$router.push('/warn/' + row.ip + '/' + row.local)
+      this.$router.push({ path:'/warn/detail', query: {ip: row.ip, local: row.local} });
     },
     formateMetric (row, column, cellValue) {
       return cellValue.join(' , ').toString()
