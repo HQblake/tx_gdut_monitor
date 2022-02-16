@@ -19,4 +19,4 @@ docker run -d -p 8084:8084 -v /home/monitor/data/agent:/data/agent --name agent 
 
 # 运行ui模块
 docker build -t monitor-web:1.0 --force-rm=true ./build/monitor-web
-docker run -d -p 8085:80 --name web --net monitor monitor-web:1.0
+docker run -d -p 8085:80 -v /home/monitor/data/web:/usr/share/nginx/html/static --name web --net monitor monitor-web:1.0

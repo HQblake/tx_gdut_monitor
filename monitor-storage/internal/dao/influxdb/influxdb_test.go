@@ -10,10 +10,10 @@ import (
 )
 
 var setting = &InfluxDBSetting{
-	URL:                "http://127.0.0.1:8086",
-	ORG:                "personal",
-	Token:              "FTGYhVo9DwF5v56ZxFC4j56R4TE-L6scyeO5jBf-eHsKPjj7O1dRl5dz2sDf65DuKUl-vlvt3exVrzuMBWKzig==",
-	Bucket:             "metric_test",
+	URL:                "http://81.71.165.211:8086/",
+	ORG:                "tx-monitor",
+	Token:              "W494CW95RhZzEc95DpxubUw19EoBuKxCxAlv3YfVCS4KRmYnJf6MhPJGWXFvzkX4hJ76-ZDBIwpV2D76wIZMcA==",
+	Bucket:             "metric",
 	BatchSize:          20,
 	LogLevel:           0,
 	FlushIntervalMs:    1000,
@@ -30,7 +30,7 @@ var setting = &InfluxDBSetting{
 
 func TestClient_SaveMatricData(t *testing.T) {
 	client := NewClient(setting)
-	writeNum := 10000
+	writeNum := 1
 
 	// 创建时间戳
 	now := time.Now().Unix()

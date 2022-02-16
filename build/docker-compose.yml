@@ -75,6 +75,6 @@ services:
     networks:
       - monitor
     ports:
-      - "8086:8086"
+      - "8086:80"
     depends_on:
       - monitor-agent
