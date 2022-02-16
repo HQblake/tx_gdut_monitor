@@ -2,7 +2,7 @@ admin:
   listen: ":8083"
   server: ":8082"
 store:
-  listen: "119.91.150.124:8080"
+  listen: "127.0.0.1:8080"
 alert:
   listen: "127.0.0.1:8081"
 rule:
