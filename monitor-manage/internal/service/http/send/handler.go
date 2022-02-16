@@ -61,7 +61,7 @@ func (h *Handler) AddSendConfig(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "000001",
-			"msg":  "参数level信息有误，请重试",
+			"msg":  "参数level信息有误，请重试" + err.Error(),
 			"data": nil,
 		})
 		return
@@ -81,7 +81,7 @@ func (h *Handler) AddSendConfig(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "030002",
-			"msg":  "新增agent发送配置出错",
+			"msg":  "新增agent发送配置出错" + err.Error(),
 			"data": nil,
 		})
 		return
@@ -139,7 +139,7 @@ func (h *Handler) UpdateSendConfig(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "030003",
-			"msg":  "更新agent发送配置出错",
+			"msg":  "更新agent发送配置出错" + err.Error(),
 			"data": nil,
 		})
 		return

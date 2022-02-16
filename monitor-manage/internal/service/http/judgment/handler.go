@@ -35,7 +35,7 @@ func (h *Handler) GetAllRule(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "020003",
-			"msg":  "获取agent信息出错",
+			"msg":  "获取agent信息出错" + err.Error(),
 			"data": nil,
 		})
 		return
@@ -44,7 +44,7 @@ func (h *Handler) GetAllRule(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "020001",
-			"msg":  "获取agent rule信息出错",
+			"msg":  "获取agent rule信息出错" + err.Error(),
 			"data": nil,
 		})
 		return
