@@ -14,7 +14,10 @@
         :data="
           tableData.filter(
             (data) =>
-              !search || data.level.toLowerCase().includes(search.toLowerCase()) || data.level.toLowerCase().includes(search.toLowerCase())
+              !search || data.id == (search.toLowerCase()) 
+              || data.level.toLowerCase().includes(search.toLowerCase())
+              || data.tabName.toLowerCase().includes(search.toLowerCase())
+              || data.startTime.includes(search)
           )
         "
         :header-cell-style="{ height: '100px' }"
@@ -77,7 +80,7 @@
             <el-input
               v-model="search"
               size="mini"
-              placeholder="输入级别关键字进行搜索 "
+              placeholder="输入关键字进行搜索 "
             />
           </template>
           <template slot-scope="scope" >
@@ -109,7 +112,7 @@ export default {
       tableData: [
         {
           id: 1,
-          tabName: 'cpu使用',
+          tabName: 'cpu利用率',
           level: '严重',
           startTime: '2022-02-10 18:00:00',
           outliers: 85,
@@ -118,18 +121,18 @@ export default {
         },
         {
           id: 2,
-          tabName: 'cpu使用',
+          tabName: 'cpu利用率',
           level: '严重',
-          startTime: '2022-02-10 18:00:00',
+          startTime: '2022-02-10 19:00:00',
           outliers: 85,
           threshold: 80,
           during: 30
         },
         {
           id: 3,
-          tabName: 'cpu使用',
+          tabName: 'mem利用率',
           level: '中等',
-          startTime: '2022-02-10 18:00:00',
+          startTime: '2022-02-10 20:00:00',
           outliers: 85,
           threshold: 80,
           during: 30

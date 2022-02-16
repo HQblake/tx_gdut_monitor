@@ -21,12 +21,14 @@
         <div class="block">
           <span class="demonstration"></span>
           <el-date-picker
-            v-model="value1"
+            v-model="timePickerValue"
             type="datetimerange"
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd HH:mm:ss"
+            :default-time="['08:00:00', '12:00:00']"
+            :default-value="new Date()"
           >
           </el-date-picker>
         </div>
@@ -74,9 +76,9 @@ export default {
           label: '24h'
         }
       ],
-      selector: '30',
-      value1: [new Date(2000, 10, 10, 10, 10), new Date(2000, 10, 11, 10, 10)],
-      value2: '',
+      selector: '120',
+      timePickerValue : [],
+      // value1: [new Date(), new Date()],
       elId: null,
       name: 1,
       chartTitle: null,
@@ -103,7 +105,8 @@ export default {
         [30, 40],
         [45, 60],
         [50, 40]
-      ]
+      ],
+      thisTime: Date()
     }
   },
   computed: {
@@ -275,27 +278,16 @@ export default {
       console.log(this.value1)
       let time = this.value1[0].toString()
       console.log(time)
+    },
+    now() {
+      var thisTime = new Date()
+      let timeS = new Date(thisTime.setMinutes(thisTime.getMinutes() - this.selector))
+      this.timePickerValue = [timeS, new Date()]
     }
-    // getCpu(){
-    //   for (let i=0; i<this.runtime.length; i++) {
-    //     this.cpu.push(this.runtime[i][0])
-    //   }
-    // },
-    // getMem(){
-    //   for (let i=0; i<this.runtime.length; i++) {
-    //     this.mem.push(this.runtime[i][1])
-    //   }
-    // }
   },
   mounted () {
-    // this.elId = guid();
-    // generateUuid().then((elId)=>{
-    //   this.elId =  elId;
-    //   console.log('create',this.elId);
-    // })
-    // console.log(this.elId);
-    // this.getUlId();
     this.drawChart()
+    this.now()
   },
   components: {}
 }
