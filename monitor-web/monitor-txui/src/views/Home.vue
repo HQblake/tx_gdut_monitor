@@ -191,10 +191,11 @@ export default {
   },
   methods: {
     handleWarn (row) {
-      this.$router.push('/warn/' + row.ip + '/' + row.local)
+      this.$router.push({ path:'/warn/detail', query: {ip: row.ip, local: row.local} });
+     
     },
     handleSend (row) {
-      this.$router.push('/send/' + row.ip + '/' + row.local)
+      this.$router.push({ path:'/send/detail', query: {ip: row.ip, local: row.local} });
     },
     handleHistory (row) {
       // 待定

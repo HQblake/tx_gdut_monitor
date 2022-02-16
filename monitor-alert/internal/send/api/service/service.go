@@ -21,6 +21,7 @@ func NewService(agents output.IManager) *Service {
 }
 
 func (s *Service) Set(ctx context.Context, request *sendpb.UpdateRequest) (*sendpb.SendResponse, error) {
+	fmt.Println(request.String())
 	outputs := s.agents.GetOutputs(fmt.Sprintf("%s-%s", request.GetIP(), request.GetLocal()))
 	conf := output.Config{
 		Name: strings.ToLower(request.GetConfig().GetConf().GetSendType().String()),
@@ -41,6 +42,7 @@ func (s *Service) Set(ctx context.Context, request *sendpb.UpdateRequest) (*send
 }
 
 func (s *Service) Del(ctx context.Context, request *sendpb.DelRequest) (*sendpb.SendResponse, error) {
+	fmt.Println(request.String())
 	outputs := s.agents.GetOutputs(fmt.Sprintf("%s-%s", request.GetIP(), request.GetLocal()))
 
 	err := outputs.Del(int(request.GetConfigID()))
@@ -57,6 +59,7 @@ func (s *Service) Del(ctx context.Context, request *sendpb.DelRequest) (*sendpb.
 }
 
 func (s *Service) Init(ctx context.Context, request *sendpb.InitRequest) (*sendpb.SendResponse, error) {
+	fmt.Println("init:",request.GetConfig())
 	for agent, config := range request.GetConfig() {
 		outputs := s.agents.GetOutputs(agent)
 		for _, c := range config.GetConfig() {

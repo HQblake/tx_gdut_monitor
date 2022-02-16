@@ -102,6 +102,8 @@
 </template>
 
 <script>
+import { GetWarnList } from '@/api/show'
+
 export default {
   name: 'warning',
   components: {},

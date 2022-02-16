@@ -167,8 +167,11 @@ export default {
   },
 
   created () {
-    this.ip = this.$route.params.ip
-    this.local = this.$route.params.local
+    this.ip = this.$route.query.ip
+    this.local = this.$route.query.local
+    if(!this.ip || !this.local){
+      this.$router.push({ path:'/'});
+    }
     this.id = -1
     this.sendType = ParseSendtype(1)
     this.level = ParseLevel(1)

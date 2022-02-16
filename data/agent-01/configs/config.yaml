@@ -7,5 +7,5 @@ agent:
     - ip_address
   location: beijing
 connect:
-  host: 127.0.0.1
+  host: alert
   port: 8081
