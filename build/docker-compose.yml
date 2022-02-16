@@ -2,9 +2,22 @@ version: "3.9"
 networks:
   monitor:
     driver: bridge
-    external: true
 
 services:
+#  mysql:
+#    build: ./monitor-mysql
+#    container_name: mysql
+#    networks:
+#      - monitor
+#    ports:
+#      - "9090:3306"
+#    volumes:
+#      - $PWD/data/mysql/conf:/etc/mysql/
+#      - $PWD/data/mysql/data:/var/lib/mysql
+#    environment:
+#      MYSQL_ROOT_PASSWORD: tx-monitor-gdut-group2
+#      MYSQL_DATABASE: monitor
+
   monitor-storage:
     build: ./monitor-storage
     container_name: storage
@@ -14,9 +27,9 @@ services:
       - "8080:8080"
     volumes:
       - $PWD/data/storage:/data/storage
-    depends_on:
-      - influxdb
-      - mysql
+#    depends_on:
+#      - influxdb
+#      - mysql
 
   monitor-alert:
     build: ./monitor-alert
@@ -28,7 +41,7 @@ services:
     volumes:
       - $PWD/data/alert:/data/alert
     depends_on:
-      - redis
+#      - redis
       - monitor-storage
 
   monitor-manage:
@@ -65,5 +78,3 @@ services:
       - "8086:8086"
     depends_on:
       - monitor-agent
-
-
