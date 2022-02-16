@@ -1,20 +1,19 @@
 # 启动编译环境
 # 阶段一：用中间镜像进行编译
-FROM alpine:latest AS builder
-RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.15/main/ > /etc/apk/repositories
+FROM node:14-alpine AS builder
+# RUN echo -e http://mirrors.ustc.edu.cn/alpine/v3.15/main/ > /etc/apk/repositories
+
 # 配置编译环境
-# RUN command
 RUN apk update
 RUN apk upgrade
 RUN apk add git
-# RUN apk add nodejs
-# RUN apk add npm
 
+# 拉取并打包项目源码
 RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /home/monitor
-# WORKDIR /home/monitor/monitor-web/monitor-txui
-# RUN cd /home/monitor/monitor-web/monitor-txui
-# RUN npm install
-# RUN npm run build
+WORKDIR /home/monitor/monitor-web/monitor-txui
+RUN cd /home/monitor/monitor-web/monitor-txui
+RUN npm install node-sass --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
+RUN npm run build
 
 FROM nginx:latest
 # 将dist文件中的内容复制到 /usr/share/nginx/html/ 这个目录下面
