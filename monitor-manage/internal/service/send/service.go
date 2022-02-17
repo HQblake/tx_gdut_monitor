@@ -251,6 +251,7 @@ func (s *Service) Init() {
 		})
 		if err != nil {
 			log.Println(err)
+			return
 		}
 		if resp.GetCode() != sendpb.SendResponse_SUCCESS {
 			log.Printf("init send service error %s", resp.GetMsg())
