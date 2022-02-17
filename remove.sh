@@ -1,6 +1,3 @@
-# 执行docker compose
-docker-compose -f ./build/docker-compose.yml up
-
 # 重命名镜像
 # docker tag build_monitor-mysql:latest monitor-mysql:1.0
 docker tag build_monitor-storage:latest monitor-storage:1.0
