@@ -26,6 +26,8 @@ func (i *Info) ParseMethod(method int32) {
 	m, ok := methodType[method]
 	if ok {
 		i.Method = m
+		return
 	}
 	i.Method = "unknown"
+	return
 }

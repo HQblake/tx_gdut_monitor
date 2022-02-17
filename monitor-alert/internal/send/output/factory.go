@@ -34,8 +34,8 @@ type FactoryHandler struct {
 
 
 func (f *FactoryHandler) Register(name string, factory IFactory) error {
-	_, err := f.Get(name)
-	if err != nil{
+	_, ok := f.data[name]
+	if ok {
 		return fmt.Errorf("duplicate register %s\n", name)
 	}
 	f.data[name] = factory

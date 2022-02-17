@@ -30,7 +30,7 @@
         </el-table-column>
         <el-table-column
           :formatter="formateSendType"
-          prop="sendType"
+          prop="send_type"
           label="告警类型">
         </el-table-column>
         <el-table-column
@@ -126,7 +126,7 @@ export default {
           id: 1,
           ip: '127.0.0.1',
           local: '北京',
-          sendType: 0,
+          send_type: 0,
           level: 0,
           config: `{"target": "526756656@qq.com,123456789@163.com", "format_type": "html"}`
         },
@@ -134,7 +134,7 @@ export default {
           id: 11,
           ip: '127.0.0.1',
           local: '广州',
-          sendType: 1,
+          send_type: 1,
           level: 1,
           config: `{"topic": "test", "format_type": "line", "address": "127.0.0.1:8554,127.0.0.2:7894", "version": "0.2.0.1", "partition_type": "hash","partition":0, "partition_key": "test"}`
         },
@@ -142,7 +142,7 @@ export default {
           id: 12,
           ip: '127.0.0.1',
           local: '深圳',
-          sendType: 2,
+          send_type: 2,
           level: 2,
           config: `{"topic": "test_nsq", "format_type": "json", "address": "127.0.0.1:1234"}`
         },
@@ -150,7 +150,7 @@ export default {
           id: 13,
           ip: '127.0.0.1',
           local: '上海',
-          sendType: 0,
+          send_type: 0,
           level: 3,
           config: `{"target": "526756656@qq.com", "format_type": "line"}`
         },
@@ -158,7 +158,7 @@ export default {
           id: 14,
           ip: '127.0.0.1',
           local: '北京',
-          sendType: 3,
+          send_type: 3,
           level: 0,
           config: `{"url": "http://127.0.0.1/test", "format_type": "json", "method": "GET"}`
         }
@@ -230,10 +230,10 @@ export default {
     },
     showEdit (row) {
       this.level = ParseLevel(row.level)
-      this.sendType = ParseSendtype(row.sendType)
+      this.sendType = ParseSendtype(row.send_type)
       this.id = row.id
       // 清空告警类型，方便判断整合
-      this.config = ParseObj(row.sendType, row.config)
+      this.config = ParseObj(row.send_type, row.config)
       // 页面显示
       this.dialogFormVisible = true
     },

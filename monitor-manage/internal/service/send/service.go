@@ -132,12 +132,23 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 		},
 	})
 	if err != nil {
+		// 失败得回滚新增操作
+		s.deleteRoll(int32(id))
 		return err
 	}
 	if res.GetCode() != sendpb.SendResponse_SUCCESS {
+		s.deleteRoll(int32(id))
 		return fmt.Errorf("set send config send service error %s", res.GetMsg())
 	}
 	return nil
+}
+
+func (s *Service) deleteRoll(id int32)  {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	s.store.DeleteConfig(ctx, &managepb.IDRequest{
+		ID: id,
+	})
 }
 
 func (s *Service) Update(id int32, IP string, Local string, SendType int32, Level int32, Config string) error {

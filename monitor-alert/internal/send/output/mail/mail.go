@@ -96,6 +96,7 @@ func (m *Mail) Reset(level output.Level, config interface{}) error {
 	defer m.lock.Unlock()
 	m.level = level
 	m.formatType = c.FormatType
+	m.target = c.Target
 	m.pool.New = func() interface{} {
 		return &email.Email{
 			Headers: textproto.MIMEHeader{},

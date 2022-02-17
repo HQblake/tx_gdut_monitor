@@ -10,6 +10,6 @@ Redis:
   DB: 1
 Hosts:
   Network: tcp
-  Server: 127.0.0.1:8081
-  ManageClient: 127.0.0.1:8082
-  StorageClient: 127.0.0.1:8080
+  Server: :8081
+  ManageClient: :8082
+  StorageClient: :8080

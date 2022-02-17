@@ -313,8 +313,8 @@ func (c *Client) GetAlertConfigByIPAndLocal(ip, local string) []model.AlertConfi
 		return res
 	}
 	for rows.Next() {
-		rows.Scan(&alert.ID, &alert.IP, &alert.Local, &alert.SendType, &alert.Config,
-			&alert.Level)
+		rows.Scan(&alert.ID, &alert.IP, &alert.Local, &alert.SendType,
+			&alert.Level, &alert.Config)
 		res = append(res, alert)
 	}
 	defer rows.Close()

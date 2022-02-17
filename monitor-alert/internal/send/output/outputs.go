@@ -32,11 +32,14 @@ type Outputs struct {
 
 func (o *Outputs) Output(info model.Info) error {
 	var err error
+	// 加锁，发送的时候预防写
 	o.lock.RLock()
 	for _, output := range o.outputs {
 		if ParseLevel(info.Level) >= output.Level() {
 			err = output.Output(info)
-			log.Println(err)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 	o.lock.RUnlock()
