@@ -10,7 +10,6 @@ import (
 	"net/smtp"
 	"net/textproto"
 	"sync"
-	"time"
 )
 
 // amklofqapqejcabf
@@ -68,9 +67,9 @@ func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
 
 func (m *Mail) sendMail() {
 	for mail := range m.infoCh {
-		err := m.mail.Send(mail, 5*time.Second)
+		err := m.mail.Send(mail, -1)
 		if err != nil {
-			log.Println(err)
+			log.Println("send mail:", err)
 		}
 		m.pool.Put(mail)
 	}
