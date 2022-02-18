@@ -1,5 +1,5 @@
 <!--
- * @Description: 
+ * @Description:
  * @Autor: yzq
  * @Date: 2022-02-16 14:28:12
  * @LastEditors: yzq
@@ -19,9 +19,9 @@ import SingleChart from '@/components/SingleChart.vue'
 
 export default {
   name: 'show',
-  created() {
-     this.ip = this.$route.params.ip
-     this.local = this.$route.params.local
+  created () {
+    this.ip = this.$route.params.ip
+    this.local = this.$route.params.local
   },
   components: {
     SingleChart
@@ -31,5 +31,4 @@ export default {
 
 <style lang="less">
 
-  
 </style>

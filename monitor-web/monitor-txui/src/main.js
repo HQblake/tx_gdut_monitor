@@ -33,7 +33,6 @@ axios.get('/static/config.json').then((res) => {
     store,
     render: h => h(App)
   }).$mount('#app')
-}).catch((err)=>{
-  console.log('err:',err)
+}).catch((err) => {
+  console.log('err:', err)
 })
-

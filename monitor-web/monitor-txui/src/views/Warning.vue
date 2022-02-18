@@ -161,129 +161,129 @@
 </template>
 
 <script>
-import { GetWarnList } from "@/api/show";
+import { GetWarnList } from '@/api/show'
 
 export default {
-  name: "warning",
+  name: 'warning',
   components: {},
-  data() {
+  data () {
     return {
       timePickerValue: [],
-      level: "",
+      level: '',
       levelOptions: [
         {
-          label: "严重",
-          value: "严重",
+          label: '严重',
+          value: '严重'
         },
         {
-          label: "中等",
-          value: "中等",
+          label: '中等',
+          value: '中等'
         },
         {
-          label: "警告",
-          value: "警告",
-        },
+          label: '警告',
+          value: '警告'
+        }
       ],
-      warnContent: "",
+      warnContent: '',
       warnOptions: [
         {
-          label: "cpu使用率",
-          value: "cpu",
+          label: 'cpu使用率',
+          value: 'cpu'
         },
         {
-          label: "mem使用率",
-          value: "mem",
-        },
+          label: 'mem使用率',
+          value: 'mem'
+        }
       ],
-      Outliers: "",
-      threshold: "",
-      duration: "",
+      Outliers: '',
+      threshold: '',
+      duration: '',
       dialogVisible: false,
-      search: "",
+      search: '',
       tableData: [
         {
           id: 1,
           ip: '127.0.0.1',
           local: '北京',
-          tabName: "cpu利用率",
-          level: "严重",
-          startTime: "2022-02-10 18:00:00",
+          tabName: 'cpu利用率',
+          level: '严重',
+          startTime: '2022-02-10 18:00:00',
           outliers: 85,
           threshold: 80,
-          during: 30,
+          during: 30
         },
         {
           id: 2,
-           ip: '127.0.0.2',
+          ip: '127.0.0.2',
           local: '北京',
-          tabName: "cpu利用率",
-          level: "严重",
-          startTime: "2022-02-10 19:00:00",
+          tabName: 'cpu利用率',
+          level: '严重',
+          startTime: '2022-02-10 19:00:00',
           outliers: 85,
           threshold: 80,
-          during: 30,
+          during: 30
         },
         {
           id: 3,
           ip: '127.0.0.2',
           local: '上海',
-          tabName: "mem利用率",
-          level: "中等",
-          startTime: "2022-02-10 20:00:00",
+          tabName: 'mem利用率',
+          level: '中等',
+          startTime: '2022-02-10 20:00:00',
           outliers: 85,
           threshold: 80,
-          during: 30,
-        },
-      ],
-    };
+          during: 30
+        }
+      ]
+    }
   },
   methods: {
-    now() {
+    now () {
       var thisTime = new Date()
       let timeS = new Date(thisTime.setMinutes(thisTime.getMinutes() - this.selector))
       this.timePickerValue = [timeS, new Date()]
     },
-    deleteData(index, row) {
-      this.dialogVisible = false;
-      console.log(index);
-      console.log(row);
+    deleteData (index, row) {
+      this.dialogVisible = false
+      console.log(index)
+      console.log(row)
 
-      this.tableData.splice(index, 1);
+      this.tableData.splice(index, 1)
     },
-    openDelete(index, row) {
-      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+    openDelete (index, row) {
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.deleteData(index, row);
+          this.deleteData(index, row)
           this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+            type: 'success',
+            message: '删除成功!'
+          })
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
     },
-    handleEdit(index, row) {
-      console.log(index, row);
+    handleEdit (index, row) {
+      console.log(index, row)
     },
-    handleDelete(index, row) {
-      console.log(index, row);
-    },
+    handleDelete (index, row) {
+      console.log(index, row)
+    }
   },
-  created (){
-    
+  created () {
+
   },
-  mounted (){
+  mounted () {
     this.now()
   }
-};
+}
 </script>
 
 <style>

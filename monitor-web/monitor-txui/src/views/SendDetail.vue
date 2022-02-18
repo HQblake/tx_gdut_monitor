@@ -169,8 +169,8 @@ export default {
   created () {
     this.ip = this.$route.query.ip
     this.local = this.$route.query.local
-    if(!this.ip || !this.local){
-      this.$router.push({ path:'/'});
+    if (!this.ip || !this.local) {
+      this.$router.push({ path: '/' })
     }
     this.id = -1
     this.sendType = ParseSendtype(1)
@@ -259,7 +259,6 @@ export default {
             } else {
               this.$alert(err)
             }
-            this.$router.go(0)
           })
       } else {
         UpdateSendConfig(this.ip, this.local, this.id, this.sendType, this.level, StringObj(this.config))
@@ -272,7 +271,6 @@ export default {
             } else {
               this.$alert(err)
             }
-            this.$router.go(0)
           })
       }
     },
@@ -288,7 +286,6 @@ export default {
           } else {
             this.$alert(err)
           }
-          this.$router.go(0)
         })
     }
   }

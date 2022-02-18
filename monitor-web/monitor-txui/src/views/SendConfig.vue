@@ -60,7 +60,7 @@ export default {
         port: '2016-05-03',
         local: '北京',
         is_live: true,
-        send: [1, 2]
+        send: [1, 2, 1]
       }, {
         ip: '127.0.0.2',
         port: '2016-05-03',
@@ -115,11 +115,16 @@ export default {
   },
   methods: {
     handleEdit (row) {
-      this.$router.push({ path:'/send/detail', query: {ip: row.ip, local: row.local} });
+      this.$router.push({ path: '/send/detail', query: { ip: row.ip, local: row.local } })
     },
     formateSend (row, column, cellValue) {
-      var arr = []
+      let arr = []
+      let visited = {}
       for (var j = 0; j < cellValue.length; j++) {
+        if (visited[cellValue[j]]) {
+          continue
+        }
+        visited[cellValue[j]] = true
         arr.push(ParseSendtype(cellValue[j]))
       }
       return arr.join(' , ').toString()

@@ -66,8 +66,8 @@ func (h *Handler) GetWarnInfoWithId(c *gin.Context) {
 
 func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 	// ip string, local string, level int32, begin int64, end int64
-	begin := c.Query("begin")
-	end := c.Query("end")
+	begin := c.Param("begin")
+	end := c.Param("end")
 	if begin == "" || end == "" {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040004",
@@ -76,10 +76,10 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 		})
 		return
 	}
-	ip := c.Query("ip")
-	local := c.Query("local")
-	metric := c.Query("metric")
-	level := c.Query("level")
+	ip := c.Param("ip")
+	local := c.Param("local")
+	metric := c.Param("metric")
+	level := c.Param("level")
 	var newLevel int64
 	if level != "" {
 		newLevel, _ = strconv.ParseInt(level, 10, 32)
@@ -106,11 +106,11 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 }
 
 func (h *Handler) GetMetricsWithTime(c *gin.Context) {
-	ip := c.Query("ip")
-	local := c.Query("local")
-	metric := c.Query("metric")
-	begin := c.Query("begin")
-	limit := c.Query("limit")
+	ip := c.Param("ip")
+	local := c.Param("local")
+	metric := c.Param("metric")
+	begin := c.Param("begin")
+	limit := c.Param("limit")
 	if ip == "" || local == "" || metric == "" || begin == "" || limit == "" {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040006",

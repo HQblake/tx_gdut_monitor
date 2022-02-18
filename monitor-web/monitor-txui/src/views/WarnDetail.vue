@@ -160,10 +160,10 @@ export default {
   created () {
     this.ip = this.$route.query.ip
     this.local = this.$route.query.local
-    if(!this.ip || !this.local){
-      this.$router.push({ path:'/'});
+    if (!this.ip || !this.local) {
+      this.$router.push({ path: '/' })
     }
-    
+
     this.metric = ''
     this.id = -1
     this.method = 1
@@ -228,7 +228,6 @@ export default {
           } else {
             this.$alert(err)
           }
-          this.$router.go(0)
         })
     },
     handleDel (row) {
@@ -243,7 +242,6 @@ export default {
           } else {
             this.$alert(err)
           }
-          this.$router.go(0)
         })
     },
     formateMethod (row, column, cellValue) {

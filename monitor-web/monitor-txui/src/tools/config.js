@@ -157,8 +157,8 @@ export function CheckConfig (t, config) {
     if (!config.url.value) {
       return { check: false, msg: '请求地址不能为空' }
     }
-    if (config.url.value.startsWith('http://') && config.url.value.startsWith('https://')) {
-      return { check: false, msg: '请求地址有误' }
+    if (!config.url.value.startsWith('http://') && !config.url.value.startsWith('https://')) {
+      return { check: false, msg: '请求url地址格式有误' }
     }
   }
   return { check: true, msg: '' }

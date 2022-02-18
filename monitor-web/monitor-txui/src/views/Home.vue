@@ -17,7 +17,7 @@
       </el-row>
 
       <el-table
-        :data="tableData.filter(data => !search 
+        :data="tableData.filter(data => !search
               || data.ip == search.toLowerCase()
               || (data.ip.toString() + data.port.toString()) == search.toLowerCase()
               || data.local.toLowerCase().includes(search.toLowerCase())
@@ -157,24 +157,23 @@ export default {
     }
   },
   created () {
-  //   GetAllAgent().then(data => {
-  //     this.tableData = data.data
-  //   })
-  //     .catch(err => {
-  //       if (err.msg) {
-  //         this.$alert(err.msg)
-  //         return
-  //       }
-  //       this.$alert(err)
-  //     })
+    GetAllAgent().then(data => {
+      this.tableData = data.data
+    })
+      .catch(err => {
+        if (err.msg) {
+          this.$alert(err.msg)
+          return
+        }
+        this.$alert(err)
+      })
   },
   methods: {
     handleWarn (row) {
-      this.$router.push({ path:'/warn/detail', query: {ip: row.ip, local: row.local} });
-     
+      this.$router.push({ path: '/warn/detail', query: { ip: row.ip, local: row.local } })
     },
     handleSend (row) {
-      this.$router.push({ path:'/send/detail', query: {ip: row.ip, local: row.local} });
+      this.$router.push({ path: '/send/detail', query: { ip: row.ip, local: row.local } })
     },
     handleHistory (row) {
       // 待定
@@ -191,9 +190,9 @@ export default {
     },
     formateLive (row, column, cellValue) {
       if (cellValue) {
-        return "是"
+        return '是'
       }
-      return "否"
+      return '否'
     }
 
   }

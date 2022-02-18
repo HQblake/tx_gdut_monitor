@@ -114,10 +114,13 @@ export default {
   },
   methods: {
     handleEdit (row) {
-      this.$router.push({ path:'/warn/detail', query: {ip: row.ip, local: row.local} });
+      this.$router.push({ path: '/warn/detail', query: { ip: row.ip, local: row.local } })
     },
     formateMetric (row, column, cellValue) {
-      return cellValue.join(' , ').toString()
+      if (cellValue) {
+        return cellValue.join(' , ').toString()
+      }
+      return ''
     },
     formateAgent (row, column, cellValue) {
       if (row.port) {

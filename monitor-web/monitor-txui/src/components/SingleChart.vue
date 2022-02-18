@@ -8,7 +8,7 @@
   <div>
     <div class="nav">
       <div class="subNav">
-        
+
         <el-select v-model="selector" placeholder="时长" class='select'>
           <el-option
             v-for="item in options"
@@ -77,7 +77,7 @@ export default {
         }
       ],
       selector: '30',
-      timePickerValue : [],
+      timePickerValue: [],
       // value1: [new Date(), new Date()],
       elId: null,
       name: 1,
@@ -279,7 +279,7 @@ export default {
       let time = this.value1[0].toString()
       console.log(time)
     },
-    now() {
+    now () {
       var thisTime = new Date()
       let timeS = new Date(thisTime.setMinutes(thisTime.getMinutes() - this.selector))
       this.timePickerValue = [timeS, new Date()]

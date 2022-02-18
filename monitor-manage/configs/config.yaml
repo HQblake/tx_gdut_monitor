@@ -2,9 +2,9 @@ admin:
   listen: ":8083"
   server: ":8082"
 store:
-  listen: "127.0.0.1:8080"
+  listen: ":8080"
 alert:
-  listen: "127.0.0.1:8081"
+  listen: ":8081"
 rule:
   method: 1
   period: "5m"
