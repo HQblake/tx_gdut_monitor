@@ -102,7 +102,7 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// 检查配置
-	res ,err := s.send.Check(ctx, &sendpb.CheckRequest{
+	res ,err := s.send.Check(ctx, &sendpb.CheckSendRequest{
 		IP: Ip,
 		Local: Local,
 		Config: &sendpb.CheckConfig{

@@ -40,7 +40,7 @@ func (s *Service) Set(ctx context.Context, request *sendpb.UpdateRequest) (*send
 	}, nil
 }
 
-func (s *Service) Check(ctx context.Context, request *sendpb.CheckRequest) (*sendpb.SendResponse, error) {
+func (s *Service) Check(ctx context.Context, request *sendpb.CheckSendRequest) (*sendpb.SendResponse, error) {
 	outputs := s.agents.GetOutputs(fmt.Sprintf("%s-%s", request.GetIP(), request.GetLocal()))
 	conf := output.Config{
 		Name: strings.ToLower(request.GetConfig().GetSendType().String()),

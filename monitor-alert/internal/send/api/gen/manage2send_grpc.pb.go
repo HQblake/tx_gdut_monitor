@@ -22,7 +22,7 @@ type SendServiceClient interface {
 	Set(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*SendResponse, error)
 	Del(ctx context.Context, in *DelRequest, opts ...grpc.CallOption) (*SendResponse, error)
 	Init(ctx context.Context, in *InitRequest, opts ...grpc.CallOption) (*SendResponse, error)
-	Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*SendResponse, error)
+	Check(ctx context.Context, in *CheckSendRequest, opts ...grpc.CallOption) (*SendResponse, error)
 }
 
 type sendServiceClient struct {
@@ -60,7 +60,7 @@ func (c *sendServiceClient) Init(ctx context.Context, in *InitRequest, opts ...g
 	return out, nil
 }
 
-func (c *sendServiceClient) Check(ctx context.Context, in *CheckRequest, opts ...grpc.CallOption) (*SendResponse, error) {
+func (c *sendServiceClient) Check(ctx context.Context, in *CheckSendRequest, opts ...grpc.CallOption) (*SendResponse, error) {
 	out := new(SendResponse)
 	err := c.cc.Invoke(ctx, "/api.SendService/Check", in, out, opts...)
 	if err != nil {
@@ -77,7 +77,7 @@ type SendServiceServer interface {
 	Set(context.Context, *UpdateRequest) (*SendResponse, error)
 	Del(context.Context, *DelRequest) (*SendResponse, error)
 	Init(context.Context, *InitRequest) (*SendResponse, error)
-	Check(context.Context, *CheckRequest) (*SendResponse, error)
+	Check(context.Context, *CheckSendRequest) (*SendResponse, error)
 	mustEmbedUnimplementedSendServiceServer()
 }
 
@@ -94,7 +94,7 @@ func (UnimplementedSendServiceServer) Del(context.Context, *DelRequest) (*SendRe
 func (UnimplementedSendServiceServer) Init(context.Context, *InitRequest) (*SendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Init not implemented")
 }
-func (UnimplementedSendServiceServer) Check(context.Context, *CheckRequest) (*SendResponse, error) {
+func (UnimplementedSendServiceServer) Check(context.Context, *CheckSendRequest) (*SendResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Check not implemented")
 }
 func (UnimplementedSendServiceServer) mustEmbedUnimplementedSendServiceServer() {}
@@ -165,7 +165,7 @@ func _SendService_Init_Handler(srv interface{}, ctx context.Context, dec func(in
 }
 
 func _SendService_Check_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CheckRequest)
+	in := new(CheckSendRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -177,7 +177,7 @@ func _SendService_Check_Handler(srv interface{}, ctx context.Context, dec func(i
 		FullMethod: "/api.SendService/Check",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SendServiceServer).Check(ctx, req.(*CheckRequest))
+		return srv.(SendServiceServer).Check(ctx, req.(*CheckSendRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
