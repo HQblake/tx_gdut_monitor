@@ -101,6 +101,21 @@ func (s *Service) GetConfigs(ip string, local string) ([]model.SendConfig, error
 func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32, Config string) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	// 检查配置
+	res ,err := s.send.Check(ctx, &sendpb.CheckRequest{
+		IP: Ip,
+		Local: Local,
+		Config: &sendpb.CheckConfig{
+			SendType: sendpb.Type(SendType),
+			Config: Config,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	if res.GetCode() != sendpb.SendResponse_SUCCESS {
+		return fmt.Errorf("add send config send service check error %s", res.GetMsg())
+	}
 	resp, err := s.store.AddConfig(ctx, &managepb.AddSendRequest{
 		IP: Ip,
 		Local: Local,
@@ -114,12 +129,12 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 	if resp.GetCode() != managepb.ResponseCode_SUCCESS {
 		return fmt.Errorf("add send config store service error %s", resp.GetMsg())
 	}
-	fmt.Println(resp.GetMsg())
+
 	id, err := strconv.Atoi(resp.GetMsg())
 	if err != nil {
 		return err
 	}
-	res, err := s.send.Set(ctx, &sendpb.UpdateRequest{
+	res, err = s.send.Set(ctx, &sendpb.UpdateRequest{
 		IP: Ip,
 		Local: Local,
 		Config: &sendpb.ConfigEntry{

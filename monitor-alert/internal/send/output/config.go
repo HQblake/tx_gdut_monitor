@@ -5,6 +5,11 @@ import (
 	"reflect"
 )
 
+type IConfig interface {
+	Check() error
+}
+
+
 func ToConfig(v string, t reflect.Type) (interface{}, error) {
 	obj := newConfig(t)
 	err := json.Unmarshal([]byte(v), obj)

@@ -21,7 +21,6 @@ func NewService(agents output.IManager) *Service {
 }
 
 func (s *Service) Set(ctx context.Context, request *sendpb.UpdateRequest) (*sendpb.SendResponse, error) {
-	fmt.Println(request.String())
 	outputs := s.agents.GetOutputs(fmt.Sprintf("%s-%s", request.GetIP(), request.GetLocal()))
 	conf := output.Config{
 		Name: strings.ToLower(request.GetConfig().GetConf().GetSendType().String()),
@@ -29,6 +28,25 @@ func (s *Service) Set(ctx context.Context, request *sendpb.UpdateRequest) (*send
 		Config: request.GetConfig().GetConf().GetConfig(),
 	}
 	err := outputs.Set(int(request.GetConfig().GetConfigID()), conf)
+	if err != nil {
+		return &sendpb.SendResponse{
+			Code: sendpb.SendResponse_ERROR,
+			Msg: err.Error(),
+		}, nil
+	}
+	return &sendpb.SendResponse{
+		Code: sendpb.SendResponse_SUCCESS,
+		Msg: "success",
+	}, nil
+}
+
+func (s *Service) Check(ctx context.Context, request *sendpb.CheckRequest) (*sendpb.SendResponse, error) {
+	outputs := s.agents.GetOutputs(fmt.Sprintf("%s-%s", request.GetIP(), request.GetLocal()))
+	conf := output.Config{
+		Name: strings.ToLower(request.GetConfig().GetSendType().String()),
+		Config: request.GetConfig().GetConfig(),
+	}
+	err := outputs.Check(conf)
 	if err != nil {
 		return &sendpb.SendResponse{
 			Code: sendpb.SendResponse_ERROR,

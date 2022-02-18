@@ -1,6 +1,7 @@
 package output
 
 import (
+	"fmt"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
 	"log"
 	"sync"
@@ -20,6 +21,7 @@ type IOutputs interface {
 	Set(id int, conf Config) error
 	List() []IOutput
 	Output(info model.Info) error
+	Check(conf Config) error
 }
 
 type Outputs struct {
@@ -111,6 +113,22 @@ func (o *Outputs) Set(id int, conf Config) error {
 	}
 	o.outputs[id] = output
 	return nil
+}
+
+func (o *Outputs) Check(conf Config) error {
+	factory, err := Get(conf.Name)
+	if err != nil {
+		return err
+	}
+	c, err := ToConfig(conf.Config, factory.ConfigType())
+	if err != nil {
+		return err
+	}
+	check, ok := c.(IConfig)
+	if !ok {
+		return fmt.Errorf("output (%s) config (%s) parse error", conf.Name, conf.Config)
+	}
+	return check.Check()
 }
 
 func NewOutputs(id string) *Outputs {

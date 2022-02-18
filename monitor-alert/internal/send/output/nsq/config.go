@@ -11,6 +11,10 @@ type Config struct {
 	Address    string `json:"address"`
 }
 
+func (c *Config) Check() error {
+	return c.doCheck()
+}
+
 func (c *Config) doCheck() error {
 	c.FormatType = strings.ToLower(c.FormatType)
 	if c.FormatType == "" {

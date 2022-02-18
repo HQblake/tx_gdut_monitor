@@ -25,6 +25,11 @@ type ProducerConfig struct {
 	FormatType    string         `json:"format_type"`
 }
 
+func (c *Config) Check() error {
+	_, err := c.doCheck()
+	return err
+}
+
 func (c *Config) doCheck() (*ProducerConfig, error) {
 	c.FormatType = strings.ToLower(c.FormatType)
 	if c.FormatType == "" {

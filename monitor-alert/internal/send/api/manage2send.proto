@@ -8,6 +8,7 @@ service SendService {
   rpc Set(UpdateRequest) returns (SendResponse);
   rpc Del(DelRequest) returns (SendResponse);
   rpc Init(InitRequest) returns (SendResponse);
+  rpc Check(CheckRequest) returns (SendResponse);
 }
 
 
@@ -23,6 +24,8 @@ message Config{
   string Config = 2;
   int32 Level = 3;
 }
+
+
 
 message ConfigEntry {
   int32 ConfigID = 1;
@@ -50,7 +53,16 @@ message DelRequest{
 message InitRequest{
   map<string, InitConfig> Config = 1;
 }
+message CheckRequest{
+  string IP = 1; // ip和local组成agent的唯一标识
+  string Local = 2;
+  CheckConfig Config = 3;
+}
 
+message CheckConfig{
+  Type SendType = 1;
+  string Config = 2;
+}
 
 
 message SendResponse {
