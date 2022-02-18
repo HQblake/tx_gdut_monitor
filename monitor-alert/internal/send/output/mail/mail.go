@@ -35,7 +35,7 @@ type Mail struct {
 }
 
 func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
-	pool, err := email.NewPool(address, 3, smtp.PlainAuth("", user, code, host))
+	pool, err := email.NewPool(address, 5, smtp.PlainAuth("", user, code, host))
 	if err != nil {
 		return nil, err
 	}
@@ -67,10 +67,12 @@ func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
 
 func (m *Mail) sendMail() {
 	for mail := range m.infoCh {
+		log.Printf("开始发送邮件：%s;%s", mail.Text, mail.HTML)
 		err := m.mail.Send(mail, -1)
 		if err != nil {
 			log.Println("send mail:", err)
 		}
+		log.Println("发送邮件结束")
 		m.pool.Put(mail)
 	}
 	m.stopCh <- true
