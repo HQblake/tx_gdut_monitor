@@ -33,11 +33,11 @@ type Service struct {
 func NewService() *Service{
 	Register()
 	agents := output.NewManager()
-	agents.Agents["127.0.0.1-test"] = output.NewOutputs("127.0.0.1-test")
-	err := agents.GetOutputs("127.0.0.1-test").Set(1, output.Config{Name: "email", Level: 0, Config: `{"target":"526756656@qq.com", "format_type":"html"}`})
-	if err != nil {
-		log.Println(err)
-	}
+	//agents.Agents["127.0.0.1-test"] = output.NewOutputs("127.0.0.1-test")
+	//err := agents.GetOutputs("127.0.0.1-test").Set(1, output.Config{Name: "email", Level: 0, Config: `{"target":"526756656@qq.com", "format_type":"html"}`})
+	//if err != nil {
+	//	log.Println(err)
+	//}
 	return &Service{
 		agents: agents,
 		proxy:  service.NewService(agents),
@@ -58,13 +58,18 @@ func (s *Service) Send(alert *model.AlertInfo) error {
 	for _, info := range alert.Metrics {
 		// 考虑开协程去分别处理,同一时间上报的指标数不会过多，暂不做协程数量限制
 		i := s.newInfo(fmt.Sprintf("%s-%s", alert.IP, alert.Local), info)
-		go func(i model2.Info) {
-			err := outputs.Output(i)
-			if err != nil {
-				log.Println(err)
-			}
-			s.release(i)
-		}(i)
+		err := outputs.Output(i)
+		if err != nil {
+			log.Println(err)
+		}
+		s.release(i)
+		//go func(i model2.Info) {
+		//	err := outputs.Output(i)
+		//	if err != nil {
+		//		log.Println(err)
+		//	}
+		//	s.release(i)
+		//}(i)
 	}
 	return nil
 }
