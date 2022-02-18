@@ -33,6 +33,11 @@ type Service struct {
 func NewService() *Service{
 	Register()
 	agents := output.NewManager()
+	agents.Agents["127.0.0.1-test"] = output.NewOutputs("127.0.0.1-test")
+	err := agents.GetOutputs("127.0.0.1-test").Set(1, output.Config{Name: "email", Level: 0, Config: `{"target":"526756656@qq.com", "format_type":"html"}`})
+	if err != nil {
+		log.Println(err)
+	}
 	return &Service{
 		agents: agents,
 		proxy:  service.NewService(agents),

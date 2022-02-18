@@ -4,12 +4,14 @@ import (
 	"flag"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"google.golang.org/grpc"
 	"log"
 	"net"
+	"time"
 )
 
 func init() {
@@ -43,6 +45,27 @@ func setupSetting(config string) {
 func setupService() {
 	// 服务加载顺序：先加载发送服务、再加载判定服务、最后加载接入服务
 	global.Send = send.NewService()
+
+	go func() {
+		t := time.Tick(30*time.Second)
+		for {
+			select {
+			case <-t:
+				global.Send.Send(&model.AlertInfo{
+				IP: "127.0.0.1",
+				Local: "test",
+				Metrics: map[string]model.MetricInfo{
+					"cpu_rate": {
+						Method: 1,
+						Value: 0,
+						Threshold: 0,
+						Level: 0,
+					},
+				},
+				})
+			}
+		}
+	}()
 	log.Println("发送服务加载完成")
 	global.Judgement = judgment.NewService(global.Setting, global.Send)
 	log.Println("判定服务加载完成")
