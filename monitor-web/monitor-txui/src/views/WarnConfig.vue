@@ -114,7 +114,8 @@ export default {
   },
   methods: {
     handleEdit (row) {
-      this.$router.push({ path: '/warn/detail', query: { ip: row.ip, local: row.local } })
+      // this.$router.push({ path: '/warn/detail', query: { ip: row.ip, local: row.local } })
+      this.$router.push('/warn/' + row.ip + '/' + row.local)
     },
     formateMetric (row, column, cellValue) {
       if (cellValue) {

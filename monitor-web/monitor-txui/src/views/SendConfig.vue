@@ -115,7 +115,8 @@ export default {
   },
   methods: {
     handleEdit (row) {
-      this.$router.push({ path: '/send/detail', query: { ip: row.ip, local: row.local } })
+      // this.$router.push({ path: '/send/detail', query: { ip: row.ip, local: row.local } })
+      this.$router.push('/send/' + row.ip + '/' + row.local)
     },
     formateSend (row, column, cellValue) {
       let arr = []

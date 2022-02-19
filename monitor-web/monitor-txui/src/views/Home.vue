@@ -56,9 +56,6 @@
             <el-button type="warning"
               size="mini"
               @click="handleSend(scope.row)">发送配置管理</el-button>
-            <el-button type="danger"
-              size="mini"
-              @click="handleHistory(scope.row)">告警历史详情</el-button>
             <el-button type="info"
               size="mini"
               @click="handleShow(scope.row)">数据详情</el-button>
@@ -170,14 +167,12 @@ export default {
   },
   methods: {
     handleWarn (row) {
-      this.$router.push({ path: '/warn/detail', query: { ip: row.ip, local: row.local } })
+      this.$router.push('/warn/' + row.ip + '/' + row.local)
+      // this.$router.push({ path: '/warn/detail', query: { ip: row.ip, local: row.local } })
     },
     handleSend (row) {
-      this.$router.push({ path: '/send/detail', query: { ip: row.ip, local: row.local } })
-    },
-    handleHistory (row) {
-      // 待定
       this.$router.push('/send/' + row.ip + '/' + row.local)
+      // this.$router.push({ path: '/send/detail', query: { ip: row.ip, local: row.local } })
     },
     handleShow (row) {
       this.$router.push('/show/' + row.ip + '/' + row.local)
