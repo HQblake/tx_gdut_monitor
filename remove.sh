@@ -7,7 +7,7 @@ docker tag build_monitor-agent:latest monitor-agent:1.0
 docker tag build_monitor-web:latest monitor-web:1.0
 
 # 删除中间镜像
-docker rmi $(docker images | grep "none" | awk '{print $3}')
+docker rmi -f $(docker images | grep "none" | awk '{print $3}')
 
 # 删除旧镜像
 # docker rmi -f build_monitor-mysql:latest
