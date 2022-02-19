@@ -13,11 +13,9 @@
 
 ## 系统架构
 
-[//]: # (![项目架构]&#40;wiki/images/article.jpg&#41;)
+![系统架构](wiki/images/article.svg)
 
-![系统架构](wiki/images/article.svg "系统架构")
-
-![API接口设计概要](wiki/images/flow.svg "API接口设计概要")
+![API接口设计概要](wiki/images/flow.svg)
 
 1. **信息采集端**
     * **信息采集agent**：负责采集系统的信息并上报给子系统
