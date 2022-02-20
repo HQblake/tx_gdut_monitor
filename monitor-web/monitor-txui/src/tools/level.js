@@ -1,19 +1,18 @@
 import { Parse, Stringfy } from '@/tools/json'
 export var LevelType = {
-  0: 'info',
-  1: 'warn',
-  2: 'error',
-  3: 'panic'
+  '0': 'info',
+  '1': 'warn',
+  '2': 'error',
+  '3': 'panic'
 }
 export var LevelMap = {
-  'info': 0,
-  'warn': 1,
-  'error': 2,
-  'panic': 3
+  'info': '0',
+  'warn': '1',
+  'error': '2',
+  'panic': '3'
 }
 
 export function ParseObj (levelObj) {
-  
   let obj = {}
   Object.keys(LevelType).forEach(function (key) {
     obj[LevelType[key]] = {
@@ -28,7 +27,7 @@ export function StringObj (threshold) {
   let obj = {}
   Object.keys(threshold).forEach(function (key) {
     if (threshold[key].value) {
-      obj[LevelMap[key]] = threshold[key].value
+      obj[LevelMap[key]] = parseFloat(threshold[key].value)
     }
   })
   return Stringfy(obj)

@@ -82,16 +82,16 @@ export var defaultConfig = {
   }
 }
 export var SendType = {
-  0: 'email',
-  1: 'kafka',
-  2: 'nsq',
-  3: 'http'
+  '0': 'email',
+  '1': 'kafka',
+  '2': 'nsq',
+  '3': 'http'
 }
 export var SendMap = {
-  'email': 0,
-  'kafka': 1,
-  'nsq': 2,
-  'http': 3
+  'email': '0',
+  'kafka': '1',
+  'nsq': '2',
+  'http': '3'
 }
 
 export function ParseObj (t, s) {
