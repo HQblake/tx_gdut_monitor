@@ -12,8 +12,8 @@ export var LevelMap = {
   'panic': 3
 }
 
-export function ParseObj (threshold) {
-  let levelObj = Parse(threshold)
+export function ParseObj (levelObj) {
+  
   let obj = {}
   Object.keys(LevelType).forEach(function (key) {
     obj[LevelType[key]] = {
