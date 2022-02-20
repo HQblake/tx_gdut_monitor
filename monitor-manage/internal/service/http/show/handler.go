@@ -1,8 +1,15 @@
 package show
 
 import (
+	"bytes"
+	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
+	"time"
+
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/model"
+	// managepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/rpc/client/judgment/gen"
 
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/show"
 	"github.com/gin-gonic/gin"
@@ -65,10 +72,20 @@ func (h *Handler) GetWarnInfoWithId(c *gin.Context) {
 }
 
 func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
-	// ip string, local string, level int32, begin int64, end int64
-	begin := c.Param("begin")
-	end := c.Param("end")
-	if begin == "" || end == "" {
+	buff := bytes.NewBuffer([]byte{})
+	buff.ReadFrom(c.Request.Body)
+	hinfo := model.HistoryInfo{}
+	err := json.Unmarshal(buff.Bytes(), &hinfo)
+	if err != nil {
+		log.Printf("json.Unmarshal();err: %v", err)
+		return
+	}
+
+	log.Println(hinfo)
+	format := "2006-01-02 15:04:05"
+	start, err := time.ParseInLocation(format, hinfo.Start, time.Local)
+	if err != nil {
+		log.Printf("time.Parse();err: %v", err)
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040004",
 			"msg":  "初始时间和终止时间获取有误",
@@ -76,19 +93,19 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 		})
 		return
 	}
-	ip := c.Param("ip")
-	local := c.Param("local")
-	metric := c.Param("metric")
-	level := c.Param("level")
-	var newLevel int64
-	if level != "" {
-		newLevel, _ = strconv.ParseInt(level, 10, 32)
-	} else {
-		newLevel = 0
+
+	end, err := time.ParseInLocation(format, hinfo.End, time.Local)
+	if err != nil {
+		log.Printf("time.Parse();err: %v", err)
+		c.JSON(http.StatusOK, gin.H{
+			"code": "040004",
+			"msg":  "初始时间和终止时间获取有误",
+			"data": nil,
+		})
+		return
 	}
-	newBegin, _ := strconv.ParseInt(begin, 10, 64)
-	newEnd, _ := strconv.ParseInt(end, 10, 64)
-	res, err := h.service.GetWarnInfoWithParams(ip, local, metric, int32(newLevel), newBegin, newEnd)
+
+	res, err := h.service.GetWarnInfoWithParams(hinfo, start, end)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040005",
@@ -106,22 +123,25 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 }
 
 func (h *Handler) GetMetricsWithTime(c *gin.Context) {
-	ip := c.Param("ip")
-	local := c.Param("local")
-	metric := c.Param("metric")
-	begin := c.Param("begin")
-	limit := c.Param("limit")
-	if ip == "" || local == "" || metric == "" || begin == "" || limit == "" {
-		c.JSON(http.StatusOK, gin.H{
-			"code": "040006",
-			"msg":  "获取主机指标参数有误",
-			"data": nil,
-		})
+	buff := bytes.NewBuffer([]byte{})
+	buff.ReadFrom(c.Request.Body)
+	metInfo := model.MetricsReq{}
+	err := json.Unmarshal(buff.Bytes(), &metInfo)
+	if err != nil {
+		log.Printf("json.Unmarshal();err: %v", err)
 		return
 	}
-	newBegin, _ := strconv.ParseInt(begin, 10, 64)
-	newLimit, _ := strconv.ParseInt(limit, 10, 64)
-	res, err := h.service.GetMetricsWithTime(ip, local, metric, newBegin, int32(newLimit))
+	log.Println(metInfo)
+
+	log.Printf(metInfo.IP, metInfo.Local, metInfo.MetricName, metInfo.Period, metInfo.Begin, metInfo.End, metInfo.Limit)
+
+	format := "2006-01-02 15:04:05"
+	newBegin := metInfo.Begin.Format(format)
+	newEnd := metInfo.End.Format(format)
+	metInfo.Begin = newBegin
+	metInfo.End = newEnd
+
+	res, err := h.service.GetMetricsWithTime()
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040007",

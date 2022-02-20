@@ -1,7 +1,14 @@
+/*
+ * @Description:
+ * @Autor: yzq
+ * @Date: 2022-02-11 10:35:39
+ * @LastEditors: yzq
+ */
 package service
 
 import (
 	"context"
+
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/dao"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/manage/managepb"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/pkg/setting"
@@ -39,7 +46,7 @@ func (h *HistoryService) GetAlertInfo(request *managepb.AlertRequest, server man
 	histories := h.dao.GetAlertInfo(request.ID, request.Level, request.IP, request.Local, request.Metric, request.Begin, request.End)
 	for _, info := range histories {
 		_ = server.Send(&managepb.AlertResponse{
-			Code: 200,
+			Code: managepb.ResponseCode_SUCCESS,
 			Msg:  "SUCCESS",
 			Result: &managepb.AlertInfo{
 				ID:        info.ID,

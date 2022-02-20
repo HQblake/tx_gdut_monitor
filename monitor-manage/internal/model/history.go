@@ -1,3 +1,9 @@
+/*
+ * @Description:
+ * @Autor: yzq
+ * @Date: 2022-02-11 10:35:39
+ * @LastEditors: yzq
+ */
 package model
 
 type HistoryInfo struct {
@@ -9,6 +15,7 @@ type HistoryInfo struct {
 	Threshold float64 `json:"threshold"`
 	Method    int32   `json:"method"`
 	Level     int32   `json:"level"`
-	Start     int64   `json:"start"`
+	Start     string  `json:"start"`
+	End       string  `json:"end"`
 	Duration  string  `json:"duration"`
 }

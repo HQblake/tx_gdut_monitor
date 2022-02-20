@@ -1,6 +1,14 @@
+/*
+ * @Description:
+ * @Autor: yzq
+ * @Date: 2022-02-13 22:53:14
+ * @LastEditors: yzq
+ */
 package show
 
 import (
+	"time"
+
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/model"
 )
 
@@ -11,10 +19,10 @@ type IShow interface {
 	// GetWarnInfoWithId 根据id返回告警信息
 	GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error)
 	// GetWarnInfoWithParams 带参数查询告警信息, 参数为Ip和Local、Level、start、end
-	GetWarnInfoWithParams(ip string, local string, metric string, level int32, start int64, end int64) ([]model.HistoryInfo, error)
+	GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time.Time) ([]model.HistoryInfo, error)
 
 	// GetMetricsInOneDay 比如根据agentId(ip和local)和metric获取一天内的指标情况等
-	GetMetricsWithTime(ip string, local string, metric string, begin int64, limit int32) ([]model.MetricsInfo, error)
+	GetMetricsWithTime(req model.MetricsReq) ([]model.MetricsInfo, error)
 
 	// DelWarnInfo 根据id删除告警信息
 	DelWarnInfo(id int32) error

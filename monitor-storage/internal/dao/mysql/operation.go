@@ -1,11 +1,12 @@
 package mysql
 
 import (
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 )
 
 // SaveAgentInfo 调用MySQL的存储过程
@@ -132,6 +133,8 @@ func (c *Client) GetAllAlertInfo() []model.HistoryInfo {
 // 若给定的参数值为其类型的零值，则表示该条件未设定
 // level 参数在此处的零值为"负数"
 func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, end int64) []model.HistoryInfo {
+	log.Printf("start: %d", begin)
+	log.Printf("end: %d", end)
 	var alert model.HistoryInfo
 	var res []model.HistoryInfo
 	if id > 0 {
@@ -165,7 +168,7 @@ func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, 
 		if level >= 0 {
 			sql += " AND h.level=" + strconv.Itoa(int(level))
 		}
-		sql += " AND h.start>=? AND h.start<=?"
+		sql += " AND h.start>=? AND h.start<=? order by h.start desc"
 
 		if begin <= 0 {
 			begin = 0

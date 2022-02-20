@@ -86,10 +86,10 @@ func router(h *http.Handler) *gin.Engine {
 
 	// show
 	show := r.Group("show")
-	show.GET("/metrics/:ip/:local/:metric/:begin/:limit", h.GetMetricsWithTime)
+	show.GET("/metrics", h.GetMetricsWithTime)
 	show.GET("/warnList", h.GetWarnInfo)
 	show.GET("/warnId/:id", h.GetWarnInfoWithId)
-	show.GET("/warnParams/:ip/:local/:metric/:level/:start/:end", h.GetWarnInfoWithParams)
+	show.GET("/warnParams", h.GetWarnInfoWithParams)
 	show.POST("/del/:id", h.DelWarnInfo)
 	return r
 }

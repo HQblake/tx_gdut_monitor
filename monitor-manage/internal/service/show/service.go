@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	// "encoding/json"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/model"
@@ -45,7 +46,7 @@ func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 			continue
 		}
 		if resp.Code != managepb.ResponseCode_SUCCESS {
-			log.Printf("grpc get history rule error %v", resp.Msg)
+			log.Printf("code != success %v", resp)
 			continue
 		}
 		config := resp.GetResult()
@@ -58,7 +59,7 @@ func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 			Method:    config.GetMethod(),
 			Level:     config.GetLevel(),
 			Threshold: config.GetThreshold(),
-			Start:     config.GetStart(),
+			Start:     time.Unix(config.GetStart(), 0).Format("2006-01-02 15:04:05"),
 			Duration:  config.GetDuration(),
 		}
 		res = append(res, conf)
@@ -69,14 +70,16 @@ func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 // 根据id获取当前告警信息
 func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error) {
 	var err error
+
 	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{ID: id})
 	if err != nil {
 		return nil, err
 	}
 	var resp *managepb.AlertResponse
-	res := make([]model.HistoryInfo, 0, 10)
+	res := make([]model.HistoryInfo, 0)
 	for {
 		resp, err = stream.Recv()
+
 		if err == io.EOF {
 			break
 		}
@@ -98,7 +101,7 @@ func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error) {
 			Method:    config.GetMethod(),
 			Level:     config.GetLevel(),
 			Threshold: config.GetThreshold(),
-			Start:     config.GetStart(),
+			Start:     time.Unix(config.GetStart(), 0).Format("2006-01-02 15:04:05"),
 			Duration:  config.GetDuration(),
 		}
 		res = append(res, conf)
@@ -107,9 +110,16 @@ func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error) {
 }
 
 // 根据参数灵活查询告警信息
-func (s *Service) GetWarnInfoWithParams(ip string, local string, metric string, level int32, begin int64, end int64) ([]model.HistoryInfo, error) {
-	var err error
-	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{IP: ip, Local: local, Level: level, Metric: metric, Begin: begin, End: end})
+func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time.Time) ([]model.HistoryInfo, error) {
+	log.Println("req: ", hinfo, start.Unix(), end.Unix())
+	req := managepb.AlertRequest{
+		IP:     hinfo.Ip,
+		Local:  hinfo.Local,
+		Level:  hinfo.Level,
+		Metric: hinfo.Metric,
+		Begin:  start.Unix(),
+		End:    end.Unix()}
+	stream, err := s.alertClient.GetAlertInfo(context.Background(), &req)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +148,7 @@ func (s *Service) GetWarnInfoWithParams(ip string, local string, metric string, 
 			Method:    config.GetMethod(),
 			Level:     config.GetLevel(),
 			Threshold: config.GetThreshold(),
-			Start:     config.GetStart(),
+			Start:     time.Unix(config.GetStart(), 0).Format("2006-01-02 15:04:05"),
 			Duration:  config.GetDuration(),
 		}
 		res = append(res, conf)
@@ -147,9 +157,9 @@ func (s *Service) GetWarnInfoWithParams(ip string, local string, metric string, 
 }
 
 // 根据开始时间和数据量限制获取指定条数的指标数据
-func (s *Service) GetMetricsWithTime(ip string, local string, metric string, begin int64, limit int32) ([]model.MetricsInfo, error) {
+func (s *Service) GetMetricsWithTime(ip string, local string, metric string, begin time.Time, limit int32) ([]model.MetricsInfo, error) {
 	var err error
-	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{IP: ip, Local: local, Metric: metric, Begin: begin, Limit: limit})
+	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{IP: ip, Local: local, Metric: metric, Begin: begin.Unix(), Limit: limit})
 	if err != nil {
 		return nil, err
 	}
