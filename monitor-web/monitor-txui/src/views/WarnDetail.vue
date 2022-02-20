@@ -113,7 +113,7 @@ export default {
           metric: 'cpu利用率',
           method: 1,
           period: '5m',
-          threshold: `{"0":0.01, "1": 0.02}`
+          threshold: {"0":0.01, "1": 0.02}
         },
         {
           id: 11,
@@ -122,7 +122,7 @@ export default {
           metric: 'mem',
           method: 2,
           period: '5m',
-          threshold: `{}`
+          threshold: {}
         },
         {
           id: 12,
@@ -131,7 +131,7 @@ export default {
           metric: 'rate',
           method: 3,
           period: '5m',
-          threshold: `{}`
+          threshold: {}
         },
         {
           id: 13,
@@ -140,7 +140,7 @@ export default {
           metric: 'cpu利用率',
           method: 0,
           period: '5m',
-          threshold: `{"1":0.01, "2": 0.02}`
+          threshold: {"1":0.01, "2": 0.02}
         },
         {
           id: 14,
@@ -149,7 +149,7 @@ export default {
           metric: 'cpu利用率',
           method: 1,
           period: '5m',
-          threshold: `{"3":0.01}`
+          threshold: {"3":0.01}
         }
       ],
       search: '',

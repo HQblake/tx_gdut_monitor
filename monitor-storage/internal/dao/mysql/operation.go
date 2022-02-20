@@ -212,8 +212,8 @@ func (c *Client) DelAlterInfo(id int32) error {
 func (c *Client) GetCheckConfigsByIPAndLocal(ip, local string) []model.CheckConfig {
 	var check model.CheckConfig
 	var res []model.CheckConfig
-	rows, err := c.db.Query("SELECT c.id, a.ip, a.local, m.name, c.method, c.period, c.threshold"+
-		"FROM ((`check` AS c LEFT JOIN agent AS a ON c.agentId=a.id) LEFT JOIN metric AS m ON c.metricId=m.id)"+
+	rows, err := c.db.Query("SELECT c.id, a.ip, a.local, m.name, c.method, c.period, c.threshold "+
+		"FROM ((`check` AS c LEFT JOIN agent AS a ON c.agentId=a.id) LEFT JOIN metric AS m ON c.metricId=m.id) "+
 		"WHERE a.ip=? AND a.local=?", ip, local)
 	if err != nil {
 		log.Println(err)
@@ -234,7 +234,7 @@ func (c *Client) UpdateCheckConfig(check *model.CheckConfig) (int32, error) {
 	if check.ID < 0 {
 		// ID < 0 说明agent新增了判定指标，需增加默认配置
 		res, err := c.db.Exec("INSERT INTO `check`(agentId, metricId, method, period, threshold) "+
-			"VALUES((SELECT id FORM agent WHERE ip=? AND local=?), (SELECT id FROM metric WHERE name=?), ?, ?, ?)",
+			"VALUES((SELECT id FROM agent WHERE ip=? AND local=?), (SELECT id FROM metric WHERE name=?), ?, ?, ?)",
 			check.IP, check.Local, check.Metric, check.Method, check.Period, check.Threshold)
 		if err != nil {
 			log.Println(err)
