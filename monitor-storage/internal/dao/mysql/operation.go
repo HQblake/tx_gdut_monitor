@@ -209,8 +209,8 @@ func (c *Client) DelAlterInfo(id int32) error {
 func (c *Client) GetCheckConfigsByIPAndLocal(ip, local string) []model.CheckConfig {
 	var check model.CheckConfig
 	var res []model.CheckConfig
-	rows, err := c.db.Query("SELECT c.id, a.ip, a.local, m.name, c.method, c.period, c.threshold"+
-		"FROM ((`check` AS c LEFT JOIN agent AS a ON c.agentId=a.id) LEFT JOIN metric AS m ON c.metricId=m.id)"+
+	rows, err := c.db.Query("SELECT c.id, a.ip, a.local, m.name, c.method, c.period, c.threshold "+
+		"FROM ((`check` AS c LEFT JOIN agent AS a ON c.agentId=a.id) LEFT JOIN metric AS m ON c.metricId=m.id) "+
 		"WHERE a.ip=? AND a.local=?", ip, local)
 	if err != nil {
 		log.Println(err)

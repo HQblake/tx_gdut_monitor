@@ -50,3 +50,11 @@ func TestClient_UpdateCheckConfig(t *testing.T) {
 	}
 	fmt.Println(id)
 }
+
+func TestClient_GetCheckConfigsByIPAndLocal(t *testing.T) {
+	client := NewClient(MS)
+	configs := client.GetCheckConfigsByIPAndLocal("172.18.0.5", "beijing")
+	for _, config := range configs {
+		fmt.Println(config)
+	}
+}
