@@ -4,6 +4,7 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -20,11 +21,11 @@ func (c *Client) SaveAgentInfo(metric *model.Metric) error {
 
 // SaveAlertInfo 存储告警信息
 func (c *Client) SaveAlertInfo(history *model.HistoryInfo) error {
-	_, err := c.db.Exec("INSERT INTO history(agentId, metricId, value, threshold, method, "+
-		"level, duration, start) VALUES((SELECT a.id FROM agent AS a WHERE a.ip=? AND a.local=?), "+
-		"(SELECT m.id FROM metric AS m WHERE m.name=?), ?, ?, ?, ?, ?, ?)",
-		history.IP, history.Local, history.Metric, history.Value, history.Threshold, history.Method,
-		history.Level, history.Duration, history.Start)
+	_, err := c.db.Exec(`INSERT INTO history(agentId, metricId, value, threshold, method, 
+	level, duration, start) VALUES((SELECT a.id FROM agent AS a WHERE a.ip=? AND a.local=?), 
+	(SELECT m.id FROM metric AS m WHERE m.name=?), ?, ?, ?, ?, ?, ?)`, history.IP, history.Local,
+		history.Metric, history.Value, history.Threshold, history.Method, history.Level, history.Duration,
+		history.Start)
 	if err != nil {
 		log.Println(err)
 		return err
@@ -38,13 +39,20 @@ func (c *Client) GetAllAgentInfo() []model.AgentInfo {
 	// 可以考虑循环调用 GetMetricsByAgentID
 	var agent model.AgentInfo
 	var res []model.AgentInfo
-	rows, err := c.db.Query("SELECT * FROM agent")
+	rows, err := c.db.Query(`SELECT a.id, a.ip, a.local, a.port, a.isLive, 
+    (SELECT GROUP_CONCAT(DISTINCT m.name ORDER BY m.id ASC)
+    FROM agent_metric am LEFT JOIN metric m ON am.metricId = m.id
+    WHERE am.agentId = a.id) metrics 
+	FROM agent a LEFT JOIN agent_metric am ON a.id = am.id
+	WHERE a.isLive = ?`, true)
 	if err != nil {
 		log.Println(err)
 		return res
 	}
 	for rows.Next() {
-		rows.Scan(&agent.ID, &agent.IP, &agent.Local, &agent.Port, &agent.IsLive)
+		var metricStr string
+		rows.Scan(&agent.ID, &agent.IP, &agent.Local, &agent.Port, &agent.IsLive, &metricStr)
+		agent.Metrics = strings.Split(metricStr, ",")
 		res = append(res, agent)
 	}
 	defer rows.Close()
@@ -56,12 +64,18 @@ func (c *Client) GetAllAgentInfo() []model.AgentInfo {
 // GetAgentInfoByIPAndLocal 根据IP与Local获取指定的Agent及其metric列表
 func (c *Client) GetAgentInfoByIPAndLocal(ip, local string) model.AgentInfo {
 	var agent model.AgentInfo
-	rows, err := c.db.Query("SELECT * FROM agent WHERE ip=? AND local=?", ip, local)
+	rows, err := c.db.Query(`SELECT a.id, a.ip, a.local, a.port, a.isLive, 
+    (SELECT GROUP_CONCAT(DISTINCT m.name ORDER BY m.id ASC)
+    FROM agent_metric am LEFT JOIN metric m ON am.metricId = m.id WHERE am.agentId = a.id) metrics 
+	FROM agent a LEFT JOIN agent_metric am ON a.id = am.id
+	WHERE a.ip = ? AND a.local = ? AND a.isLive= ? `, ip, local, true)
 	if err != nil {
 		log.Println(err)
 
 	} else if rows.Next() {
-		rows.Scan(&agent.ID, &agent.IP, &agent.Local, &agent.Port, &agent.IsLive)
+		var metricStr string
+		rows.Scan(&agent.ID, &agent.IP, &agent.Local, &agent.Port, &agent.IsLive, &metricStr)
+		agent.Metrics = strings.Split(metricStr, ",")
 	}
 	defer rows.Close()
 
@@ -73,10 +87,10 @@ func (c *Client) GetAgentInfoByIPAndLocal(ip, local string) model.AgentInfo {
 func (c *Client) GetMetricsByIPAndLocal(ip, local string) []string {
 	var tempName string
 	var res []string
-	rows, err := c.db.Query("SELECT m.name "+
-		"FROM ((agent_metric AS am LEFT JOIN agent AS a ON am.agentId=a.id) "+
-		"LEFT JOIN metric AS m ON am.metricId=m.id) "+
-		"WHERE a.ip=? AND a.local=?", ip, local)
+	rows, err := c.db.Query(`SELECT m.name 
+	FROM ((agent_metric AS am LEFT JOIN agent AS a ON am.agentId=a.id)
+	LEFT JOIN metric AS m ON am.metricId=m.id)
+	WHERE a.ip=? AND a.local=?`, ip, local)
 	if err != nil {
 		log.Println(err)
 		return res
@@ -96,9 +110,10 @@ func (c *Client) GetMetricsByIPAndLocal(ip, local string) []string {
 func (c *Client) GetAllAlertInfo() []model.HistoryInfo {
 	var history model.HistoryInfo
 	var res []model.HistoryInfo
-	rows, err := c.db.Query("SELECT h.id, a.ip, a.local, m.name, h.value, h.threshold, h.method, h.level, " +
-		"h.start, h.duration FROM ((history AS h LEFT JOIN agent AS a ON h.agentId=a.id) " +
-		"LEFT JOIN metric AS m ON h.metricId=m.id)")
+	rows, err := c.db.Query(`SELECT h.id, a.ip, a.local, m.name, h.value, h.threshold, 
+    h.method, h.level, h.start, h.duration 
+	FROM ((history AS h LEFT JOIN agent AS a ON h.agentId=a.id)
+	LEFT JOIN metric AS m ON h.metricId=m.id)`)
 	if err != nil {
 		log.Println(err)
 	}
