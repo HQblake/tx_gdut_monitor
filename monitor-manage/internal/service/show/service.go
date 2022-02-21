@@ -157,9 +157,17 @@ func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time
 }
 
 // 根据开始时间和数据量限制获取指定条数的指标数据
-func (s *Service) GetMetricsWithTime(ip string, local string, metric string, begin time.Time, limit int32) ([]model.MetricsInfo, error) {
+func (s *Service) GetMetricsWithTime(req model.MetricsReq, begin, end time.Time) ([]model.MetricsInfo, error) {
 	var err error
-	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{IP: ip, Local: local, Metric: metric, Begin: begin.Unix(), Limit: limit})
+	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{
+		IP:     req.IP,
+		Local:  req.Local,
+		Metric: req.Metric,
+		Begin:  begin.Unix(),
+		End:    begin.Unix(),
+		Period: req.Period,
+		Method: req.Method,
+		Limit:  req.Limit})
 	if err != nil {
 		return nil, err
 	}

@@ -22,7 +22,7 @@ type IShow interface {
 	GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time.Time) ([]model.HistoryInfo, error)
 
 	// GetMetricsInOneDay 比如根据agentId(ip和local)和metric获取一天内的指标情况等
-	GetMetricsWithTime(req model.MetricsReq) ([]model.MetricsInfo, error)
+	GetMetricsWithTime(req model.MetricsReq, begin, end time.Time) ([]model.MetricsInfo, error)
 
 	// DelWarnInfo 根据id删除告警信息
 	DelWarnInfo(id int32) error

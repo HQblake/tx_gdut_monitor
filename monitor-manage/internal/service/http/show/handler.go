@@ -133,15 +133,32 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 	}
 	log.Println(metInfo)
 
-	log.Printf(metInfo.IP, metInfo.Local, metInfo.MetricName, metInfo.Period, metInfo.Begin, metInfo.End, metInfo.Limit)
+	log.Printf(metInfo.IP, metInfo.Local, metInfo.Metric, metInfo.Period, metInfo.Begin, metInfo.End, metInfo.Limit)
 
 	format := "2006-01-02 15:04:05"
-	newBegin := metInfo.Begin.Format(format)
-	newEnd := metInfo.End.Format(format)
-	metInfo.Begin = newBegin
-	metInfo.End = newEnd
+	begin, err := time.ParseInLocation(format, strconv.Itoa(int(metInfo.Begin)), time.Local)
+	if err != nil {
+		log.Printf("time.Parse();err: %v", err)
+		c.JSON(http.StatusOK, gin.H{
+			"code": "040004",
+			"msg":  "初始时间和终止时间获取有误",
+			"data": nil,
+		})
+		return
+	}
 
-	res, err := h.service.GetMetricsWithTime()
+	end, err := time.ParseInLocation(format, strconv.Itoa(int(metInfo.End)), time.Local)
+	if err != nil {
+		log.Printf("time.Parse();err: %v", err)
+		c.JSON(http.StatusOK, gin.H{
+			"code": "040004",
+			"msg":  "初始时间和终止时间获取有误",
+			"data": nil,
+		})
+		return
+	}
+
+	res, err := h.service.GetMetricsWithTime(metInfo, begin, end)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040007",
