@@ -1,15 +1,15 @@
-package cache
+package mysql
 
 import "sync"
 
 type token chan struct{}
 
-type CacheLock struct {
+type CientLock struct {
 	mx    sync.Mutex
 	locks map[string]token
 }
 
-func (l *CacheLock) Lock(id string) {
+func (l *CientLock) Lock(id string) {
 	l.mx.Lock()
 	ch, ok := l.locks[id]
 	if !ok {
@@ -20,15 +20,15 @@ func (l *CacheLock) Lock(id string) {
 	ch <- struct{}{}
 }
 
-func (l *CacheLock) Unlock(id string) {
+func (l *CientLock) Unlock(id string) {
 	l.mx.Lock()
 	ch := l.locks[id]
 	<-ch
 	l.mx.Unlock()
 }
 
-func NewLock() *CacheLock {
-	return &CacheLock{
+func NewLock() *CientLock {
+	return &CientLock{
 		mx:    sync.Mutex{},
 		locks: make(map[string]token),
 	}

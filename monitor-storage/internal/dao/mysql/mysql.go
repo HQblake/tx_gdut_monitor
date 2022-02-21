@@ -13,6 +13,7 @@ import (
 
 type Client struct {
 	db *sql.DB
+	mx *CientLock
 }
 
 func NewClient(s *MySQLSetting) *Client {
@@ -29,5 +30,5 @@ func NewClient(s *MySQLSetting) *Client {
 	db.SetMaxOpenConns(s.MaxOpenConns)
 	db.SetMaxIdleConns(s.MaxIdleConns)
 	defer log.Println("MySQL Connection Succeeded")
-	return &Client{db}
+	return &Client{db, NewLock()}
 }

@@ -5,8 +5,8 @@ Workers:
   PreAlloc: false       # 内存预分配，是否初始化Pool的时候分配worker资源
   MaxBlockingTasks: 0   # 最大阻塞任务数，默认0，任务阻塞直到分配到worker；当非0时，达到最大任务数，不执行任务并返回overload
 Redis:
-  Host: 81.71.165.211:6379
-  Password: tx-monitor-gdut-group2
+  Host: 127.0.0.1:9097 # 81.71.165.211:6379
+  Password: 12345678 # tx-monitor-gdut-group2
   DB: 1
 Hosts:
   Network: tcp

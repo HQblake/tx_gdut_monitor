@@ -1,7 +1,7 @@
 InfluxDB:   # InfluxDB配置
-  URL: http://81.71.165.211:8086/
-  ORG: tx-monitor
-  Token: W494CW95RhZzEc95DpxubUw19EoBuKxCxAlv3YfVCS4KRmYnJf6MhPJGWXFvzkX4hJ76-ZDBIwpV2D76wIZMcA==
+  URL: http://127.0.0.1:9096/ # http://81.71.165.211:8086/
+  ORG: debug
+  Token: CZ5ZuD-j5XtbTHDmG_RHIuHuu8LU2UOhTSp02hpR6z9hMPk4-5ETiNuYtFrNYDghHq0OLHxSCQA4vBEhm6OJpA== # W494CW95RhZzEc95DpxubUw19EoBuKxCxAlv3YfVCS4KRmYnJf6MhPJGWXFvzkX4hJ76-ZDBIwpV2D76wIZMcA==
   Bucket: metric
   BatchSize: 20   # 批处理数量
   LogLevel: 0
@@ -18,8 +18,8 @@ InfluxDB:   # InfluxDB配置
 MySQL:     # MySQL配置
   DBType: mysql
   Username: root
-  Password: tx-monitor-gdut-group2
-  Host: 81.71.165.211:3307
+  Password: root # tx-monitor-gdut-group2
+  Host: 127.0.0.1:3306 # 81.71.165.211:3307
   DBName: monitor
   Charset: utf8mb4
   ParseTime: True
