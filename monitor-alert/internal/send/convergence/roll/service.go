@@ -11,6 +11,9 @@ import (
 	"time"
 )
 
+// 滚动告警收敛算法，尚未完善
+
+
 const (
 	convergenceMinInterval int64 = 60 * 5
 	convergenceMapLimit    int   = 300
