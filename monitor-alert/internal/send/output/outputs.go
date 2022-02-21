@@ -35,18 +35,14 @@ type Outputs struct {
 func (o *Outputs) Output(infos []model.Info) error {
 	var err error
 	// 加锁，发送的时候预防写
+	outputInfos := o.parseInfos(infos)
 	o.lock.RLock()
 	for _, output := range o.outputs {
-		outputLevel := output.Level()
-		outputInfo := make([]model.Info, 0, len(infos))
-		for _, info := range infos {
-			if ParseLevel(info.Level) >= outputLevel {
-				outputInfo = append(outputInfo, info)
+		if v, ok := outputInfos[output.Level()]; ok {
+			err = output.Output(v)
+			if err != nil {
+				log.Println(err)
 			}
-		}
-		err = output.Output(outputInfo)
-		if err != nil {
-			log.Println(err)
 		}
 	}
 	o.lock.RUnlock()
@@ -134,6 +130,43 @@ func (o *Outputs) Check(conf Config) error {
 		return fmt.Errorf("output (%s) config (%s) parse error", conf.Name, conf.Config)
 	}
 	return check.Check()
+}
+
+func (o *Outputs) parseInfos(infos []model.Info) map[Level][]model.Info {
+	res := make(map[Level][]model.Info, 4)
+	for _, info := range infos {
+		level := ParseLevel(info.Level)
+		switch level {
+		case InfoLevel:
+			if v, ok := res[InfoLevel]; ok {
+				res[InfoLevel] = append(v, info)
+			}else {
+				res[InfoLevel] = []model.Info{info}
+			}
+			fallthrough
+		case WarnLevel:
+			if v, ok := res[WarnLevel]; ok {
+				res[WarnLevel] = append(v, info)
+			}else {
+				res[WarnLevel] = []model.Info{info}
+			}
+			fallthrough
+		case ErrorLevel:
+			if v, ok := res[ErrorLevel]; ok {
+				res[ErrorLevel] = append(v, info)
+			}else {
+				res[ErrorLevel] = []model.Info{info}
+			}
+			fallthrough
+		case PanicLevel:
+			if v, ok := res[PanicLevel]; ok {
+				res[PanicLevel] = append(v, info)
+			}else {
+				res[PanicLevel] = []model.Info{info}
+			}
+		}
+	}
+	return res
 }
 
 func NewOutputs(id string) *Outputs {
