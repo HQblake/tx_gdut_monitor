@@ -1,6 +1,6 @@
-package simple
+package aggregation
 
-
+// 告警数据聚合操作，避免同一时间段频繁告警
 
 import (
 	"fmt"
@@ -13,23 +13,11 @@ import (
 "time"
 )
 
-const (
-	convergenceMinInterval int64 = 60 * 5
-	convergenceMapLimit    int   = 300
-	convergenceMaxInterval int64 = 60 * 40
 
-
-)
-
-type convergenceData struct {
-	scrollStartTime         int64
-	scrollLeft, scrollRight int64
-}
 type Convergence struct {
 	stack    *convergence.Queue
 	manage   output.IManager
 	lock     sync.RWMutex
-	data     map[string]*convergenceData
 	timer    *time.Ticker
 	infoPool *sync.Pool
 }
@@ -40,7 +28,6 @@ func NewConvergence(manage output.IManager, interval time.Duration) *Convergence
 		stack:  convergence.InitQueue(),
 		manage: manage,
 		lock:   sync.RWMutex{},
-		data:   make(map[string]*convergenceData),
 		infoPool: &sync.Pool{
 			New: func() interface{} {
 				return model.Info{}

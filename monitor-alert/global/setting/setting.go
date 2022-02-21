@@ -15,12 +15,13 @@ func NewSetting(path string) (*Setting, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	hosts := &HostSetting{}
-	vp.UnmarshalKey("Hosts", hosts)
+	err = vp.UnmarshalKey("Hosts", hosts)
 	return &Setting{vp, hosts}, nil
 }
 
 func (s *Setting) ReadSection(k string, v interface{}) error {
 	return s.vp.UnmarshalKey(k, v)
 }
+
+
