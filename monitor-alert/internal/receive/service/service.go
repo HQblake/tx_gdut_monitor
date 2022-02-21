@@ -23,8 +23,18 @@ func (s *ReceiveService) Report(ctx context.Context, in *receivepb.ReportReq) (*
 	p, _ := peer.FromContext(ctx) //获取Agent的IP地址和端口号 形式为IP:PORT
 	//fmt.Println(p.Addr.String())  //打印Agent的IP地址和端口号
 	str := strings.Split(p.Addr.String(), ":")
-	agentreport.IP = str[0]                   //封装IP
-	agentreport.Port = str[1]                 //封装port
+
+	// 用于压力测试的代码，后续可删除
+	ip, port := str[0], str[1]
+	if in.IP != "" {
+		ip = in.IP
+	}
+	if in.Port != "" {
+		port = in.Port
+	}
+
+	agentreport.IP = ip                       //封装IP
+	agentreport.Port = port                   //封装port
 	agentreport.Metrics = in.Metric           //封装指标Map
 	agentreport.Timestamp = in.GetTimestamp() //封装时间戳
 	agentreport.Local = in.Local              //封装区域
