@@ -1,14 +1,15 @@
 package send
 
 import (
-	"fmt"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	sendpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/gen"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/service"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/convergence"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/convergence/simple"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
 	"google.golang.org/grpc"
 	"sync"
+	"time"
 )
 
 // ISend 接入判定服务
@@ -21,7 +22,7 @@ type ISend interface {
 
 type Service struct {
 	proxy    *service.Service
-	convergence *convergence.Convergence
+	convergence convergence.IConvergence
 	infoPool *sync.Pool
 }
 
@@ -32,7 +33,10 @@ func NewService() *Service{
 	Register()
 	agents := output.NewManager()
 	return &Service{
-		convergence: convergence.NewConvergence(agents),
+		// 简单收敛聚合处理，一分钟告警一次
+		convergence: simple.NewConvergence(agents, time.Minute * 1),
+		// 滚动收敛聚合处理，一分钟告警一次
+		//convergence: roll.NewConvergence(agents, time.Minute * 1),
 		proxy:  service.NewService(agents),
 	}
 }
@@ -41,7 +45,6 @@ func (s *Service) RegisterService(ser *grpc.Server) {
 }
 
 func (s *Service) Send(alert *model.AlertInfo) error {
-	s.convergence.AlertConvergence(fmt.Sprintf("%s-%s", alert.IP, alert.Local), alert)
-	return nil
+	return s.convergence.Alert(alert)
 }
 
