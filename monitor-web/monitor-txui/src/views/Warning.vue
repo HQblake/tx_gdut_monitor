@@ -27,7 +27,7 @@
           ></el-col>
           <el-col :span="4"
             ><div class="grid-content bg-purple">
-              <el-select v-model="warnContent" placeholder="级别">
+              <el-select v-model="level" placeholder="级别">
                 <el-option
                   v-for="item in levelOptions"
                   :key="item.value"
@@ -67,9 +67,9 @@
             (data) =>
               !search ||
               data.id == search.toLowerCase() ||
-              data.level.toLowerCase().includes(search.toLowerCase()) ||
-              data.tabName.toLowerCase().includes(search.toLowerCase()) ||
-              data.startTime.includes(search)
+              data.level == search.toLowerCase() ||
+              data.metric.toLowerCase().includes(search.toLowerCase()) ||
+              data.start.includes(search)
           )
         "
         :header-cell-style="{ height: '100px' }"
@@ -91,7 +91,7 @@
         </el-table-column>
         <el-table-column
           label="告警内容"
-          prop="tabName"
+          prop="metric"
           align="center"
           header-aligh="center"
         >
@@ -106,7 +106,7 @@
         <el-table-column
           min-width="100px"
           label="开始时间"
-          prop="startTime"
+          prop="start"
           align="center"
           header-aligh="center"
         >
@@ -114,7 +114,7 @@
         <!-- <el-table-column label="指标" prop="5" > </el-table-column> -->
         <el-table-column
           label="异常值"
-          prop="outliers"
+          prop="value"
           align="center"
           header-aligh="center"
         >
@@ -128,7 +128,7 @@
         </el-table-column>
         <el-table-column
           label="持续时间"
-          prop="during"
+          prop="duration"
           align="center"
           header-aligh="center"
         >
@@ -168,31 +168,32 @@ export default {
   components: {},
   data () {
     return {
+      data1: '',
       timePickerValue: [],
       level: '',
       levelOptions: [
         {
           label: '严重',
-          value: '严重'
+          value: '1'
         },
         {
           label: '中等',
-          value: '中等'
+          value: '2'
         },
         {
           label: '警告',
-          value: '警告'
+          value: '3'
         }
       ],
       warnContent: '',
       warnOptions: [
         {
           label: 'cpu使用率',
-          value: 'cpu'
+          value: 'cpu_rate'
         },
         {
           label: 'mem使用率',
-          value: 'mem'
+          value: 'mem_rate'
         }
       ],
       Outliers: '',
@@ -201,39 +202,39 @@ export default {
       dialogVisible: false,
       search: '',
       tableData: [
-        {
-          id: 1,
-          ip: '127.0.0.1',
-          local: '北京',
-          tabName: 'cpu利用率',
-          level: '严重',
-          startTime: '2022-02-10 18:00:00',
-          outliers: 85,
-          threshold: 80,
-          during: 30
-        },
-        {
-          id: 2,
-          ip: '127.0.0.2',
-          local: '北京',
-          tabName: 'cpu利用率',
-          level: '严重',
-          startTime: '2022-02-10 19:00:00',
-          outliers: 85,
-          threshold: 80,
-          during: 30
-        },
-        {
-          id: 3,
-          ip: '127.0.0.2',
-          local: '上海',
-          tabName: 'mem利用率',
-          level: '中等',
-          startTime: '2022-02-10 20:00:00',
-          outliers: 85,
-          threshold: 80,
-          during: 30
-        }
+        // {
+        //   id: 1,
+        //   ip: '127.0.0.1',
+        //   local: '北京',
+        //   tabName: 'cpu利用率',
+        //   level: '严重',
+        //   startTime: '2022-02-10 18:00:00',
+        //   outliers: 85,
+        //   threshold: 80,
+        //   during: 30
+        // },
+        // {
+        //   id: 2,
+        //   ip: '127.0.0.2',
+        //   local: '北京',
+        //   tabName: 'cpu利用率',
+        //   level: '严重',
+        //   startTime: '2022-02-10 19:00:00',
+        //   outliers: 85,
+        //   threshold: 80,
+        //   during: 30
+        // },
+        // {
+        //   id: 3,
+        //   ip: '127.0.0.2',
+        //   local: '上海',
+        //   tabName: 'mem利用率',
+        //   level: '中等',
+        //   startTime: '2022-02-10 20:00:00',
+        //   outliers: 85,
+        //   threshold: 80,
+        //   during: 30
+        // }
       ]
     }
   },
@@ -278,7 +279,20 @@ export default {
     }
   },
   created () {
+    GetWarnList().then(data => {
+      console.log(data)
+      console.log(111);
+      this.tableData = data.data
+      // console.log(tableData);
 
+    })
+      .catch(err => {
+        if (err.msg) {
+          this.$alert(err.msg)
+          return
+        }
+        this.$alert(err)
+      })
   },
   mounted () {
     this.now()

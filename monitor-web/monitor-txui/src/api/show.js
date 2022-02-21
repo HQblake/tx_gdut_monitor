@@ -1,3 +1,9 @@
+/*
+ * @Description: 
+ * @Autor: yzq
+ * @Date: 2022-02-18 16:59:22
+ * @LastEditors: yzq
+ */
 import { fetchGet, fetchPost } from '@/request.js'
 
 export function GetMetricsWithTime (ip, local, metric, begin, limit) {
@@ -7,8 +13,8 @@ export function GetMetricsWithTime (ip, local, metric, begin, limit) {
 }
 
 // 获取所有告警信息
-export function GetWarnInfo () {
-  let url = 'warn/warnList'
+export function GetWarnList () {
+  let url = '/show/warnList'
   return fetchGet(url, {})
 }
 
