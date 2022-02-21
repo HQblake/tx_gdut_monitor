@@ -5,7 +5,6 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/service"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"google.golang.org/grpc"
 )
 
@@ -28,8 +27,8 @@ func (s *server) RegisterService(ser *grpc.Server) {
 	judgpb.RegisterRuleUpdaterServer(ser, s.proxy)
 }
 
-func NewService(s *setting.Setting, send send.ISend) *server {
+func NewService(send send.ISend) *server {
 	return &server{
-		proxy: service.NewService(s, send),
+		proxy: service.NewService(send),
 	}
 }

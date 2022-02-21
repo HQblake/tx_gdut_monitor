@@ -1,15 +1,14 @@
-package convergence
+package model
 
 import (
 "fmt"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
 )
 
 // define a node
 type Node struct {
-	Target string
-	Message model.Info
-	Metric string
+	Target  string
+	Message Info
+	Metric  string
 }
 
 // queue

@@ -137,18 +137,11 @@ func (o *Outputs) parseInfos(infos []model.Info) map[Level][]model.Info {
 	for _, info := range infos {
 		level := ParseLevel(info.Level)
 		switch level {
-		case InfoLevel:
-			if v, ok := res[InfoLevel]; ok {
-				res[InfoLevel] = append(v, info)
+		case PanicLevel:
+			if v, ok := res[PanicLevel]; ok {
+				res[PanicLevel] = append(v, info)
 			}else {
-				res[InfoLevel] = []model.Info{info}
-			}
-			fallthrough
-		case WarnLevel:
-			if v, ok := res[WarnLevel]; ok {
-				res[WarnLevel] = append(v, info)
-			}else {
-				res[WarnLevel] = []model.Info{info}
+				res[PanicLevel] = []model.Info{info}
 			}
 			fallthrough
 		case ErrorLevel:
@@ -158,11 +151,18 @@ func (o *Outputs) parseInfos(infos []model.Info) map[Level][]model.Info {
 				res[ErrorLevel] = []model.Info{info}
 			}
 			fallthrough
-		case PanicLevel:
-			if v, ok := res[PanicLevel]; ok {
-				res[PanicLevel] = append(v, info)
+		case WarnLevel:
+			if v, ok := res[WarnLevel]; ok {
+				res[WarnLevel] = append(v, info)
 			}else {
-				res[PanicLevel] = []model.Info{info}
+				res[WarnLevel] = []model.Info{info}
+			}
+			fallthrough
+		case InfoLevel:
+			if v, ok := res[InfoLevel]; ok {
+				res[InfoLevel] = append(v, info)
+			}else {
+				res[InfoLevel] = []model.Info{info}
 			}
 		}
 	}

@@ -3,7 +3,6 @@ package roll
 import (
 	"fmt"
 	model2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/convergence"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
 	"log"
@@ -12,8 +11,6 @@ import (
 )
 
 // 滚动告警收敛算法，尚未完善
-
-
 const (
 	convergenceMinInterval int64 = 60 * 5
 	convergenceMapLimit    int   = 300
@@ -26,7 +23,7 @@ type convergenceData struct {
 	scrollLeft, scrollRight int64
 }
 type Convergence struct {
-	stack    *convergence.Queue
+	stack    *model.Queue
 	manage   output.IManager
 	lock     sync.RWMutex
 	data     map[string]*convergenceData
@@ -36,7 +33,7 @@ type Convergence struct {
 
 func NewConvergence(manage output.IManager, interval time.Duration) *Convergence {
 	c := &Convergence{
-		stack:  convergence.InitQueue(),
+		stack:  model.InitQueue(),
 		manage: manage,
 		lock:   sync.RWMutex{},
 		data:   make(map[string]*convergenceData),
@@ -82,7 +79,7 @@ func (c *Convergence) alertConvergence(target string, info model.Info, timestamp
 	cod.scroll(timestamp)
 	c.lock.Unlock()
 	c.lock.Lock()
-	data := convergence.Node{
+	data := model.Node{
 		Target:  target,
 		Message: info,
 		Metric:  metric,
@@ -91,11 +88,11 @@ func (c *Convergence) alertConvergence(target string, info model.Info, timestamp
 	c.lock.Unlock()
 }
 
-func (c *Convergence) push(data convergence.Node) {
+func (c *Convergence) push(data model.Node) {
 	c.stack.EnQueue(data)
 }
 
-func (c *Convergence) pop() convergence.Node {
+func (c *Convergence) pop() model.Node {
 	return c.stack.DeQueue()
 }
 
@@ -160,8 +157,8 @@ func (c *Convergence) SendQueueTask() {
 }
 
 // 获取所有的告警信息
-func (c *Convergence) allData() []convergence.Node {
-	list := make([]convergence.Node, 0)
+func (c *Convergence) allData() []model.Node {
+	list := make([]model.Node, 0)
 	c.lock.Lock()
 	for {
 		data := c.pop()

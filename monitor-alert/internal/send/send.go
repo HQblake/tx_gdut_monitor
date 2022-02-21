@@ -5,11 +5,9 @@ import (
 	sendpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/gen"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/service"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/convergence"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/convergence/simple"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
 	"google.golang.org/grpc"
 	"sync"
-	"time"
 )
 
 // ISend 接入判定服务
@@ -33,10 +31,7 @@ func NewService() *Service{
 	Register()
 	agents := output.NewManager()
 	return &Service{
-		// 简单收敛聚合处理，一分钟告警一次
-		convergence: simple.NewConvergence(agents, time.Minute * 1),
-		// 滚动收敛聚合处理，一分钟告警一次
-		//convergence: roll.NewConvergence(agents, time.Minute * 1),
+		convergence: convergence.NewConvergence(agents),
 		proxy:  service.NewService(agents),
 	}
 }

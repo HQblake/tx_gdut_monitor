@@ -5,17 +5,16 @@ package aggregation
 import (
 	"fmt"
 	model2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/convergence"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
-"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
-"log"
-"sync"
-"time"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
+	"log"
+	"sync"
+	"time"
 )
 
 
 type Convergence struct {
-	stack    *convergence.Queue
+	stack    *model.Queue
 	manage   output.IManager
 	lock     sync.RWMutex
 	timer    *time.Ticker
@@ -25,7 +24,7 @@ type Convergence struct {
 // NewConvergence interval 报警频率
 func NewConvergence(manage output.IManager, interval time.Duration) *Convergence {
 	c := &Convergence{
-		stack:  convergence.InitQueue(),
+		stack:  model.InitQueue(),
 		manage: manage,
 		lock:   sync.RWMutex{},
 		infoPool: &sync.Pool{
@@ -43,7 +42,7 @@ func (c *Convergence) Alert(alert *model2.AlertInfo) error {
 	target := fmt.Sprintf("%s-%s", alert.IP, alert.Local)
 	c.lock.Lock()
 	for metric, info := range alert.Metrics {
-		data := convergence.Node{
+		data := model.Node{
 			Target:  target,
 			Message: c.newInfo(target, info),
 			Metric:  metric,
@@ -55,11 +54,11 @@ func (c *Convergence) Alert(alert *model2.AlertInfo) error {
 }
 
 
-func (c *Convergence) push(data convergence.Node) {
+func (c *Convergence) push(data model.Node) {
 	c.stack.EnQueue(data)
 }
 
-func (c *Convergence) pop() convergence.Node {
+func (c *Convergence) pop() model.Node {
 	return c.stack.DeQueue()
 }
 
@@ -82,8 +81,8 @@ func (c *Convergence) SendQueueTask() {
 }
 
 // 获取所有的告警信息
-func (c *Convergence) allData() []convergence.Node {
-	list := make([]convergence.Node, 0)
+func (c *Convergence) allData() []model.Node {
+	list := make([]model.Node, 0)
 	c.lock.Lock()
 	for {
 		data := c.pop()

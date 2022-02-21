@@ -2,10 +2,10 @@ package client
 
 import (
 	"context"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global/setting"
 	managepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/proto/managepb"
 	storepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/proto/storagepb"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"log"
@@ -85,18 +85,18 @@ func (c *Client) GetAgentRule(ip, local string, metrics []string) model.AgentRul
 	return agent
 }
 
-func NewClient(s *setting.Setting) *Client {
+func NewClient() *Client {
 	client := &Client{}
 	var conn *grpc.ClientConn
 	var err error
-
-	conn, err = grpc.Dial(s.Hosts.ManageClient, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	hosts := setting.GetHostConfig()
+	conn, err = grpc.Dial(hosts.ManageClient, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalln(err)
 	}
 	client.manage = managepb.NewManageServiceClient(conn)
 
-	conn, err = grpc.Dial(s.Hosts.StorageClient, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err = grpc.Dial(hosts.StorageClient, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalln(err)
 	}
