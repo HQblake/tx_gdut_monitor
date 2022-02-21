@@ -1,7 +1,6 @@
 package convergence
 
 import (
-	"fmt"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global/setting"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/convergence/aggregation"
@@ -21,19 +20,18 @@ func NewConvergence(manage output.IManager) IConvergence {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(config)
 	if config.Interval == 0 {
 		config.Interval = 1
 	}
 	switch config.Convergence {
-	case 0:
-		// 不做收敛处理，收到即告警
-		return instant.NewConvergence(manage)
+	case 1:
+		// 简单聚合收敛处理，默认一分钟告警一次
+		return aggregation.NewConvergence(manage, time.Duration(config.Interval) * time.Second)
 	case 2:
 		// 滚动收敛聚合处理，默认一分钟告警一次
 		return roll.NewConvergence(manage, time.Duration(config.Interval) * time.Second)
 	default:
-		// 默认为1，简单聚合收敛处理，默认一分钟告警一次
-		return aggregation.NewConvergence(manage, time.Duration(config.Interval) * time.Second)
+		// 默认为0，不做收敛处理，收到即刻告警
+		return instant.NewConvergence(manage)
 	}
 }
