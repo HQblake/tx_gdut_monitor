@@ -131,12 +131,9 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 		log.Printf("json.Unmarshal();err: %v", err)
 		return
 	}
-	log.Println(metInfo)
-
-	log.Printf(metInfo.IP, metInfo.Local, metInfo.Metric, metInfo.Period, metInfo.Begin, metInfo.End, metInfo.Limit)
 
 	format := "2006-01-02 15:04:05"
-	begin, err := time.ParseInLocation(format, strconv.Itoa(int(metInfo.Begin)), time.Local)
+	begin, err := time.ParseInLocation(format, metInfo.Begin, time.Local)
 	if err != nil {
 		log.Printf("time.Parse();err: %v", err)
 		c.JSON(http.StatusOK, gin.H{
@@ -147,7 +144,7 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 		return
 	}
 
-	end, err := time.ParseInLocation(format, strconv.Itoa(int(metInfo.End)), time.Local)
+	end, err := time.ParseInLocation(format, metInfo.End, time.Local)
 	if err != nil {
 		log.Printf("time.Parse();err: %v", err)
 		c.JSON(http.StatusOK, gin.H{
@@ -158,7 +155,9 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 		return
 	}
 
+	log.Println("res")
 	res, err := h.service.GetMetricsWithTime(metInfo, begin, end)
+	log.Println("res", res)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040007",

@@ -11,8 +11,8 @@ type MetricsReq struct {
 	Local  string `json:"local"`
 	Metric string `json:"metricName"`
 	Period string `json:"period"`
-	Begin  int64  `json:"begin"`
-	End    int64  `json:"end"`
+	Begin  string `json:"begin"`
+	End    string `json:"end"`
 	Method int32  `json:"method"`
 	Limit  int32  `json:"limit"`
 }

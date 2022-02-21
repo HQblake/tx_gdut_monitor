@@ -159,6 +159,7 @@ func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time
 // 根据开始时间和数据量限制获取指定条数的指标数据
 func (s *Service) GetMetricsWithTime(req model.MetricsReq, begin, end time.Time) ([]model.MetricsInfo, error) {
 	var err error
+	log.Println("req", req, begin, end)
 	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{
 		IP:     req.IP,
 		Local:  req.Local,
@@ -178,14 +179,18 @@ func (s *Service) GetMetricsWithTime(req model.MetricsReq, begin, end time.Time)
 		if err == io.EOF {
 			break
 		}
+		// log.Printf("11111111")
 		if err != nil {
 			log.Printf("grpc get historyAlert rule error %v", err)
 			continue
 		}
-		if resp.Code != managepb.ResponseCode_SUCCESS {
-			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
-			continue
-		}
+		// if resp.Code != managepb.ResponseCode_SUCCESS {
+		// 	// log.Printf("222")
+
+		// 	log.Printf("grpc get historyAlert rule error %v", resp.Msg)
+		// 	continue
+		// }
+		// log.Printf("222")
 		config := resp.GetResult()
 		conf := model.MetricsInfo{
 			Timestamp: config.GetTimestamp(),
