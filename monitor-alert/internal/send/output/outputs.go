@@ -185,6 +185,9 @@ type IManager interface {
 }
 type Manager struct {
 	lock *sync.RWMutex
+	// 暂时为agentid(ip + local)
+	// Todo 更为完善的方式应该是中间再加一层，以发送配置分组id为键值，这样可以为多个agent绑定同一组告警配置，完全解耦
+	// Todo 鉴于时间和页面需求较为复杂（这样做还需要一个发送配置分组管理），暂时以agentid为键值，即一个agent配置一套发送规则
 	Agents map[string]IOutputs
 }
 func NewManager() *Manager {
