@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	setting2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global/setting"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global/setting"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/receive"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
@@ -39,13 +39,13 @@ func main() {
 	Receive.RegisterService(server)
 
 	// 启动端口监听
-	host := setting2.GetHostConfig()
+	host := setting.GetHostConfig()
 	lis, _ := net.Listen(host.Network, host.Server)
 	server.Serve(lis)
 }
 
 func setupSetting(config string) {
-	err := setting2.InitSetting(config)
+	err := setting.InitSetting(config)
 	if err != nil {
 		log.Fatal(err)
 	}

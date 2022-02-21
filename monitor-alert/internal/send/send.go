@@ -25,7 +25,6 @@ type Service struct {
 }
 
 
-
 // NewService 初始化发送服务，提供对外的判定服务结构（判定服务直接调用该结构的Send方法即可完成发送）
 func NewService() *Service{
 	Register()

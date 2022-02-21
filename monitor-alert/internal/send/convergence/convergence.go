@@ -26,10 +26,10 @@ func NewConvergence(manage output.IManager) IConvergence {
 	switch config.Convergence {
 	case 1:
 		// 简单聚合收敛处理，默认一分钟告警一次
-		return aggregation.NewConvergence(manage, time.Duration(config.Interval) * time.Second)
+		return aggregation.NewConvergence(manage, time.Duration(config.Interval) * time.Minute)
 	case 2:
 		// 滚动收敛聚合处理，默认一分钟告警一次
-		return roll.NewConvergence(manage, time.Duration(config.Interval) * time.Second)
+		return roll.NewConvergence(manage, time.Duration(config.Interval) * time.Minute)
 	default:
 		// 默认为0，不做收敛处理，收到即刻告警
 		return instant.NewConvergence(manage)

@@ -1,5 +1,6 @@
 package setting
 
+// WorkersSetting 保存Goroutine协程池的配置
 type WorkersSetting struct {
 	Capacity         int    // 协程池容量
 	ExpiryDuration   string // worker 协程过期时间

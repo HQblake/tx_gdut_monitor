@@ -13,3 +13,6 @@ Hosts:
   Server: ':8081'
   ManageClient: 'manage:8082'
   StorageClient: 'storage:8080'
+Alert:
+  Convergence: 1 # 告警收敛方式，0为即时告警，1为聚合收敛，2为滚动收敛(未完善)，默认为0
+  Interval: 1 # 告警周期，单位为min，收敛方式为1或2时有效，默认为1min
