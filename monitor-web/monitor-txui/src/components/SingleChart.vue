@@ -27,8 +27,6 @@
             start-placeholder="开始日期"
             end-placeholder="结束日期"
             value-format="yyyy-MM-dd HH:mm:ss"
-            :default-time="['08:00:00', '12:00:00']"
-            :default-value="new Date()"
           >
           </el-date-picker>
         </div>
