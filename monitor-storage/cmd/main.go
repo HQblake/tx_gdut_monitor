@@ -13,7 +13,7 @@ import (
 
 func init() {
 	var config string
-	flag.StringVar(&config, "config", "../configs/config.yaml", "存储系统配置文件")
+	flag.StringVar(&config, "config", "./configs/config.yaml", "存储系统配置文件")
 	flag.Parse()
 
 	var err error

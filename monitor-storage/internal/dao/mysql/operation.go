@@ -12,11 +12,15 @@ import (
 // SaveAgentInfo 调用MySQL的存储过程
 // 传入参数：IP、Local、Port、Metric_Name，保存Agent信息
 func (c *Client) SaveAgentInfo(metric *model.Metric) error {
+	// 需要上锁
+	c.mx.Lock(metric.IP + metric.Local)
 	_, err := c.db.Exec("CALL AddAgentInfo(?,?,?,?)", metric.IP, metric.Local, metric.Port, metric.Name)
+	c.mx.Unlock(metric.IP + metric.Local)
 	if err != nil {
 		return err
 	}
 	log.Printf("SaveAgentInfo: %v\n", *metric)
+
 	return nil
 }
 

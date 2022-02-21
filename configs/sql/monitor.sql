@@ -11,7 +11,7 @@
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 13/02/2022 11:34:24
+ Date: 21/02/2022 18:11:27
 */
 
 SET NAMES utf8mb4;
@@ -28,7 +28,7 @@ CREATE TABLE `agent`  (
   `port` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Agent 端口',
   `isLive` tinyint(1) NOT NULL DEFAULT 1 COMMENT 'Agent 存活状态: 1为存活，0为失活',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for agent_metric
@@ -43,7 +43,7 @@ CREATE TABLE `agent_metric`  (
   INDEX `map_metric`(`metricId`) USING BTREE,
   CONSTRAINT `map_agent` FOREIGN KEY (`agentId`) REFERENCES `agent` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `map_metric` FOREIGN KEY (`metricId`) REFERENCES `metric` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 9 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for alert
@@ -58,7 +58,7 @@ CREATE TABLE `alert`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `alert_agent`(`agentId`) USING BTREE,
   CONSTRAINT `alert_agent` FOREIGN KEY (`agentId`) REFERENCES `agent` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for check
@@ -76,7 +76,7 @@ CREATE TABLE `check`  (
   INDEX `select2`(`agentId`) USING BTREE,
   CONSTRAINT `check_agent` FOREIGN KEY (`agentId`) REFERENCES `agent` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `check_metric` FOREIGN KEY (`metricId`) REFERENCES `metric` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for history
@@ -97,7 +97,7 @@ CREATE TABLE `history`  (
   INDEX `history_metric`(`metricId`) USING BTREE,
   CONSTRAINT `history_agent` FOREIGN KEY (`agentId`) REFERENCES `agent` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `history_metric` FOREIGN KEY (`metricId`) REFERENCES `metric` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 6 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Table structure for metric
@@ -121,7 +121,7 @@ CREATE PROCEDURE `AddAgentInfo`(IN i VARCHAR(50),
 BEGIN
 	-- 定义 MetricID 与 AgentID 变量
 	DECLARE metricId INT DEFAULT -1;
-	DECLARE agentId1 INT DEFAULT -1;
+	DECLARE agentId INT DEFAULT -1;
 	DECLARE id INT DEFAULT -1;
 	
 	-- 获取metricID，若不存在则插入新的metric
@@ -132,11 +132,10 @@ BEGIN
 	END IF;
 
 	-- 获取AgentID，若不存在则插入新的agent
-	SELECT a.id FROM agent AS a WHERE a.`ip`=i AND a.`local`=l AND a.`port`=p INTO agentId1;
-	IF agentId1=-1 THEN
+	SELECT a.id FROM agent AS a WHERE a.`ip`=i AND a.`local`=l AND a.`port`=p INTO agentId;
+	IF agentId=-1 THEN
 		INSERT INTO agent(`ip`,`local`,`port`) VALUES(i,l,p);
-		SELECT a.id FROM agent AS a WHERE a.`ip`=i AND a.`local`=l AND a.`port`=p INTO agentId1;
--- 		INSERT into alert(agentId,sendType,`level`,config) SELECT a.id,0,0,"defult" FROM agent AS a WHERE a.`ip`=i AND a.`local`=l AND a.`port`=p agentId1
+		SELECT a.id FROM agent AS a WHERE a.`ip`=i AND a.`local`=l AND a.`port`=p INTO agentId;
 	END IF;
 
 	
