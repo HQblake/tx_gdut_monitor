@@ -1,3 +1,9 @@
+/*
+ * @Description:
+ * @Autor: yzq
+ * @Date: 2022-02-11 10:35:39
+ * @LastEditors: yzq
+ */
 package model
 
 type MetricsInfo struct {
@@ -7,14 +13,14 @@ type MetricsInfo struct {
 }
 
 type MetricsReq struct {
-	IP     string `json:"ip"`
-	Local  string `json:"local"`
-	Metric string `json:"metricName"`
-	Period string `json:"period"`
-	Begin  string `json:"begin"`
-	End    string `json:"end"`
-	Method int32  `json:"method"`
-	Limit  int32  `json:"limit"`
+	IP         string `json:"ip"`
+	Local      string `json:"local"`
+	MetricName string `json:"metricName"`
+	Period     string `json:"period"`
+	Begin      string `json:"begin"`
+	End        string `json:"end"`
+	Method     int32  `json:"method"`
+	Limit      int32  `json:"limit"`
 }
 
 // type MetricRequest struct {
