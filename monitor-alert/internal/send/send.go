@@ -5,12 +5,10 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	sendpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/gen"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/api/service"
-	model2 "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/convergence"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
 	"google.golang.org/grpc"
-	"log"
 	"sync"
-	"time"
 )
 
 // ISend 接入判定服务
@@ -23,7 +21,7 @@ type ISend interface {
 
 type Service struct {
 	proxy    *service.Service
-	agents   output.IManager
+	convergence *convergence.Convergence
 	infoPool *sync.Pool
 }
 
@@ -34,13 +32,8 @@ func NewService() *Service{
 	Register()
 	agents := output.NewManager()
 	return &Service{
-		agents: agents,
+		convergence: convergence.NewConvergence(agents),
 		proxy:  service.NewService(agents),
-		infoPool: &sync.Pool{
-			New: func() interface{} {
-				return model2.Info{}
-			},
-		},
 	}
 }
 func (s *Service) RegisterService(ser *grpc.Server) {
@@ -48,40 +41,7 @@ func (s *Service) RegisterService(ser *grpc.Server) {
 }
 
 func (s *Service) Send(alert *model.AlertInfo) error {
-	fmt.Printf("开始告警：%+v",alert)
-	outputs := s.agents.GetOutputs(fmt.Sprintf("%s-%s", alert.IP, alert.Local))
-	for _, info := range alert.Metrics {
-		i := s.newInfo(fmt.Sprintf("%s-%s", alert.IP, alert.Local), info)
-		err := outputs.Output(i)
-		if err != nil {
-			log.Println(err)
-		}
-		s.release(i)
-		// 考虑开协程去分别处理,同一时间上报的指标数不会过多，暂不做协程数量限制
-		//go func(i model2.Info) {
-		//	err := outputs.Output(i)
-		//	if err != nil {
-		//		log.Println(err)
-		//	}
-		//	s.release(i)
-		//}(i)
-	}
+	s.convergence.AlertConvergence(fmt.Sprintf("%s-%s", alert.IP, alert.Local), alert)
 	return nil
 }
 
-func (s *Service) newInfo(agent string, alert model.MetricInfo) model2.Info {
-	i := s.infoPool.Get().(model2.Info)
-	i.Agent = agent
-	i.Metric = alert.Metric
-	i.Value = alert.Value
-	i.Threshold = alert.Threshold
-	i.Level = output.Level(alert.Level).String()
-	i.Duration = alert.Duration
-	i.Start = time.Unix(alert.Start, 0).Format("[2006-01-01 15:04:05]")
-	i.ParseMethod(alert.Method)
-	return i
-}
-
-func (s *Service) release(info model2.Info) {
-	s.infoPool.Put(info)
-}

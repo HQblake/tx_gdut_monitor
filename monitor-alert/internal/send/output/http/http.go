@@ -68,8 +68,8 @@ func (h *Http) Reset(level output.Level, config interface{}) error {
 	return nil
 }
 
-func (h *Http) Output(info model.Info) error {
-	msg, err := format.Format(h.formatType, info)
+func (h *Http) Output(infos []model.Info) error {
+	msg, err := format.Format(h.formatType, infos)
 	if err != nil {
 		return err
 	}

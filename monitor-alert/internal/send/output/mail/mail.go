@@ -108,7 +108,7 @@ func (m *Mail) Reset(level output.Level, config interface{}) error {
 	return nil
 }
 
-func (m *Mail) Output(info model.Info) error {
+func (m *Mail) Output(infos []model.Info) error {
 	if !m.enable {
 		return nil
 	}
@@ -118,7 +118,7 @@ func (m *Mail) Output(info model.Info) error {
 		return nil
 	}
 	em := m.pool.Get().(*email.Email)
-	msg, err := format.Format(m.formatType, info)
+	msg, err := format.Format(m.formatType, infos)
 	if err != nil {
 		return err
 	}

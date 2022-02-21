@@ -75,7 +75,7 @@ func (k *Kafka) Reset(level output.Level, config interface{}) error {
 
 }
 
-func (k *Kafka) Output(info model.Info) error {
+func (k *Kafka) Output(infos []model.Info) error {
 	k.lock.RLock()
 	defer k.lock.RUnlock()
 	if k.producer == nil || k.input == nil {
@@ -84,7 +84,7 @@ func (k *Kafka) Output(info model.Info) error {
 	if !k.enable {
 		return nil
 	}
-	body, err := format.Format(k.formatType, info)
+	body, err := format.Format(k.formatType, infos)
 	if err != nil {
 		return err
 	}

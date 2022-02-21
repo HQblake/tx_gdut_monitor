@@ -69,8 +69,8 @@ func (n *Nsq) Reset(level output.Level, config interface{}) error {
 	return nil
 }
 
-func (n *Nsq) Output(info model.Info) error {
-	msg, err := format.Format(n.formatType, info)
+func (n *Nsq) Output(infos []model.Info) error {
+	msg, err := format.Format(n.formatType, infos)
 	if err != nil {
 		return err
 	}
