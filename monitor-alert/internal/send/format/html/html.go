@@ -15,7 +15,7 @@ type Html struct {
 	tmp *template.Template
 }
 
-func (h *Html) Format(info model.Info) ([]byte, error) {
+func (h *Html) Format(info []model.Info) ([]byte, error) {
 	b := &bytes.Buffer{}
 	b.Reset()
 	err := h.tmp.Execute(b, info)

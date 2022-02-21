@@ -17,7 +17,7 @@ func Get(name string) (IFormatterPool, error)  {
 	return formatPool.Get(name)
 }
 
-func Format(name string, info model.Info) ([]byte, error) {
+func Format(name string, info []model.Info) ([]byte, error) {
 	pool, err := formatPool.Get(name)
 	if err != nil {
 		return nil, err
