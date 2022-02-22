@@ -6,16 +6,20 @@ import (
 	judgpb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/judgment/judgpb"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/pkg/setting"
+	"github.com/panjf2000/ants/v2"
+	"log"
+	"os"
+	"time"
 )
 
 type MetricService struct {
-	dao *dao.StorageDao
+	dao  *dao.StorageDao
+	pool *ants.Pool
 	*judgpb.UnimplementedMetricServiceServer
 }
 
 func (m *MetricService) GetAggregatedData(ctx context.Context, request *judgpb.AggregatedRequest) (*judgpb.AggregatedResponse, error) {
 	metric := model.MetricPool.Get().(*model.Metric)
-	defer model.MetricPool.Put(metric)
 	parseMetric(request, metric)
 	// 1. 执行事务处理，获取聚合结果
 	value, err := m.dao.GetAggregatedData(request.Period, request.Method, metric)
@@ -23,11 +27,13 @@ func (m *MetricService) GetAggregatedData(ctx context.Context, request *judgpb.A
 		return &judgpb.AggregatedResponse{Code: judgpb.BaseResponseCode_ERRORCODE, Msg: err.Error()}, err
 	}
 
-	// 2. 在MySQL中进行相关记录
+	// 将存储AgentInfo的任务提交至协程池
 	err = m.dao.SaveAgentInfo(metric)
 	if err != nil {
-		return &judgpb.AggregatedResponse{Code: judgpb.BaseResponseCode_ERRORCODE, Msg: err.Error()}, err
+		log.Printf("Save AgentInfo error: %v\n", err)
 	}
+	model.MetricPool.Put(metric)
+
 	return &judgpb.AggregatedResponse{Code: judgpb.BaseResponseCode_SUCCESSCODE, Msg: "SUCCESS", Result: value}, nil
 }
 
@@ -43,8 +49,23 @@ func (m *MetricService) InsertAlertInfo(ctx context.Context, request *judgpb.His
 }
 
 func NewService(s *setting.Setting) *MetricService {
+	ws := &model.WorkersSetting{}
+	s.ReadSection("Workers", ws)
+
+	duration, _ := time.ParseDuration(ws.ExpiryDuration)
+
+	// 初始化协程池
+	pool, _ := ants.NewPool(ws.Capacity, ants.WithOptions(ants.Options{
+		ExpiryDuration:   duration,
+		PreAlloc:         ws.PreAlloc,
+		MaxBlockingTasks: ws.MaxBlockingTasks,
+		Nonblocking:      ws.Nonblocking,
+		PanicHandler:     nil,
+		Logger:           ants.Logger(log.New(os.Stderr, "", log.LstdFlags)),
+	}))
 	return &MetricService{
-		dao: dao.NewStorageDao(s),
+		dao:  dao.NewStorageDao(s),
+		pool: pool,
 	}
 }
 
