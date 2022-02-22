@@ -77,7 +77,7 @@ export var defaultConfig = {
     method: {
       label: '请求方式',
       value: 'POST',
-      selectList: ['GET', 'POST', 'HEAD', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE']
+      selectList: ['POST', 'HEAD', 'PUT', 'DELETE', 'CONNECT', 'OPTIONS', 'TRACE']
     }
   }
 }

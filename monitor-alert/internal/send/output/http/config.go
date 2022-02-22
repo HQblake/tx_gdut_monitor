@@ -7,11 +7,10 @@ import (
 )
 
 type Config struct {
-	FormatType string `json:"format_type"`
-	Method string `json:"method"`
-	Url string `json:"url"`
-	Headers map[string]string `json:"headers"`
-	
+	FormatType string            `json:"format_type"`
+	Method     string            `json:"method"`
+	Url        string            `json:"url"`
+	Headers    map[string]string `json:"headers"`
 }
 
 func (c *Config) Check() error {
@@ -25,7 +24,7 @@ func (c *Config) doCheck() error {
 	}
 	c.Method = strings.ToUpper(c.Method)
 	switch c.Method {
-	case "GET", "POST", "HEAD", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE":
+	case "POST", "HEAD", "PUT", "DELETE", "CONNECT", "OPTIONS", "TRACE":
 	default:
 		return fmt.Errorf("method is invalid")
 	}
