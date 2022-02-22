@@ -244,7 +244,7 @@ func (s *Service) Init() {
 			entry := &sendpb.ConfigEntry{
 				ConfigID: config.ID,
 				Conf: &sendpb.Config{
-					SendType: config.SendType,
+					SendType: sendpb.Type(config.SendType),
 					Config:   config.Config,
 					Level:    config.Level,
 				},
