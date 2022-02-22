@@ -70,10 +70,7 @@
           </el-col>
         </el-row>
       </div>
-
-      <el-table
-        :data="
-          tableData.filter(
+      <!--   .filter(
             (data) =>
               !search ||
               data.ip == search.toLowerCase() ||
@@ -83,7 +80,11 @@
               data.value == search.toLowerCase() ||
               data.threshold == search.toLowerCase() ||
               data.duration == search.toLowerCase()
-          )
+          ) -->
+      <el-table
+        :data="
+          tableData
+        
         "
         :header-cell-style="{ height: '100px' }"
         style="width: 100%"
@@ -189,7 +190,9 @@ export default {
         case 2:
           return '中等';
         case 1:
-          return '告警'
+          return '告警';
+        case 0:
+          return '信息';
       }
 
     }
@@ -275,7 +278,16 @@ export default {
       let end = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       let levelInt = Number(this.level)
       console.log(this.ip, this.local, this.warnContent, levelInt, start, end);
-      // this.tableData = GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, start, end)
+      GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, start, end).then(data => {
+        this.tableData = data.data
+      })
+        .catch((err) => {
+          if (err.msg) {
+            this.$alert(err.msg)
+            return
+          }
+          this.$alert(err)
+        });       
     },
     now() {
       var thisTime = new Date();
@@ -316,8 +328,8 @@ export default {
   created() {
     GetWarnList()
       .then((data) => {
-        console.log(data);
-        console.log(111);
+        // console.log(data);
+        // console.log(111);
         this.tableData = data.data;
         // console.log(tableData);
       })
