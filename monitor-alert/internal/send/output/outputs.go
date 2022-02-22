@@ -13,7 +13,6 @@ type Config struct {
 	Config string
 }
 
-
 type IOutputs interface {
 	ID() string
 	Get(id int) (IOutput, bool)
@@ -26,7 +25,7 @@ type IOutputs interface {
 
 type Outputs struct {
 	// agent id
-	id string
+	id   string
 	lock *sync.RWMutex
 	// 对应agent的output集合
 	outputs map[int]IOutput
@@ -64,7 +63,6 @@ func (o *Outputs) List() []IOutput {
 	o.lock.RUnlock()
 	return res
 }
-
 
 func (o *Outputs) Get(id int) (IOutput, bool) {
 	o.lock.RLock()
@@ -113,6 +111,7 @@ func (o *Outputs) Set(id int, conf Config) error {
 		return err
 	}
 	o.outputs[id] = output
+	fmt.Printf("set output config %+v\n", conf)
 	return nil
 }
 
@@ -140,28 +139,28 @@ func (o *Outputs) parseInfos(infos []model.Info) map[Level][]model.Info {
 		case PanicLevel:
 			if v, ok := res[PanicLevel]; ok {
 				res[PanicLevel] = append(v, info)
-			}else {
+			} else {
 				res[PanicLevel] = []model.Info{info}
 			}
 			fallthrough
 		case ErrorLevel:
 			if v, ok := res[ErrorLevel]; ok {
 				res[ErrorLevel] = append(v, info)
-			}else {
+			} else {
 				res[ErrorLevel] = []model.Info{info}
 			}
 			fallthrough
 		case WarnLevel:
 			if v, ok := res[WarnLevel]; ok {
 				res[WarnLevel] = append(v, info)
-			}else {
+			} else {
 				res[WarnLevel] = []model.Info{info}
 			}
 			fallthrough
 		case InfoLevel:
 			if v, ok := res[InfoLevel]; ok {
 				res[InfoLevel] = append(v, info)
-			}else {
+			} else {
 				res[InfoLevel] = []model.Info{info}
 			}
 		}
@@ -171,14 +170,11 @@ func (o *Outputs) parseInfos(infos []model.Info) map[Level][]model.Info {
 
 func NewOutputs(id string) *Outputs {
 	return &Outputs{
-		id: id,
-		lock: &sync.RWMutex{},
+		id:      id,
+		lock:    &sync.RWMutex{},
 		outputs: make(map[int]IOutput),
 	}
 }
-
-
-
 
 type IManager interface {
 	GetOutputs(id string) IOutputs
@@ -190,9 +186,10 @@ type Manager struct {
 	// Todo 鉴于时间和页面需求较为复杂（这样做还需要一个发送配置分组管理），暂时以agentid为键值，即一个agent配置一套发送规则
 	Agents map[string]IOutputs
 }
+
 func NewManager() *Manager {
 	return &Manager{
-		lock: &sync.RWMutex{},
+		lock:   &sync.RWMutex{},
 		Agents: make(map[string]IOutputs),
 	}
 }

@@ -17,11 +17,12 @@ import (
 // arcxevvtlmzjcada
 const (
 	address = "smtp.qq.com:25"
-	user = "zekew@foxmail.com"
-	code = "arcxevvtlmzjcada"
-	host = "smtp.qq.com"
+	user    = "zekew@foxmail.com"
+	code    = "arcxevvtlmzjcada"
+	host    = "smtp.qq.com"
 	subject = "TX_GDUT_ALERT"
 )
+
 type Mail struct {
 	pool       *sync.Pool
 	level      output.Level
@@ -41,7 +42,7 @@ func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
 		return nil, err
 	}
 	m := &Mail{
-		lock: &sync.RWMutex{},
+		lock:       &sync.RWMutex{},
 		enable:     false,
 		level:      level,
 		target:     conf.Target,
@@ -68,11 +69,13 @@ func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
 
 func (m *Mail) sendMail() {
 	for mail := range m.infoCh {
-		err := m.mail.Send(mail, 10 * time.Second)
+		log.Println("mail 告警开始")
+		err := m.mail.Send(mail, 10*time.Second)
 		if err != nil {
 			log.Println("send mail:", err)
 		}
 		m.pool.Put(mail)
+		log.Println("mail 告警开始")
 	}
 	m.stopCh <- true
 }

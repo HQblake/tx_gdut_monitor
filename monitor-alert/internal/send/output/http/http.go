@@ -33,11 +33,11 @@ func NewHttp(level output.Level, config *Config) (*Http, error) {
 		target:     config.Url,
 		level:      level,
 		formatType: config.FormatType,
-		client:     &http.Client{Timeout:  30 * time.Second},
+		client:     &http.Client{Timeout: 30 * time.Second},
 		headers:    toHeader(config.Headers),
 		info:       make(chan []byte, 5),
 		stopCh:     make(chan bool),
-		lock:&sync.RWMutex{},
+		lock:       &sync.RWMutex{},
 	}
 	go h.send()
 	return h, nil
@@ -91,7 +91,7 @@ func (h *Http) Finish() error {
 	return nil
 }
 
-func (h *Http) send()  {
+func (h *Http) send() {
 	for in := range h.info {
 		request, err := http.NewRequest(h.method, h.target, bytes.NewReader(in))
 		if err != nil {
@@ -108,6 +108,7 @@ func (h *Http) send()  {
 		if h.formatType == "html" {
 			request.Header.Set("Content-Type", "application/html")
 		}
+		log.Println("http 告警发送")
 		response, err := h.client.Do(request)
 		if err != nil {
 			log.Printf("send request error :%s \n", err.Error())
@@ -118,11 +119,12 @@ func (h *Http) send()  {
 			response.Body.Close()
 			if err != nil {
 				log.Printf("send to http error :%s \n", err.Error())
-			}else {
+			} else {
 				log.Printf("http response error :%s \n", string(b))
 			}
 			continue
 		}
+		log.Println("http 告警结束")
 	}
-	h.stopCh <-true
+	h.stopCh <- true
 }

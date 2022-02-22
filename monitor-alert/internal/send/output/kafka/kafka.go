@@ -18,7 +18,7 @@ type Kafka struct {
 	enable     bool
 	input      chan<- *sarama.ProducerMessage
 	producer   sarama.AsyncProducer
-	lock *sync.RWMutex
+	lock       *sync.RWMutex
 	wg         *sync.WaitGroup
 	cancel     context.CancelFunc
 }
@@ -29,13 +29,13 @@ func NewKafka(level output.Level, conf *ProducerConfig) (*Kafka, error) {
 		return nil, err
 	}
 	k := &Kafka{
-		lock: &sync.RWMutex{},
-		level: level,
-		conf: conf,
+		lock:       &sync.RWMutex{},
+		level:      level,
+		conf:       conf,
 		formatType: conf.FormatType,
-		enable: false,
-		input: producer.Input(),
-		producer: producer,
+		enable:     false,
+		input:      producer.Input(),
+		producer:   producer,
 	}
 	go k.sendMsg()
 	return k, nil
@@ -98,7 +98,9 @@ func (k *Kafka) Output(infos []model.Info) error {
 	if k.conf.PartitionType == "hash" {
 		msg.Key = sarama.StringEncoder(k.conf.PartitionKey)
 	}
+	log.Println("kafka 告警开始")
 	k.input <- msg
+	log.Println("kafka 告警结束")
 	return nil
 }
 
@@ -111,7 +113,7 @@ func (k *Kafka) Finish() error {
 	return nil
 }
 
-func (k *Kafka) sendMsg()  {
+func (k *Kafka) sendMsg() {
 	if k.enable {
 		return
 	}
