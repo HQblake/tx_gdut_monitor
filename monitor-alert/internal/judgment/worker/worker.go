@@ -1,9 +1,9 @@
 package worker
 
 import (
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global/setting"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/client"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"github.com/panjf2000/ants/v2"
 	"log"
 	"os"
@@ -16,13 +16,16 @@ type Worker struct {
 	judgment JudgFunc
 }
 
-func NewWorker(s *setting.Setting, judg JudgFunc) *Worker {
-	ws := WorkersSetting{}
-	err := s.ReadSection("Workers", &ws)
+func NewWorker(judg JudgFunc) *Worker {
+	//ws := WorkersSetting{}
+	//err := s.ReadSection("Workers", &ws)
+	//if err != nil {
+	//	log.Fatalln(err)
+	//}
+	ws, err := setting.GetWorkerConfig()
 	if err != nil {
 		log.Fatalln(err)
 	}
-
 	duration, _ := time.ParseDuration(ws.ExpiryDuration)
 	workers, err := ants.NewPoolWithFunc(ws.Capacity, handler, ants.WithOptions(ants.Options{
 		ExpiryDuration:   duration,

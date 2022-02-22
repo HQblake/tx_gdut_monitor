@@ -50,6 +50,7 @@
             <th>持续时间</th>
             <th>开始时间</th>
         </tr>
+        {{ range . }}
         <tr>
             <td>{{ .Agent }}</td>
             <td>{{ .Metric }}</td>
@@ -60,6 +61,8 @@
             <td>{{ .Duration }}</td>
             <td>{{ .Start }}</td>
         </tr>
+        {{ end }}
+
     </table>
 </div>
 

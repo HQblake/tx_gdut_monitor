@@ -10,7 +10,7 @@ type Json struct {
 }
 
 // Format json格式化直接输出
-func (h *Json) Format(info model.Info) ([]byte, error) {
+func (h *Json) Format(info []model.Info) ([]byte, error) {
 	return json.Marshal(info)
 }
 

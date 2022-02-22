@@ -13,32 +13,32 @@ type Config struct {
 	Config string
 }
 
-
 type IOutputs interface {
 	ID() string
 	Get(id int) (IOutput, bool)
 	Del(id int) error
 	Set(id int, conf Config) error
 	List() []IOutput
-	Output(info model.Info) error
+	Output(infos []model.Info) error
 	Check(conf Config) error
 }
 
 type Outputs struct {
 	// agent id
-	id string
+	id   string
 	lock *sync.RWMutex
 	// 对应agent的output集合
 	outputs map[int]IOutput
 }
 
-func (o *Outputs) Output(info model.Info) error {
+func (o *Outputs) Output(infos []model.Info) error {
 	var err error
 	// 加锁，发送的时候预防写
+	outputInfos := o.parseInfos(infos)
 	o.lock.RLock()
 	for _, output := range o.outputs {
-		if ParseLevel(info.Level) >= output.Level() {
-			err = output.Output(info)
+		if v, ok := outputInfos[output.Level()]; ok {
+			err = output.Output(v)
 			if err != nil {
 				log.Println(err)
 			}
@@ -63,7 +63,6 @@ func (o *Outputs) List() []IOutput {
 	o.lock.RUnlock()
 	return res
 }
-
 
 func (o *Outputs) Get(id int) (IOutput, bool) {
 	o.lock.RLock()
@@ -112,6 +111,7 @@ func (o *Outputs) Set(id int, conf Config) error {
 		return err
 	}
 	o.outputs[id] = output
+	fmt.Printf("set output config %+v\n", conf)
 	return nil
 }
 
@@ -131,27 +131,65 @@ func (o *Outputs) Check(conf Config) error {
 	return check.Check()
 }
 
+func (o *Outputs) parseInfos(infos []model.Info) map[Level][]model.Info {
+	res := make(map[Level][]model.Info, 4)
+	for _, info := range infos {
+		level := ParseLevel(info.Level)
+		switch level {
+		case PanicLevel:
+			if v, ok := res[PanicLevel]; ok {
+				res[PanicLevel] = append(v, info)
+			} else {
+				res[PanicLevel] = []model.Info{info}
+			}
+			fallthrough
+		case ErrorLevel:
+			if v, ok := res[ErrorLevel]; ok {
+				res[ErrorLevel] = append(v, info)
+			} else {
+				res[ErrorLevel] = []model.Info{info}
+			}
+			fallthrough
+		case WarnLevel:
+			if v, ok := res[WarnLevel]; ok {
+				res[WarnLevel] = append(v, info)
+			} else {
+				res[WarnLevel] = []model.Info{info}
+			}
+			fallthrough
+		case InfoLevel:
+			if v, ok := res[InfoLevel]; ok {
+				res[InfoLevel] = append(v, info)
+			} else {
+				res[InfoLevel] = []model.Info{info}
+			}
+		}
+	}
+	return res
+}
+
 func NewOutputs(id string) *Outputs {
 	return &Outputs{
-		id: id,
-		lock: &sync.RWMutex{},
+		id:      id,
+		lock:    &sync.RWMutex{},
 		outputs: make(map[int]IOutput),
 	}
 }
-
-
-
 
 type IManager interface {
 	GetOutputs(id string) IOutputs
 }
 type Manager struct {
 	lock *sync.RWMutex
+	// 暂时为agentid(ip + local)
+	// Todo 更为完善的方式应该是中间再加一层，以发送配置分组id为键值，这样可以为多个agent绑定同一组告警配置，完全解耦
+	// Todo 鉴于时间和页面需求较为复杂（这样做还需要一个发送配置分组管理），暂时以agentid为键值，即一个agent配置一套发送规则
 	Agents map[string]IOutputs
 }
+
 func NewManager() *Manager {
 	return &Manager{
-		lock: &sync.RWMutex{},
+		lock:   &sync.RWMutex{},
 		Agents: make(map[string]IOutputs),
 	}
 }

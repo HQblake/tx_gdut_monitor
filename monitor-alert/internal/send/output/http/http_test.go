@@ -92,11 +92,10 @@ func TestSendHttp(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			for _, info := range cc.info {
-				err = outputs.Output(info)
-				if err != nil {
-					t.Error(err)
-				}
+
+			err = outputs.Output(cc.info)
+			if err != nil {
+				t.Error(err)
 			}
 			err = outputs.Finish()
 			if err != nil {
@@ -194,11 +193,9 @@ func TestResetHttp(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			for _, info := range cc.info {
-				err = outputs.Output(info)
-				if err != nil {
-					t.Error(err)
-				}
+			err = outputs.Output(cc.info)
+			if err != nil {
+				t.Error(err)
 			}
 		})
 	}

@@ -3,10 +3,11 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global/setting"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/client"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"github.com/go-redis/redis/v8"
+	"log"
 )
 
 type Cache struct {
@@ -14,9 +15,13 @@ type Cache struct {
 	rdb *redis.Client
 }
 
-func NewCache(s *setting.Setting) *Cache {
-	rs := RedisSetting{}
-	s.ReadSection("Redis", &rs)
+func NewCache() *Cache {
+	//rs := RedisSetting{}
+	//s.ReadSection("Redis", &rs)
+	rs, err := setting.GetRedisConfig()
+	if err != nil {
+		log.Fatalln(err)
+	}
 	return &Cache{rdb: redis.NewClient(&redis.Options{
 		Addr:     rs.Host,
 		Password: rs.Password,

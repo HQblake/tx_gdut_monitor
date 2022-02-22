@@ -8,7 +8,6 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/worker"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/pkg/setting"
 	"log"
 )
 
@@ -57,12 +56,12 @@ func (s *Service) Check(agent *model.AgentReport) error {
 	return s.send.Send(&alert)
 }
 
-func NewService(s *setting.Setting, send send.ISend) *Service {
+func NewService(send send.ISend) *Service {
 	return &Service{
-		cache:  cache.NewCache(s),
-		worker: worker.NewWorker(s, judgment),
+		cache:  cache.NewCache(),
+		worker: worker.NewWorker(judgment),
 		send:   send,
-		client: client.NewClient(s),
+		client: client.NewClient(),
 	}
 }
 

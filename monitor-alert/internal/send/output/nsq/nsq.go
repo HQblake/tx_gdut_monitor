@@ -6,16 +6,17 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/model"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/send/output"
 	"github.com/nsqio/go-nsq"
+	"log"
 	"sync"
 )
 
 type Nsq struct {
 	level      output.Level
 	formatType string
-	producer  *nsq.Producer
-	topic string
-	address string
-	lock *sync.RWMutex
+	producer   *nsq.Producer
+	topic      string
+	address    string
+	lock       *sync.RWMutex
 }
 
 func NewNsq(level output.Level, config *Config) (*Nsq, error) {
@@ -25,15 +26,14 @@ func NewNsq(level output.Level, config *Config) (*Nsq, error) {
 		return nil, err
 	}
 	return &Nsq{
-		lock: &sync.RWMutex{},
-		level: level,
+		lock:       &sync.RWMutex{},
+		level:      level,
 		formatType: config.FormatType,
-		topic: config.Topic,
-		address: config.Address,
-		producer: producer,
+		topic:      config.Topic,
+		address:    config.Address,
+		producer:   producer,
 	}, nil
 }
-
 
 func (n *Nsq) Level() output.Level {
 	n.lock.RLock()
@@ -69,8 +69,8 @@ func (n *Nsq) Reset(level output.Level, config interface{}) error {
 	return nil
 }
 
-func (n *Nsq) Output(info model.Info) error {
-	msg, err := format.Format(n.formatType, info)
+func (n *Nsq) Output(infos []model.Info) error {
+	msg, err := format.Format(n.formatType, infos)
 	if err != nil {
 		return err
 	}
@@ -80,10 +80,12 @@ func (n *Nsq) Output(info model.Info) error {
 		return nil
 	}
 	// 是否判定联通待定
+	log.Println("nsq 告警结束")
 	err = n.producer.Publish(n.topic, msg)
 	if err != nil {
 		return err
 	}
+	log.Println("nsq 告警结束")
 	return nil
 }
 
@@ -94,7 +96,6 @@ func (n *Nsq) Finish() error {
 	n.producer = nil
 	return nil
 }
-
 
 func createProducer(address string) (*nsq.Producer, error) {
 	nsqConf := nsq.NewConfig()

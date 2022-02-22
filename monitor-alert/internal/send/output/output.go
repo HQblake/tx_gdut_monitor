@@ -12,7 +12,7 @@ type IOutput interface {
 	// Reset 更新配置
 	Reset(level Level, config interface{}) error
 	// Output 内容输出
-	Output(info model.Info) error
+	Output(infos []model.Info) error
 	// Finish 结束
 	Finish() error
 }
