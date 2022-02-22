@@ -103,7 +103,7 @@ func TestPublish(t *testing.T) {
 
 func TestMain(t *testing.M) {
 
-	//go createConsumer(address, topic, channel)
+	go createConsumer(address, topic, channel)
 	t.Run()
 	<-time.After(5 * time.Second)
 }
