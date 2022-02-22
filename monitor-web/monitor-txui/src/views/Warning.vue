@@ -70,10 +70,7 @@
           </el-col>
         </el-row>
       </div>
-
-      <el-table
-        :data="
-          tableData.filter(
+      <!--   .filter(
             (data) =>
               !search ||
               data.ip == search.toLowerCase() ||
@@ -83,7 +80,11 @@
               data.value == search.toLowerCase() ||
               data.threshold == search.toLowerCase() ||
               data.duration == search.toLowerCase()
-          )
+          ) -->
+      <el-table
+        :data="
+          tableData
+        
         "
         :header-cell-style="{ height: '100px' }"
         style="width: 100%"
@@ -184,12 +185,14 @@ export default {
   filters: {
     changeLevel: (level) => {
       switch (level){
-        case 1:
+        case 3:
           return '严重';
         case 2:
           return '中等';
-        case 3:
-          return '告警'
+        case 1:
+          return '告警';
+        case 0:
+          return '信息';
       }
 
     }
@@ -204,7 +207,7 @@ export default {
       levelOptions: [
         {
           label: "严重",
-          value: "1",
+          value: "3",
         },
         {
           label: "中等",
@@ -212,7 +215,7 @@ export default {
         },
         {
           label: "警告",
-          value: "3",
+          value: "1",
         },
       ],
       warnContent: "",
@@ -275,7 +278,16 @@ export default {
       let end = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       let levelInt = Number(this.level)
       console.log(this.ip, this.local, this.warnContent, levelInt, start, end);
-      // this.tableData = GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, start, end)
+      GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, start, end).then(data => {
+        this.tableData = data.data
+      })
+        .catch((err) => {
+          if (err.msg) {
+            this.$alert(err.msg)
+            return
+          }
+          this.$alert(err)
+        });       
     },
     now() {
       var thisTime = new Date();
@@ -286,8 +298,8 @@ export default {
     },
     deleteData(index, row) {
       this.dialogVisible = false;
-      console.log(index);
-      console.log(row);
+      // console.log(index);
+      // console.log(row);
 
       this.tableData.splice(index, 1);
       DelWarnInfo(index)
@@ -316,8 +328,8 @@ export default {
   created() {
     GetWarnList()
       .then((data) => {
-        console.log(data);
-        console.log(111);
+        // console.log(data);
+        // console.log(111);
         this.tableData = data.data;
         // console.log(tableData);
       })

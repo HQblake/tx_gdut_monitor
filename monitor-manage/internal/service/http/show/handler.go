@@ -73,15 +73,22 @@ func (h *Handler) GetWarnInfoWithId(c *gin.Context) {
 
 func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 	buff := bytes.NewBuffer([]byte{})
+	// log.Print(c.Request.Body)
 	buff.ReadFrom(c.Request.Body)
 	hinfo := model.HistoryInfo{}
+	// log.Print(buff.String())
+	// if len(buff.Bytes()) == 0 {
+	// 	return
+	// }
 	err := json.Unmarshal(buff.Bytes(), &hinfo)
 	if err != nil {
+
+		// log.Print(&hinfo)
 		log.Printf("json.Unmarshal();err: %v", err)
 		return
 	}
 
-	log.Println(hinfo)
+	// log.Println(hinfo)
 	format := "2006-01-02 15:04:05"
 	start, err := time.ParseInLocation(format, hinfo.Start, time.Local)
 	if err != nil {

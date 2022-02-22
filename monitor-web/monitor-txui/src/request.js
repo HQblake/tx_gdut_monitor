@@ -1,3 +1,9 @@
+/*
+ * @Description: 
+ * @Autor: yzq
+ * @Date: 2022-02-17 00:52:47
+ * @LastEditors: yzq
+ */
 import axios from 'axios'
 import qs from 'qs'
 import Vue from 'vue'
@@ -53,7 +59,9 @@ export function fetchPost (url, params) {
 }
 // 返回一个Promise(发送get请求)
 export function fetchGet (url, param) {
+
   return new Promise((resolve, reject) => {
+    console.log('getParams', param);
     axios.get(getBaseUrl() + url, { params: param })
       .then(response => {
         resolve(response)
