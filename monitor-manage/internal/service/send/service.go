@@ -13,15 +13,15 @@ import (
 )
 
 type Service struct {
-	once sync.Once
-	send sendpb.SendServiceClient
+	once  sync.Once
+	send  sendpb.SendServiceClient
 	store managepb.SendServiceClient
 }
 
 func NewService(send sendpb.SendServiceClient, store managepb.SendServiceClient) *Service {
 	return &Service{
-		once: sync.Once{},
-		send: send,
+		once:  sync.Once{},
+		send:  send,
 		store: store,
 	}
 }
@@ -31,7 +31,7 @@ func (s *Service) GetAllConfigs() ([]model.SendConfig, error) {
 	// 获取存储服务中对应agent的所有判定规则
 	stream, err := s.store.GetAllConfigs(context.Background(), &managepb.BaseRequest{})
 	if err != nil {
-		return nil,  err
+		return nil, err
 	}
 	var resp *managepb.SendConfigResponse
 	res := make([]model.SendConfig, 0, 10)
@@ -45,18 +45,18 @@ func (s *Service) GetAllConfigs() ([]model.SendConfig, error) {
 			log.Printf("grpc get all send config error %v", err)
 			continue
 		}
-		if resp.Code != managepb.ResponseCode_SUCCESS{
+		if resp.Code != managepb.ResponseCode_SUCCESS {
 			log.Printf("grpc get all send config error %v", resp.Msg)
 			continue
 		}
 		config := resp.GetResult()
 		res = append(res, model.SendConfig{
-			ID: config.GetID(),
-			IP: config.GetIP(),
-			Local: config.GetLocal(),
-			SendType:config.GetSendType(),
-			Level:config.GetLevel(),
-			Config:config.GetConfig(),
+			ID:       config.GetID(),
+			IP:       config.GetIP(),
+			Local:    config.GetLocal(),
+			SendType: config.GetSendType(),
+			Level:    config.GetLevel(),
+			Config:   config.GetConfig(),
 		})
 	}
 	return res, nil
@@ -81,18 +81,18 @@ func (s *Service) GetConfigs(ip string, local string) ([]model.SendConfig, error
 			log.Printf("grpc get send config error %v", err)
 			continue
 		}
-		if resp.Code != managepb.ResponseCode_SUCCESS{
+		if resp.Code != managepb.ResponseCode_SUCCESS {
 			log.Printf("grpc get send config error %v", resp.Msg)
 			continue
 		}
 		config := resp.GetResult()
 		res = append(res, model.SendConfig{
-			ID: config.GetID(),
-			IP: config.GetIP(),
-			Local: config.GetLocal(),
-			SendType:config.GetSendType(),
-			Level:config.GetLevel(),
-			Config:config.GetConfig(),
+			ID:       config.GetID(),
+			IP:       config.GetIP(),
+			Local:    config.GetLocal(),
+			SendType: config.GetSendType(),
+			Level:    config.GetLevel(),
+			Config:   config.GetConfig(),
 		})
 	}
 	return res, nil
@@ -102,12 +102,12 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	// 检查配置
-	res ,err := s.send.Check(ctx, &sendpb.CheckSendRequest{
-		IP: Ip,
+	res, err := s.send.Check(ctx, &sendpb.CheckSendRequest{
+		IP:    Ip,
 		Local: Local,
 		Config: &sendpb.CheckConfig{
 			SendType: sendpb.Type(SendType),
-			Config: Config,
+			Config:   Config,
 		},
 	})
 	if err != nil {
@@ -117,11 +117,11 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 		return fmt.Errorf("add send config send service check error %s", res.GetMsg())
 	}
 	resp, err := s.store.AddConfig(ctx, &managepb.AddSendRequest{
-		IP: Ip,
-		Local: Local,
+		IP:       Ip,
+		Local:    Local,
 		SendType: SendType,
-		Level: Level,
-		Config: Config,
+		Level:    Level,
+		Config:   Config,
 	})
 	if err != nil {
 		return err
@@ -135,14 +135,14 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 		return err
 	}
 	res, err = s.send.Set(ctx, &sendpb.UpdateRequest{
-		IP: Ip,
+		IP:    Ip,
 		Local: Local,
 		Config: &sendpb.ConfigEntry{
 			ConfigID: int32(id),
 			Conf: &sendpb.Config{
 				SendType: sendpb.Type(SendType),
-				Config: Config,
-				Level: Level,
+				Config:   Config,
+				Level:    Level,
 			},
 		},
 	})
@@ -158,7 +158,7 @@ func (s *Service) AddConfig(Ip string, Local string, SendType int32, Level int32
 	return nil
 }
 
-func (s *Service) deleteRoll(id int32)  {
+func (s *Service) deleteRoll(id int32) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	s.store.DeleteConfig(ctx, &managepb.IDRequest{
@@ -171,14 +171,14 @@ func (s *Service) Update(id int32, IP string, Local string, SendType int32, Leve
 	defer cancel()
 	// set包括检查，先set
 	res, err := s.send.Set(ctx, &sendpb.UpdateRequest{
-		IP: IP,
+		IP:    IP,
 		Local: Local,
 		Config: &sendpb.ConfigEntry{
 			ConfigID: id,
 			Conf: &sendpb.Config{
 				SendType: sendpb.Type(SendType),
-				Config: Config,
-				Level: Level,
+				Config:   Config,
+				Level:    Level,
 			},
 		},
 	})
@@ -189,12 +189,12 @@ func (s *Service) Update(id int32, IP string, Local string, SendType int32, Leve
 		return fmt.Errorf("set send config send service error %s", res.GetMsg())
 	}
 	resp, err := s.store.UpdateConfig(ctx, &managepb.SendEntry{
-		ID: id,
-		IP: IP,
-		Local: Local,
+		ID:       id,
+		IP:       IP,
+		Local:    Local,
 		SendType: SendType,
-		Level: Level,
-		Config: Config,
+		Level:    Level,
+		Config:   Config,
 	})
 	if err != nil {
 		return err
@@ -218,8 +218,8 @@ func (s *Service) Del(ip string, local string, id int32) error {
 		return fmt.Errorf("del send config store service error %s", resp.GetMsg())
 	}
 	res, err := s.send.Del(ctx, &sendpb.DelRequest{
-		IP: ip,
-		Local: local,
+		IP:       ip,
+		Local:    local,
 		ConfigID: id,
 	})
 	if err != nil {
@@ -241,20 +241,20 @@ func (s *Service) Init() {
 		res := make(map[string]*sendpb.InitConfig)
 		for _, config := range list {
 			agent := fmt.Sprintf("%s-%s", config.IP, config.Local)
-			entry :=  &sendpb.ConfigEntry{
+			entry := &sendpb.ConfigEntry{
 				ConfigID: config.ID,
 				Conf: &sendpb.Config{
-					SendType: sendpb.Type(config.SendType),
-					Config: config.Config,
-					Level: config.Level,
+					SendType: config.SendType,
+					Config:   config.Config,
+					Level:    config.Level,
 				},
 			}
 			if v, ok := res[agent]; ok {
-				v.Config = append(v.Config,entry)
-			}else {
+				v.Config = append(v.Config, entry)
+			} else {
 				res[agent] = &sendpb.InitConfig{
-					IP: config.IP,
-					Local: config.Local,
+					IP:     config.IP,
+					Local:  config.Local,
 					Config: make([]*sendpb.ConfigEntry, 0, 4),
 				}
 				res[agent].Config = append(res[agent].Config, entry)
@@ -273,6 +273,3 @@ func (s *Service) Init() {
 		}
 	})
 }
-
-
-

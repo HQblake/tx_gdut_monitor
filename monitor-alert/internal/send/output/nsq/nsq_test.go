@@ -14,7 +14,7 @@ import (
 const (
 	// 仅供临时测试
 	address = "81.71.165.211:4150"
-	topic = "test"
+	topic   = "test"
 	channel = "test_channel"
 )
 
@@ -22,60 +22,61 @@ func TestPublish(t *testing.T) {
 	line.Register()
 	infos := []model.Info{
 		{
-			Agent: "127.0.0.1 广州",
-			Metric: "CPU",
-			Level:"panic",
-			Duration:"5min",
-			Start:time.Now().Format("[2006-01-01 15:04:05]"),
+			Agent:    "127.0.0.1 广州",
+			Metric:   "CPU",
+			Level:    "panic",
+			Duration: "5min",
+			Start:    time.Now().Format("[2006-01-01 15:04:05]"),
 		},
 		{
-			Agent: "127.0.0.4 上海",
-			Metric: "内存",
-			Value:10,
-			Threshold:3.14,
-			Method:"Sum",
+			Agent:     "127.0.0.4 上海",
+			Metric:    "内存",
+			Value:     10,
+			Threshold: 3.14,
+			Method:    "Sum",
 		},
 		{
-			Agent: "127.0.0.1 北京",
-			Metric: "内存",
-			Value:10,
-			Threshold:3.14,
-			Method:"Sum",
+			Agent:     "127.0.0.1 北京",
+			Metric:    "内存",
+			Value:     10,
+			Threshold: 3.14,
+			Method:    "Sum",
 		},
 		{
-			Agent: "127.0.0.3 深圳",
-			Metric: "内存",
-			Value:10,
-			Threshold:3.14,
-			Method:"Sum",
+			Agent:     "127.0.0.3 深圳",
+			Metric:    "内存",
+			Value:     10,
+			Threshold: 3.14,
+			Method:    "Sum",
 		},
 		{
-			Agent: "127.0.0.1 深圳",
-			Metric: "cpu",
-			Value:10,
-			Threshold:3.14,
-			Method:"Sum",
+			Agent:     "127.0.0.1 深圳",
+			Metric:    "cpu",
+			Value:     10,
+			Threshold: 3.14,
+			Method:    "Sum",
 		},
 		{
-			Agent: "127.0.0.2 深圳",
-			Metric: "网络",
-			Value:10,
-			Threshold:3.14,
-			Method:"Sum",
+			Agent:     "127.0.0.2 深圳",
+			Metric:    "网络",
+			Value:     10,
+			Threshold: 3.14,
+			Method:    "Sum",
 		},
 	}
-	cases := []struct{
-		name string
-		info []model.Info
+	cases := []struct {
+		name  string
+		info  []model.Info
 		level output.Level
-		conf *Config
+		conf  *Config
 	}{
 		{
-			name: "single test",
-			info: infos,
-			conf : &Config{
-				Topic: topic,
-				Address: address,
+			name:  "single test",
+			info:  infos,
+			level: 0,
+			conf: &Config{
+				Topic:      topic,
+				Address:    address,
 				FormatType: "line",
 			},
 		},
@@ -102,18 +103,19 @@ func TestPublish(t *testing.T) {
 
 func TestMain(t *testing.M) {
 
-	go createConsumer(address, topic, channel)
+	//go createConsumer(address, topic, channel)
 	t.Run()
-	<-time.After(5*time.Second)
+	<-time.After(5 * time.Second)
 }
 
 // 消费者
 type Consumer struct{}
+
 func (*Consumer) HandleMessage(msg *nsq.Message) error {
 	fmt.Println("receive", msg.NSQDAddress, "message:", string(msg.Body))
 	return nil
 }
-func createConsumer(address string, topic string, channel string)  {
+func createConsumer(address string, topic string, channel string) {
 	c, err := nsq.NewConsumer(topic, channel, nsq.NewConfig())
 	if err != nil {
 		log.Fatal(err.Error())
