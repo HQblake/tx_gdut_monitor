@@ -1,12 +1,18 @@
 import { fetchGet, fetchPost } from '@/request.js'
 
 export function GetMetricsWithTime (ip, local, metric, begin, end, method, limit) {
-  let metricReq = {"ip":ip, "local":local, "metricName":metric, "begin":begin, "end":end, "method":method, "limit":limit}
-  console.log(ip, local, metric, begin, limit)
-  let url = '/warn/metrics'
-  return fetchGet(url, {
-    body: metricReq
-  })
+  let metricReq = {
+    "ip":ip,
+    "local":local,
+    "metricName":metric,
+    "begin":begin,
+    "end":end,
+    "method":method,
+    "limit":limit
+  }
+  // console.log(ip, local, metric, begin, limit)
+  let url = '/show/metrics'
+  return fetchPost(url, metricReq)
 }
 
 // 获取所有告警信息
@@ -25,15 +31,16 @@ export function GetWarnInfoWithId (id) {
 // 根据其他参数搜索获取告警信息
 export function GetWarnInfoWithParams (ip, local, metric, level, start, end) {
   console.log('show/api - ',ip, local, metric, level, start, end);
+  let req = {
+    "ip":ip,  
+    "local":local,
+    "metric":metric,
+    "level":level, 
+    "start":start,
+    "end":end
+  }
   let url = '/show/warnParams'
-  return fetchGet(url, {
-    'ip':ip,  
-    'local':local,
-    'metric':metric,
-    'level':level, 
-    'start':start,
-    'end':end
-  })
+  return fetchPost(url, req)
 }
 
 // 删除指定id的告警信息

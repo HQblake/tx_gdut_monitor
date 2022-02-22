@@ -58,6 +58,7 @@
 
 <script>
 import { GetMetricsWithTime } from '@/api/show'
+import dayjs from 'dayjs'
 
 export default {
   name: 'SingleChart',
@@ -333,7 +334,9 @@ export default {
       
       console.log(this.time)
       console.log(this.method)
-      let start = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
+      let start = dayjs().format("YYYY-MM-DD HH:mm:ss")
+      console.log('dayjs',start);
+      this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       console.log(start);
       console.log(end);

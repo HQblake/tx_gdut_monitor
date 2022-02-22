@@ -12,13 +12,13 @@ function getBaseUrl () {
 }
 
 axios.defaults.timeout = 10000 // 响应时间
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=UTF-8' // 配置请求头
+axios.defaults.headers.post['Content-Type'] = 'application/json' // 配置请求头
 // axios.defaults.baseURL = getBaseUrl()
 
 // POST传参序列化(添加请求拦截器)
 axios.interceptors.request.use((config) => {
   // 在发送请求之前做某件事
-  if (config.method === 'post') {
+  if (config.method === 'POST') {
     config.data = qs.stringify(config.data)
   }
   return config
@@ -45,9 +45,12 @@ axios.interceptors.response.use((res) => {
 
 // 返回一个Promise(发送post请求)
 export function fetchPost (url, params) {
+  console.log('url',getBaseUrl() + url);
+  console.log(params);
   return new Promise((resolve, reject) => {
     axios.post(getBaseUrl() + url, params)
       .then(response => {
+        console.log('response');
         resolve(response)
       }, err => {
         reject(err)
@@ -59,13 +62,14 @@ export function fetchPost (url, params) {
 }
 // 返回一个Promise(发送get请求)
 export function fetchGet (url, param) {
-
   return new Promise((resolve, reject) => {
     console.log('getParams', param);
-    axios.get(getBaseUrl() + url, { params: param })
+    axios.get(getBaseUrl() + url, { param: param })
       .then(response => {
+        console.log('resolve');
         resolve(response)
       }, err => {
+        console.log('reject');
         reject(err)
       })
       .catch((error) => {

@@ -274,9 +274,15 @@ export default {
   },
   methods: {
     searchWarnInfo() {
-      let start = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
-      let end = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
+      console.log('timepicker',this.timePickerValue[0]);
+      console.log('timepicker',this.timePickerValue[1]);
+      // let start = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
+      // let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       let levelInt = Number(this.level)
+      // console.log(start);
+      // console.log(end);
+      let start = '2022-02-22 23:26:14'
+      let end = '2022-02-22 23:56:14'
       console.log(this.ip, this.local, this.warnContent, levelInt, start, end);
       GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, start, end).then(data => {
         this.tableData = data.data
