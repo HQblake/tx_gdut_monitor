@@ -9,16 +9,29 @@
     <div class='headline'>
       <h3 > {{ip}}-{{local}} </h3>
     </div>
-    <SingleChart></SingleChart>
+    <SingleChart ></SingleChart>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import SingleChart from '@/components/SingleChart.vue'
+import SingleChart from '@/components/SingleChart'
 
 export default {
   name: 'show',
+  data() {
+    return {
+      fatlist:[
+        {
+          id:1,
+          title:'标题1'
+        },{
+          id:2,
+          title:'标题2'
+        }
+      ]
+    }
+  },
   created () {
     this.ip = this.$route.params.ip
     this.local = this.$route.params.local

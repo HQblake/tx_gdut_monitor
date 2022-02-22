@@ -184,11 +184,11 @@ export default {
   filters: {
     changeLevel: (level) => {
       switch (level){
-        case 1:
+        case 3:
           return '严重';
         case 2:
           return '中等';
-        case 3:
+        case 1:
           return '告警'
       }
 
@@ -204,7 +204,7 @@ export default {
       levelOptions: [
         {
           label: "严重",
-          value: "1",
+          value: "3",
         },
         {
           label: "中等",
@@ -212,7 +212,7 @@ export default {
         },
         {
           label: "警告",
-          value: "3",
+          value: "1",
         },
       ],
       warnContent: "",
@@ -286,8 +286,8 @@ export default {
     },
     deleteData(index, row) {
       this.dialogVisible = false;
-      console.log(index);
-      console.log(row);
+      // console.log(index);
+      // console.log(row);
 
       this.tableData.splice(index, 1);
       DelWarnInfo(index)

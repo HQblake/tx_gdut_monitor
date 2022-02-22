@@ -6,10 +6,13 @@
  */
 import { fetchGet, fetchPost } from '@/request.js'
 
-export function GetMetricsWithTime (ip, local, metric, begin, limit) {
+export function GetMetricsWithTime (ip, local, metric, begin, end, method, limit) {
+  let metricReq = {"ip":ip, "local":local, "metricName":metric, "begin":begin, "end":end, "method":method, "limit":limit}
   console.log(ip, local, metric, begin, limit)
-  let url = 'warn/metrics/' + ip + '/' + local + '/' + metric + '/' + begin + '/' + limit
-  return fetchGet(url, {})
+  let url = 'warn/metrics'
+  return fetchGet(url, {
+    body: metricReq
+  })
 }
 
 // 获取所有告警信息
@@ -27,7 +30,7 @@ export function GetWarnInfoWithId (id) {
 
 // 根据其他参数搜索获取告警信息
 export function GetWarnInfoWithParams (ip, local, metric, level, start, end) {
-  warnInfoReq = {"ip":ip, "local":local, "metric":metric, "level":level, "start":start, "end":end}
+  let warnInfoReq = {"ip":ip, "local":local, "metric":metric, "level":level, "start":start, "end":end}
   console.log(ip, local, metric, level, start, end)
   let url = 'warn/warnParams'
   return fetchGet(url, {

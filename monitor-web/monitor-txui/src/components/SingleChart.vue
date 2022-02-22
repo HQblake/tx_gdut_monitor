@@ -9,9 +9,18 @@
     <div class="nav">
       <div class="subNav">
 
-        <el-select v-model="selector" placeholder="时长" class='select'>
+        <el-select v-model="time" placeholder="时长" class='select'>
           <el-option
-            v-for="item in options"
+            v-for="item in timeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          >
+          </el-option>
+        </el-select>
+         <el-select v-model="method" placeholder="聚合方式" class='select'>
+          <el-option
+            v-for="item in methodOptions"
             :key="item.value"
             :label="item.label"
             :value="item.value"
@@ -31,7 +40,7 @@
           </el-date-picker>
         </div>
         <el-row>
-          <el-button type="primary" @click="search()">
+          <el-button type="primary" @click="search">
             <div class="icon">
               搜索
             </div>
@@ -43,36 +52,88 @@
     <div class="single-chart">
       <div :name="name" id="main" class="echart"></div>
     </div>
+    <!-- {{ip}} -- {{local}} -->
   </div>
 </template>
 
 <script>
+import { GetMetricsWithTime } from '@/api/show'
 
 export default {
   name: 'SingleChart',
+  
   data () {
+
     return {
-      options: [
+      // list: [],
+      ip: '',
+      local: '',
+      time: '',
+      timeOptions: [
         {
-          value: '30',
+          value: '1s',
+          label: '1s'
+        },
+        {
+          value: '30m',
           label: '30m'
         },
         {
-          value: '60',
+          value: '60m',
           label: '60m'
         },
         {
-          value: '300',
+          value: '5h',
           label: '5h'
         },
         {
-          value: '720',
+          value: '12h',
           label: '12h'
         },
         {
-          value: '1440',
+          value: '24h',
           label: '24h'
         }
+      ],
+      method: '',
+      methodOptions: [
+        {
+          label: '不聚合',
+          value: -1
+        },
+        {
+          label: '总和',
+          value: 0
+        },
+        {
+          label: '平均值',
+          value: 1
+        },
+        {
+          label: '中位数',
+          value: 2
+        },
+        {
+          label: '积分',
+          value: 3
+        },
+        {
+          label: '极值',
+          value: 4
+        },
+        {
+          label: '标准差',
+          value: 5
+        },
+        {
+          label: '最大值',
+          value: 6
+        },
+        {
+          label: '最小值',
+          value: 7
+        },
+        
       ],
       selector: '30',
       timePickerValue: [],
@@ -102,7 +163,7 @@ export default {
         [50, 40],
         [30, 40],
         [45, 60],
-        [50, 40]
+        [50, 40],
       ],
       thisTime: Date()
     }
@@ -124,7 +185,10 @@ export default {
     }
   },
   props: ['data1'],
-  created () {},
+  created () {
+    this.ip = this.$route.params.ip
+    this.local = this.$route.params.local
+  },
   watch: {
     cpu (val) {
       this.drawChart()
@@ -132,14 +196,14 @@ export default {
     mem (val) {
       this.drawChart()
     },
-    data1: function (newVal, olVal) {
-      this.cData = newVal
-    }
   },
   destroyed () {
     clearInterval(this.interval)
   },
   methods: {
+    parseTime() {
+
+    },
     drawChart () {
       var timeX = []
       const now = new Date()
@@ -172,13 +236,10 @@ export default {
           curr_sec = '0' + curr_sec
         }
         var tmp = yyyyMMdd + '\n' + curr_hour + ':' + curr_min + ':' + curr_sec
-        // var tmp1 = echarts.time.format("MM-dd\nhh:mm:ss",timeS);
-        // console.log(tmp1);
+        
         timeX.unshift(tmp)
       }
-      // console.log(timeX);
-      // var data = this.cpu
-      // console.log(data)
+      
       const echarts = require('echarts/lib/echarts')
       let c = 'main'
       let myEchart = this.$echarts.init(document.getElementById(c))
@@ -268,24 +329,39 @@ export default {
       }
       myEchart.setOption(option)
     },
-    getUlId () {
-      console.log('methods', this.elId)
-    },
     search () {
-      console.log(this.selector)
-      console.log(this.value1)
-      let time = this.value1[0].toString()
-      console.log(time)
+      
+      console.log(this.time)
+      console.log(this.method)
+      let start = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
+      let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
+      console.log(start);
+      console.log(end);
+      console.log(this.ip);
+      console.log(this.local);
+      let cpu_metric = GetMetricsWithTime(this.ip, this.local, 'cpu_rate', start, end, this.method, -1)
+      let mem_metric = GetMetricsWithTime(this.ip, this.local, 'mem_rate', start, end, this.method, -1)
+      if (cpu_metric.length != mem_metric.length) {
+        this.runtime = []
+      }
+      for (let i=0; i<mem_metric.length; i++) {
+        this.runtime.push([cpu_metric[0], mem_metric[0]])
+      }
+      // ip, local, metric, begin, end, method, limit
+      // let time = this.value1[0].toString()
+      // console.log(time)
     },
     now () {
       var thisTime = new Date()
       let timeS = new Date(thisTime.setMinutes(thisTime.getMinutes() - this.selector))
       this.timePickerValue = [timeS, new Date()]
-    }
+    },
+
   },
   mounted () {
     this.drawChart()
     this.now()
+    // this.testProps()
   },
   components: {}
 }
@@ -313,5 +389,6 @@ export default {
 }
 .select{
   width: 200px;
+  padding-left: 10px;
 }
 </style>
