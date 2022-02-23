@@ -16,7 +16,7 @@ type Client struct {
 	db       *sql.DB
 	agents   *CientLock
 	metricMx sync.Mutex
-	metrics  sync.Map
+	metrics  map[string]int
 }
 
 func NewClient(s *MySQLSetting) *Client {
@@ -35,13 +35,13 @@ func NewClient(s *MySQLSetting) *Client {
 	defer log.Println("MySQL Connection Succeeded")
 
 	// 初始化metric列表
-	metrics := sync.Map{}
+	metrics := make(map[string]int)
 	row, _ := db.Query("SELECT * FROM metric")
 	var id int
 	var metric string
 	for row.Next() {
 		row.Scan(&id, &metric)
-		metrics.Store(metric, id)
+		metrics[metric] = id
 		log.Printf("Load metric: %d-%v", id, metric)
 	}
 
