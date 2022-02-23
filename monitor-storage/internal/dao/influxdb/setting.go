@@ -43,9 +43,10 @@ const (
 	|> filter(fn: (r) => r["ip"] == "%s")
 	|> filter(fn: (r) => r["local"] == "%s")
 	|> filter(fn: (r) => r["_field"] == "value")
-	|> aggregateWindow(every: %s, fn: %s)
+	|> aggregateWindow(every: %s, fn: %s, createEmpty: %v)
 	|> top(n: %v, columns: ["_time"])
-	|> sort(columns: ["_time"], desc: false)`
+	|> sort(columns: ["_time"], desc: false)
+	|> yield(name: "%s")`
 
 	aggregateWitoutLimit = `from(bucket: "%s")
 	|> range(start: %v, stop: %v)
@@ -53,7 +54,8 @@ const (
 	|> filter(fn: (r) => r["ip"] == "%s")
 	|> filter(fn: (r) => r["local"] == "%s")
 	|> filter(fn: (r) => r["_field"] == "value")
-	|> aggregateWindow(every: %s, fn: %s)`
+	|> aggregateWindow(every: %s, fn: %s, createEmpty: %v)
+	|> yield(name: "%s")`
 
 	everyWitLimit = `from(bucket: "%s")
 	|> range(start: %v, stop: %v)
