@@ -12,7 +12,7 @@ RUN apk add git
 
 # 从Git中将项目源码加载至镜像中
 # COPY ./monitor-agent /go/src/monitor-agent
-RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /git --depth 1
+RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /git  --depth 1
 RUN mv /git/monitor-agent /go/src/
 
 # 编译
