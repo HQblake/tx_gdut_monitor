@@ -63,16 +63,16 @@ func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop
 				start, stop+1, metricName, ip, local, limit)
 		}
 	} else {
+		m := Methods[method].English
 		if limit <= 0 {
 			query = fmt.Sprintf(aggregateWitoutLimit, c.bucket,
-				start, stop+1, metricName, ip, local, period, Methods[method].English)
+				start, stop+1, metricName, ip, local, period, m, false, m)
 		} else {
 			query = fmt.Sprintf(aggregateWitLimit, c.bucket,
-				start, stop+1, metricName, ip, local, period, Methods[method].English, limit)
+				start, stop+1, metricName, ip, local, period, m, false, limit, m)
 		}
 	}
-
-	log.Printf("query", query)
+	fmt.Println(query)
 	result, err := c.queryAPI.Query(context.Background(), query)
 	if err != nil {
 		return nil, err

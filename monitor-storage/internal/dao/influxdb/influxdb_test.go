@@ -1,12 +1,19 @@
+/*
+ * @Description:
+ * @Autor: yzq
+ * @Date: 2022-02-23 13:52:42
+ * @LastEditors: yzq
+ */
 package influxdb
 
 import (
 	"fmt"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	"log"
 	"math/rand"
 	"testing"
 	"time"
+
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 )
 
 var setting = &InfluxDBSetting{
@@ -55,8 +62,12 @@ func TestClient_SaveMatricData(t *testing.T) {
 
 func TestClient_GetMetricData(t *testing.T) {
 	client := NewClient(setting)
-	metrics, err := client.GetMetricData("172.18.0.5", "beijing", "cpu_rate", "1s",
-		1645372800, 1645459200, -1, 0)
+	begin, _ := time.ParseInLocation("2006-01-02 15:04:05", "2022-02-21 00:00:00", time.Local)
+	start := begin.Unix()
+	end, _ := time.ParseInLocation("2006-01-02 15:04:05", "2022-02-22 00:00:00", time.Local)
+	stop := end.Unix()
+	metrics, err := client.GetMetricData("172.18.0.5", "beijing", "cpu_rate", "120s",
+		start, stop, 0, 0)
 	if err != nil {
 		log.Fatalln(err)
 	}
