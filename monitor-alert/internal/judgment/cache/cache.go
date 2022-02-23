@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/global/setting"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/client"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/judgment/lock"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-alert/internal/model"
 	"github.com/go-redis/redis/v8"
 	"log"
 )
 
 type Cache struct {
-	mx  *CacheLock
+	mx  *lock.KeyLock
 	rdb *redis.Client
 }
 
@@ -26,7 +27,7 @@ func NewCache() *Cache {
 		Addr:     rs.Host,
 		Password: rs.Password,
 		DB:       rs.DB,
-	}), mx: NewLock()}
+	}), mx: lock.NewKeyLock()}
 }
 
 // GetRuleByIPAndLocal 根据IP与Local获取规则

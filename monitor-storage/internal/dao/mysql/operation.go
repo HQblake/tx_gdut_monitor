@@ -12,7 +12,7 @@ import (
 // 传入参数：IP、Local、Port、Metric_Name，保存Agent信息
 func (c *Client) SaveAgentInfo(metric *model.Metric) error {
 	// 判断metric是否存在
-	c.metricMx.Lock()
+	c.mx.Lock(metric.Name)
 	metricId, ok := c.metrics[metric.Name]
 	if !ok {
 		// 将新的metric插入到数据库中
@@ -22,12 +22,12 @@ func (c *Client) SaveAgentInfo(metric *model.Metric) error {
 		c.metrics[metric.Name] = metricId
 		log.Printf("INSERT metric: %v\n", metric.Name)
 	}
-	c.metricMx.Unlock()
+	c.mx.Unlock(metric.Name)
 
 	// 插入Agent信息
-	c.agents.Lock(metric.IP + metric.Local)
+	c.mx.Lock(metric.IP + metric.Local)
 	_, err := c.db.Exec("CALL AddAgentInfo(?,?,?,?)", metric.IP, metric.Local, metric.Port, metricId)
-	c.agents.Unlock(metric.IP + metric.Local)
+	c.mx.Unlock(metric.IP + metric.Local)
 
 	if err != nil {
 		return err

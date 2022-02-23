@@ -3,20 +3,16 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
-	"sync"
-	"time"
-
-	//"fmt"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/lock"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
-	//"time"
+	"time"
 )
 
 type Client struct {
-	db       *sql.DB
-	agents   *CientLock
-	metricMx sync.Mutex
-	metrics  map[string]int
+	db      *sql.DB
+	mx      *lock.KeyLock
+	metrics map[string]int
 }
 
 func NewClient(s *MySQLSetting) *Client {
@@ -46,5 +42,5 @@ func NewClient(s *MySQLSetting) *Client {
 	}
 
 	// 返回客户端
-	return &Client{db, NewLock(), sync.Mutex{}, metrics}
+	return &Client{db, lock.NewKeyLock(), metrics}
 }
