@@ -145,9 +145,10 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 	metInfo := model.MetricsReq{}
 	err := json.Unmarshal(buff.Bytes(), &metInfo)
 	if err != nil {
-		log.Printf("json.Unmarshal();err: %v", err)
+		log.Printf("json.Unmarshal();err: %v\n", err)
 		return
 	}
+	log.Printf("GetMetricsWithTime(): %v\n", metInfo)
 
 	format := "2006-01-02 15:04:05"
 	begin, err := time.ParseInLocation(format, metInfo.Begin, time.Local)
@@ -163,7 +164,7 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 
 	end, err := time.ParseInLocation(format, metInfo.End, time.Local)
 	if err != nil {
-		log.Printf("time.Parse();err: %v", err)
+		log.Printf("time.Parse();err: %v\n", err)
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040004",
 			"msg":  "初始时间和终止时间获取有误",

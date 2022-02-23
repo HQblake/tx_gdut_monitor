@@ -158,7 +158,7 @@ func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time
 
 // 根据开始时间和数据量限制获取指定条数的指标数据
 func (s *Service) GetMetricsWithTime(req model.MetricsReq, begin, end time.Time) ([]model.MetricsInfo, error) {
-	// log.Println("req: ", req, begin.Unix(), end.Unix())
+	log.Println("req: ", req, begin.Unix(), end.Unix())
 	var err error
 	// log.Println("req", req.MetricName, begin, end)
 	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{

@@ -4,6 +4,7 @@ import (
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/dao"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/manage/managepb"
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/pkg/setting"
+	"log"
 )
 
 type MetricService struct {
@@ -12,6 +13,7 @@ type MetricService struct {
 }
 
 func (m *MetricService) GetMetricData(request *managepb.MetricRequest, server managepb.MetricService_GetMetricDataServer) error {
+	log.Printf("GetMetricData(request): %v\n", request)
 	metrics, err := m.dao.GetMetricData(request.IP, request.Local, request.Metric,
 		request.Period, request.Begin, request.End, request.Method, request.Limit)
 	if err != nil {
