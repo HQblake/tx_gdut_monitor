@@ -9,7 +9,7 @@ RUN apk upgrade
 RUN apk add git
 
 # 拉取并打包项目源码
-RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /home/monitor
+RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /home/monitor --depth 1
 WORKDIR /home/monitor/monitor-web/monitor-txui
 RUN cd /home/monitor/monitor-web/monitor-txui
 RUN npm install node-sass --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
