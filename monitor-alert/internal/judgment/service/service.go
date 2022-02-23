@@ -12,7 +12,6 @@ import (
 	"log"
 	"os"
 	"runtime"
-	"sync"
 	"time"
 )
 
@@ -66,18 +65,12 @@ func (s *Service) Check(agent *model.AgentReport) error {
 	// 创建聚合结果channel
 	aggregations := make(chan aggrate, len(agent.Metrics))
 	s.pool.Submit(func() {
-		var wg sync.WaitGroup
 		for k, _ := range agent.Metrics {
-			wg.Add(1)
-			go func() {
-				aggregations <- aggrate{
-					metric: k,
-					value:  s.client.GetAggregation(k, agent, rule),
-				}
-				wg.Done()
-			}()
+			aggregations <- aggrate{
+				metric: k,
+				value:  s.client.GetAggregation(k, agent, rule),
+			}
 		}
-		wg.Wait()
 		close(aggregations)
 	})
 
