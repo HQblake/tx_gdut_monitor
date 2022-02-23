@@ -75,6 +75,6 @@ services:
     ports:
       - "8085:8085"
     volumes:
-      - $PWD/data/agent-01:/data/agent
+      - $PWD/data/agent/agent-01:/data/agent
     depends_on:
       - monitor-manage
