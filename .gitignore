@@ -4,3 +4,4 @@
 /go.mod
 /go.sum
 **/node_modules/
+**/local.yaml
