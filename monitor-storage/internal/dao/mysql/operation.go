@@ -1,26 +1,43 @@
 package mysql
 
 import (
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 	"log"
 	"strconv"
 	"strings"
 	"time"
-
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
 )
 
 // SaveAgentInfo 调用MySQL的存储过程
 // 传入参数：IP、Local、Port、Metric_Name，保存Agent信息
+var metricToken = make(chan struct{}, 1)
+
 func (c *Client) SaveAgentInfo(metric *model.Metric) error {
-	// 需要上锁
+	// 判断metric是否存在
+	var metricId int
+	metricToken <- struct{}{}
+	id, ok := c.metrics.Load(metric.Name)
+	if !ok {
+		// 将新的metric插入到数据库中
+		row, _ := c.db.Exec("INSERT INTO metric(name) VALUES(?)", metric.Name)
+		temp, _ := row.LastInsertId()
+		id = int(temp)
+		c.metrics.Store(metric.Name, id)
+		log.Printf("INSERT metric: %v\n", metric.Name)
+	}
+	metricId = id.(int)
+	<-metricToken
+
+	// 插入Agent信息
 	c.mx.Lock(metric.IP + metric.Local)
-	_, err := c.db.Exec("CALL AddAgentInfo(?,?,?,?)", metric.IP, metric.Local, metric.Port, metric.Name)
+	_, err := c.db.Exec("CALL AddAgentInfo(?,?,?,?)", metric.IP, metric.Local, metric.Port, metricId)
 	c.mx.Unlock(metric.IP + metric.Local)
+
 	if err != nil {
 		return err
 	}
-	log.Printf("SaveAgentInfo: %v\n", *metric)
 
+	log.Printf("SaveAgentInfo: %v\n", *metric)
 	return nil
 }
 
@@ -32,7 +49,7 @@ func (c *Client) SaveAlertInfo(history *model.HistoryInfo) error {
 		history.Metric, history.Value, history.Threshold, history.Method, history.Level, history.Duration,
 		history.Start)
 	if err != nil {
-		log.Println(err)
+		log.Printf("SaveAlertInfo error: %v\n", err)
 		return err
 	}
 	log.Printf("SaveAlertInfo: %v\n", *history)
@@ -51,7 +68,7 @@ func (c *Client) GetAllAgentInfo() []model.AgentInfo {
 	FROM agent a LEFT JOIN agent_metric am ON a.id = am.id
 	WHERE a.isLive = ?`, true)
 	if err != nil {
-		log.Println(err)
+		log.Printf("GetAllAgentInfo error: %v\n", err)
 		return res
 	}
 	for rows.Next() {
@@ -60,7 +77,7 @@ func (c *Client) GetAllAgentInfo() []model.AgentInfo {
 		agent.Metrics = strings.Split(metricStr, ",")
 		res = append(res, agent)
 	}
-	defer rows.Close()
+	rows.Close()
 
 	log.Printf("GetAllAgentInfo: Found %d records\n", len(res))
 	return res
@@ -75,14 +92,14 @@ func (c *Client) GetAgentInfoByIPAndLocal(ip, local string) model.AgentInfo {
 	FROM agent a LEFT JOIN agent_metric am ON a.id = am.id
 	WHERE a.ip = ? AND a.local = ? AND a.isLive= ? `, ip, local, true)
 	if err != nil {
-		log.Println(err)
+		log.Printf("GetAgentInfoByIPAndLocal error: %v\n", err)
 
 	} else if rows.Next() {
 		var metricStr string
 		rows.Scan(&agent.ID, &agent.IP, &agent.Local, &agent.Port, &agent.IsLive, &metricStr)
 		agent.Metrics = strings.Split(metricStr, ",")
+		rows.Close()
 	}
-	defer rows.Close()
 
 	log.Printf("GetAgentInfoByIPAndLocal(%s, %s): %v\n", ip, local, agent)
 	return agent
@@ -97,14 +114,14 @@ func (c *Client) GetMetricsByIPAndLocal(ip, local string) []string {
 	LEFT JOIN metric AS m ON am.metricId=m.id)
 	WHERE a.ip=? AND a.local=?`, ip, local)
 	if err != nil {
-		log.Println(err)
+		log.Printf("GetMetricsByIPAndLocal error: %v\n", err)
 		return res
 	}
 	for rows.Next() {
 		rows.Scan(&tempName)
 		res = append(res, tempName)
 	}
-	defer rows.Close()
+	rows.Close()
 
 	log.Printf("GetMetricsByIPAndLocal(%s, %s): %v\n", ip, local, res)
 	return res
@@ -120,14 +137,14 @@ func (c *Client) GetAllAlertInfo() []model.HistoryInfo {
 	FROM ((history AS h LEFT JOIN agent AS a ON h.agentId=a.id)
 	LEFT JOIN metric AS m ON h.metricId=m.id)`)
 	if err != nil {
-		log.Println(err)
+		log.Printf("GetAllAlertInfo error: %v\n", err)
 	}
 	for rows.Next() {
 		rows.Scan(&history.ID, &history.IP, &history.Local, &history.Metric, &history.Value,
 			&history.Threshold, &history.Method, &history.Level, &history.Start, &history.Duration)
 		res = append(res, history)
 	}
-	defer rows.Close()
+	rows.Close()
 
 	log.Printf("GetAllAlertInfo: Found %d records\n", len(res))
 	return res
@@ -147,7 +164,7 @@ func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, 
 			"h.method, h.level, h.start, h.duration FROM ((history AS h LEFT JOIN agent AS a ON h.agentId=a.id) "+
 			"LEFT JOIN metric AS m ON h.metricId=m.id) WHERE h.id=?", id)
 		if err != nil {
-			log.Println(err)
+			log.Printf("GetAlertInfo error: %v\n", err)
 			return res
 		}
 		for rows.Next() {
@@ -186,7 +203,7 @@ func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, 
 		//rows, err := c.db.Query(sql)
 		rows, err := c.db.Query(sql, begin, end)
 		if err != nil {
-			log.Println(err)
+			log.Printf("GetAlertInfo error: %v\n", err)
 			return res
 		}
 		for rows.Next() {
@@ -194,6 +211,7 @@ func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, 
 				&alert.Threshold, &alert.Method, &alert.Level, &alert.Start, &alert.Duration)
 			res = append(res, alert)
 		}
+		rows.Close()
 	}
 
 	log.Printf("GetAlertInfo(%d, %s, %s, %s, %d, %d, %d): Found %d records\n",
@@ -203,9 +221,9 @@ func (c *Client) GetAlertInfo(id, level int32, ip, local, metric string, begin, 
 
 // DelAlterInfo 根据ID删除告警信息
 func (c *Client) DelAlterInfo(id int32) error {
-	res, err := c.db.Exec("DELETE FROM history WHERE id=?", id)
+	_, err := c.db.Exec("DELETE FROM history WHERE id=?", id)
 	if err != nil {
-		log.Println(res)
+		log.Printf("DelAlterInfo error: %v\n", err)
 		return err
 	}
 	log.Printf("DelAlterInfo(%d)\n", id)
@@ -220,14 +238,14 @@ func (c *Client) GetCheckConfigsByIPAndLocal(ip, local string) []model.CheckConf
 		"FROM ((`check` AS c LEFT JOIN agent AS a ON c.agentId=a.id) LEFT JOIN metric AS m ON c.metricId=m.id) "+
 		"WHERE a.ip=? AND a.local=?", ip, local)
 	if err != nil {
-		log.Println(err)
+		log.Printf("GetCheckConfigsByIPAndLocal error: %v\n", err)
 		return res
 	}
 	for rows.Next() {
 		rows.Scan(&check.ID, &check.IP, &check.Local, &check.Metric, &check.Method, &check.Period, &check.Threshold)
 		res = append(res, check)
 	}
-	defer rows.Close()
+	rows.Close()
 
 	log.Printf("GetCheckConfigsByIPAndLocal(%s, %s): Found %d records\n", ip, local, len(res))
 	return res
@@ -241,7 +259,7 @@ func (c *Client) UpdateCheckConfig(check *model.CheckConfig) (int32, error) {
 			"VALUES((SELECT id FROM agent WHERE ip=? AND local=?), (SELECT id FROM metric WHERE name=?), ?, ?, ?)",
 			check.IP, check.Local, check.Metric, check.Method, check.Period, check.Threshold)
 		if err != nil {
-			log.Println(err)
+			log.Printf("UpdateCheckConfig error: %v\n", err)
 			return 0, err
 		}
 		id, err := res.LastInsertId()
@@ -252,7 +270,7 @@ func (c *Client) UpdateCheckConfig(check *model.CheckConfig) (int32, error) {
 		_, err := c.db.Exec("UPDATE `check` SET method=?, period=?, threshold=? WHERE id=?",
 			check.Method, check.Period, check.Threshold, check.ID)
 		if err != nil {
-			log.Println(err)
+			log.Printf("UpdateCheckConfig error: %v\n", err)
 			return 0, err
 		}
 		log.Printf("UpdateCheckConfig: UPDATE-%v\n", *check)
@@ -264,7 +282,7 @@ func (c *Client) UpdateCheckConfig(check *model.CheckConfig) (int32, error) {
 func (c *Client) DelCheckConfigByID(id int32) error {
 	_, err := c.db.Exec("DELETE FROM `check` WHERE id=?", id)
 	if err != nil {
-		log.Println(err)
+		log.Printf("DelCheckConfigByID error: %v\n", err)
 		return err
 	}
 	log.Printf("DelCheckConfigByID(%d)\n", id)
@@ -277,7 +295,7 @@ func (c *Client) SaveAlertConfig(alert *model.AlertConfig) (int32, error) {
 		"VALUES((SELECT a.id FROM agent AS a WHERE a.ip=? AND a.local=?), ?, ?, ?)",
 		alert.IP, alert.Local, alert.SendType, alert.Level, alert.Config)
 	if err != nil {
-		log.Println(err)
+		log.Printf("SaveAlertConfig error: %v\n", err)
 		return -1, err
 	}
 	id, err := affect.LastInsertId()
@@ -290,7 +308,7 @@ func (c *Client) UpdateAlertConfig(alert *model.AlertConfig) error {
 	_, err := c.db.Exec("UPDATE alert SET sendType=?, level=?, config=? WHERE id=?",
 		alert.SendType, alert.Level, alert.Config, alert.ID)
 	if err != nil {
-		log.Println(err)
+		log.Printf("UpdateAlertConfig: %v\n", err)
 		return err
 	}
 	log.Printf("UpdateAlertConfig: %v\n", *alert)
@@ -301,7 +319,7 @@ func (c *Client) UpdateAlertConfig(alert *model.AlertConfig) error {
 func (c *Client) DelAlertConfigByID(id int32) error {
 	_, err := c.db.Exec("DELETE FROM alert WHERE id=?", id)
 	if err != nil {
-		log.Println(err)
+		log.Printf("DelAlertConfigByID error: %v\n", err)
 		return err
 	}
 	log.Printf("DelAlertConfigByID(%d)\n", id)
@@ -314,12 +332,12 @@ func (c *Client) GetAlertConfigByID(id int32) model.AlertConfig {
 	rows, err := c.db.Query("SELECT al.id, a.ip, a.local, al.sendType, al.level, al.config "+
 		"FROM alert AS al LEFT JOIN agent AS a ON al.agentId=a.id WHERE al.id=?", id)
 	if err != nil {
-		log.Println(err)
+		log.Printf("GetAlertConfigByID error: %v\n", err)
 		return alert
 	} else if rows.Next() {
 		rows.Scan(&alert.ID, &alert.IP, &alert.Local, &alert.SendType, &alert.Level, &alert.Config)
+		rows.Close()
 	}
-	defer rows.Close()
 	log.Printf("GetAlertConfigByID(%d): %v\n", id, alert)
 	return alert
 }
@@ -331,7 +349,7 @@ func (c *Client) GetAlertConfigByIPAndLocal(ip, local string) []model.AlertConfi
 	rows, err := c.db.Query("SELECT al.id, a.ip, a.local, al.sendType, al.level, al.config "+
 		"FROM alert AS al LEFT JOIN agent AS a ON al.agentId=a.id WHERE a.ip=? AND a.local=?", ip, local)
 	if err != nil {
-		log.Println(err)
+		log.Printf("GetAlertConfigByIPAndLocal error: %v\n", err)
 		return res
 	}
 	for rows.Next() {
@@ -339,7 +357,7 @@ func (c *Client) GetAlertConfigByIPAndLocal(ip, local string) []model.AlertConfi
 			&alert.Level, &alert.Config)
 		res = append(res, alert)
 	}
-	defer rows.Close()
+	rows.Close()
 
 	log.Printf("GetAlertConfigByIPAndLocal(%s, %s): Found %d records\n", ip, local, len(res))
 	return res
@@ -353,14 +371,14 @@ func (c *Client) GetAllAlertConfig() []model.AlertConfig {
 	rows, err := c.db.Query("SELECT al.id, a.ip, a.local, al.sendType, al.level, al.config " +
 		"FROM alert AS al LEFT JOIN agent AS a ON al.agentId=a.id")
 	if err != nil {
-		log.Println(err)
+		log.Printf("GetAllAlertConfig error: %v\n", err)
 		return res
 	}
 	for rows.Next() {
 		rows.Scan(&alert.ID, &alert.IP, &alert.Local, &alert.SendType, &alert.Level, &alert.Config)
 		res = append(res, alert)
 	}
-	defer rows.Close()
+	rows.Close()
 
 	log.Printf("GetAllAlertConfig: Found %d records\n", len(res))
 	return res

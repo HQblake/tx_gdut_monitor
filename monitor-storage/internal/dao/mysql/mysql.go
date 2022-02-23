@@ -3,6 +3,7 @@ package mysql
 import (
 	"database/sql"
 	"fmt"
+	"sync"
 	"time"
 
 	//"fmt"
@@ -12,8 +13,9 @@ import (
 )
 
 type Client struct {
-	db *sql.DB
-	mx *CientLock
+	db      *sql.DB
+	mx      *CientLock
+	metrics sync.Map
 }
 
 func NewClient(s *MySQLSetting) *Client {
@@ -30,5 +32,18 @@ func NewClient(s *MySQLSetting) *Client {
 	db.SetMaxOpenConns(s.MaxOpenConns)
 	db.SetMaxIdleConns(s.MaxIdleConns)
 	defer log.Println("MySQL Connection Succeeded")
-	return &Client{db, NewLock()}
+
+	// 初始化metric列表
+	metrics := sync.Map{}
+	row, _ := db.Query("SELECT * FROM metric")
+	var id int
+	var metric string
+	for row.Next() {
+		row.Scan(&id, &metric)
+		metrics.Store(metric, id)
+		log.Printf("Load metric: %d-%v", id, metric)
+	}
+
+	// 返回客户端
+	return &Client{db, NewLock(), metrics}
 }
