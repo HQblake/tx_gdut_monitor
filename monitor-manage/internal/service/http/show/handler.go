@@ -79,26 +79,18 @@ func (h *Handler) GetWarnInfoWithId(c *gin.Context) {
 
 func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 	buff := bytes.NewBuffer([]byte{})
-	log.Print("method", c.Request.Method)
-	log.Print("form", c.Request.Form)
-	log.Print("postform", c.Request.PostForm)
-	log.Print("body", c.Request.Body)
-	log.Print("buffBytes", buff.Bytes())
 	buff.ReadFrom(c.Request.Body)
 	hinfo := model.HistoryInfo{}
-
-	// if len(buff.Bytes()) == 0 {
-	// 	return
-	// }
 	err := json.Unmarshal(buff.Bytes(), &hinfo)
 	if err != nil {
-
-		log.Print(&hinfo)
-		log.Printf("json.Unmarshal();err: %v", err)
+		c.JSON(http.StatusOK, gin.H{
+			"code": "040004",
+			"msg":  "参数获取有误" + err.Error(),
+			"data": nil,
+		})
 		return
 	}
 
-	// log.Println(hinfo)
 	format := "2006-01-02 15:04:05"
 	start, err := time.ParseInLocation(format, hinfo.Start, time.Local)
 	if err != nil {
@@ -173,9 +165,7 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 		return
 	}
 
-	// log.Println("res")
 	res, err := h.service.GetMetricsWithTime(metInfo, begin, end)
-	// log.Println("finishGetMetricsWithTime", res)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040007",

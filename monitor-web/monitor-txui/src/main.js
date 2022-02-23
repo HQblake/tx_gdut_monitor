@@ -13,10 +13,10 @@ import * as echarts from 'echarts'
 import './plugins/element.js'
 import less from 'less'
 import axios from 'axios'
-import QS from 'qs'
+import qs from 'qs'
 
 Vue.prototype.$axios = axios
-Vue.prototype.qs = QS
+Vue.prototype.qs = qs
 Vue.use(less)
 // import ElementUI from 'element-ui';
 // import 'element-ui/lib/theme-chalk/index.css';

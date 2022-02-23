@@ -1,5 +1,5 @@
 /*
- * @Description: 
+ * @Description:
  * @Autor: yzq
  * @Date: 2022-02-18 16:59:22
  * @LastEditors: yzq
@@ -8,18 +8,18 @@ import { fetchGet, fetchPost } from '@/request.js'
 
 export function GetMetricsWithTime (ip, local, metric, begin, end, period, method, limit) {
   let metricReq = {
-    "ip":ip,
-    "local":local,
-    "metricName":metric,
-    "begin":begin,
-    "end":end,
-    "period":period,
-    "method":method,
-    "limit":limit
+    'ip': ip,
+    'local': local,
+    'metricName': metric,
+    'begin': begin,
+    'end': end,
+    'period': period,
+    'method': method,
+    'limit': limit
   }
   // console.log(ip, local, metric, begin, limit)
   let url = '/show/metrics'
-  return fetchPost(url, metricReq)
+  return fetchPost(url, metricReq, true)
 }
 
 // 获取所有告警信息
@@ -37,21 +37,21 @@ export function GetWarnInfoWithId (id) {
 
 // 根据其他参数搜索获取告警信息
 export function GetWarnInfoWithParams (ip, local, metric, level, start, end) {
-  console.log('show/api - ',ip, local, metric, level, start, end);
+  console.log('show/api - ', ip, local, metric, level, start, end)
   let req = {
-    "ip":ip,  
-    "local":local,
-    "metric":metric,
-    "level":level, 
-    "start":start,
-    "end":end
+    'ip': ip,
+    'local': local,
+    'metric': metric,
+    'level': level,
+    'start': start,
+    'end': end
   }
   let url = '/show/warnParams'
-  return fetchPost(url, req)
+  return fetchPost(url, req, true)
 }
 
 // 删除指定id的告警信息
 export function DelWarnInfo (id) {
   let url = '/show/del/' + id
-  return fetchPost(url, {})
+  return fetchPost(url, {}, true)
 }

@@ -1,5 +1,5 @@
 /*
- * @Description: 
+ * @Description:
  * @Autor: yzq
  * @Date: 2022-02-23 12:54:29
  * @LastEditors: yzq
@@ -9,6 +9,6 @@
 
 var rateChart
 
-export default({
-  rateChart //echart图表
+export default ({
+  rateChart // echart图表
 })

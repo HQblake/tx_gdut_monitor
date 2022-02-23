@@ -58,7 +58,7 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 value-format="yyyy-MM-dd HH:mm:ss"
-               
+
               >
               </el-date-picker>
             </div>
@@ -84,7 +84,7 @@
       <el-table
         :data="
           tableData
-        
+
         "
         :header-cell-style="{ height: '100px' }"
         style="width: 100%"
@@ -182,70 +182,68 @@
 </template>
 
 <script>
-import { GetWarnList } from "@/api/show";
-import { GetWarnInfoWithParams } from "@/api/show";
-import { DelWarnInfo } from "@/api/show"
+import { GetWarnList, GetWarnInfoWithParams, DelWarnInfo } from '@/api/show'
+
 import dayjs from 'dayjs'
 
 export default {
-  name: "warning",
+  name: 'warning',
   components: {},
   filters: {
     changeLevel: (level) => {
-      switch (level){
+      switch (level) {
         case 3:
-          return '严重';
+          return '严重'
         case 2:
-          return '中等';
+          return '中等'
         case 1:
-          return '告警';
+          return '告警'
         case 0:
-          return '信息';
+          return '信息'
       }
-
     }
   },
-  data() {
+  data () {
     return {
-      ip: "",
-      local: "",
-      data1: "",
+      ip: '',
+      local: '',
+      data1: '',
       timePickerValue: [],
-      level: "",
+      level: '',
       levelOptions: [
         {
-          label: "严重",
-          value: "3",
+          label: '严重',
+          value: '3'
         },
         {
-          label: "中等",
-          value: "2",
+          label: '中等',
+          value: '2'
         },
         {
-          label: "警告",
-          value: "1",
+          label: '警告',
+          value: '1'
         },
         {
-          label: "信息",
-          value: "0",
+          label: '信息',
+          value: '0'
         }
       ],
-      warnContent: "",
+      warnContent: '',
       warnOptions: [
         {
-          label: "cpu使用率",
-          value: "cpu_rate",
+          label: 'cpu使用率',
+          value: 'cpu_rate'
         },
         {
-          label: "mem使用率",
-          value: "mem_rate",
-        },
+          label: 'mem使用率',
+          value: 'mem_rate'
+        }
       ],
-      Outliers: "",
-      threshold: "",
-      duration: "",
+      Outliers: '',
+      threshold: '',
+      duration: '',
       dialogVisible: false,
-      search: "",
+      search: '',
       tableData: [
         // {
         //   id: 1,
@@ -281,27 +279,27 @@ export default {
         //   duration: 30
         // }
       ],
-      selector: 30,
-    };
+      selector: 30
+    }
   },
   methods: {
-    searchWarnInfo() {
-      console.log('timepicker',this.timePickerValue[0]);
-      console.log('timepicker',this.timePickerValue[1]);
+    searchWarnInfo () {
+      console.log('timepicker', this.timePickerValue[0])
+      console.log('timepicker', this.timePickerValue[1])
       // let start = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       // let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       let start1 = this.timePickerValue[0]
       let end1 = this.timePickerValue[1]
       let levelInt = Number(this.level)
-      let startFormat = dayjs(start1).format("YYYY-MM-DD HH:mm:ss")
-      let endFormat = dayjs(end1).format("YYYY-MM-DD HH:mm:ss")
-      console.log('startFormat',startFormat);
-      console.log('endFormat',endFormat);
+      let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
+      let endFormat = dayjs(end1).format('YYYY-MM-DD HH:mm:ss')
+      console.log('startFormat', startFormat)
+      console.log('endFormat', endFormat)
       // console.log(start);
       // console.log(end);
       let start = '2022-02-22 23:26:14'
       let end = '2022-02-22 23:56:14'
-      console.log(this.ip, this.local, this.warnContent, levelInt, startFormat, endFormat);
+      console.log(this.ip, this.local, this.warnContent, levelInt, startFormat, endFormat)
       GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, startFormat, endFormat).then(data => {
         this.tableData = data.data
       })
@@ -311,61 +309,61 @@ export default {
             return
           }
           this.$alert(err)
-        });       
+        })
     },
-    now() {
-      var thisTime = new Date();
+    now () {
+      var thisTime = new Date()
       let timeS = new Date(
         thisTime.setMinutes(thisTime.getMinutes() - this.selector)
-      );
-      this.timePickerValue = [timeS, new Date()];
+      )
+      this.timePickerValue = [timeS, new Date()]
     },
-    deleteData(index, row) {
-      this.dialogVisible = false;
-      console.log('index',index);
-      console.log(row.id);
+    deleteData (index, row) {
+      this.dialogVisible = false
+      console.log('index', index)
+      console.log(row.id)
 
-      this.tableData.splice(index, 1);
+      this.tableData.splice(index, 1)
       DelWarnInfo(row.id)
     },
-    openDelete(index, row) {
-      this.$confirm("此操作将永久删除该消息, 是否继续?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
+    openDelete (index, row) {
+      this.$confirm('此操作将永久删除该消息, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
-          this.deleteData(index, row);
+          this.deleteData(index, row)
           this.$message({
-            type: "success",
-            message: "删除成功!",
-          });
+            type: 'success',
+            message: '删除成功!'
+          })
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除",
-          });
-        });
-    },
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
   },
-  created() {
+  created () {
     GetWarnList()
       .then((data) => {
-        this.tableData = data.data;
+        this.tableData = data.data
       })
       .catch((err) => {
         if (err.msg) {
-          this.$alert(err.msg);
-          return;
+          this.$alert(err.msg)
+          return
         }
-        this.$alert(err);
-      });
+        this.$alert(err)
+      })
   },
-  mounted() {
-    this.now();
-  },
-};
+  mounted () {
+    this.now()
+  }
+}
 </script>
 
 <style>

@@ -19,15 +19,15 @@ import SingleChart from '@/components/SingleChart'
 
 export default {
   name: 'show',
-  data() {
+  data () {
     return {
-      fatlist:[
+      fatlist: [
         {
-          id:1,
-          title:'标题1'
-        },{
-          id:2,
-          title:'标题2'
+          id: 1,
+          title: '标题1'
+        }, {
+          id: 2,
+          title: '标题2'
         }
       ]
     }

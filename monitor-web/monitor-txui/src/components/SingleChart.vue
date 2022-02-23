@@ -65,9 +65,8 @@ import dayjs from 'dayjs'
 
 export default {
   name: 'SingleChart',
-  
-  data () {
 
+  data () {
     return {
       // list: [],
       ip: '',
@@ -136,8 +135,8 @@ export default {
         {
           label: '最小值',
           value: 7
-        },
-        
+        }
+
       ],
       selector: '30',
       timePickerValue: [],
@@ -148,15 +147,15 @@ export default {
       noDataTip: false,
       config: '',
       chart: '',
-      cpu:[],
-      mem:[],
+      cpu: [],
+      mem: [],
       timeX: [],
       thisTime: Date(),
-      myEchart:null
+      myEchart: null
     }
   },
   computed: {
-    
+
   },
   props: ['data1'],
   created () {
@@ -169,24 +168,24 @@ export default {
     clearInterval(this.interval)
   },
   methods: {
-    parseTime() {
+    parseTime () {
 
     },
-    getCpu(){
+    getCpu () {
       for (let i = 0; i < this.runtime.length; i++) {
         this.cpu.push(this.runtime[i][0])
       }
     },
-    getMem(){
+    getMem () {
       for (let i = 0; i < this.runtime.length; i++) {
         this.mem.push(this.runtime[i][1])
       }
     },
-    chartInit() {
+    chartInit () {
       let c = 'main'
       let dom = document.getElementById(c)
 
-      console.log('echart',this.$echarts.myEchart);
+      console.log('echart', this.$echarts.myEchart)
       this.myEchart = this.$echarts.init(dom)
     },
     drawChart () {
@@ -196,26 +195,24 @@ export default {
       switch (this.time) {
         case '1s':
           timeGap = 1
-          break;
+          break
         case '30m':
           timeGap = 1800
-          break;
+          break
         case '60m':
           timeGap = 3600
-          break;
+          break
         case '6h':
           timeGap = 21600
-          break;
+          break
         case '12h':
           timeGap = 43200
-          break;
+          break
         case '24h':
           timeGap = 86400
-          break;
+          break
       }
 
-      
-      
       let option = {
         title: {
           text: 'runtime'
@@ -299,88 +296,84 @@ export default {
         ]
       }
       this.myEchart.setOption(option)
-      console.log('drawChart');
+      console.log('drawChart')
     },
     search () {
+      let start1 = this.timePickerValue[0].toLocaleString('chinese', { hour12: false }).split('/').join('-')
+      let end = this.timePickerValue[1].toLocaleString('chinese', { hour12: false }).split('/').join('-')
+      let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
+      let endFormat = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
 
-      let start1 = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
-      let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
-      let startFormat = dayjs(start1).format("YYYY-MM-DD HH:mm:ss")
-      let endFormat = dayjs(end).format("YYYY-MM-DD HH:mm:ss")
-
-      console.log('startFormat', startFormat);
-      console.log('endFormat', endFormat);
-      console.log('method',this.method)
-      console.log('time',this.time);
+      console.log('startFormat', startFormat)
+      console.log('endFormat', endFormat)
+      console.log('method', this.method)
+      console.log('time', this.time)
       var timeGap
       switch (this.time) {
         case '1s':
           timeGap = '1s'
-          break;
+          break
         case '30m':
           timeGap = '1800s'
-          break;
+          break
         case '60m':
           timeGap = '3600s'
-          break;
+          break
         case '6h':
           timeGap = '21600s'
-          break;
+          break
         case '12h':
           timeGap = '43200s'
-          break;
+          break
         case '24h':
           timeGap = '86400s'
-          break;
+          break
       }
 
       let cpu_metric = GetMetricsWithTime(this.ip, this.local, 'cpu_rate', startFormat, endFormat, timeGap, this.method, -1)
       let mem_metric = GetMetricsWithTime(this.ip, this.local, 'mem_rate', startFormat, endFormat, timeGap, this.method, -1)
-      
-     
-
 
       cpu_metric.then((data) => {
         // 处理cpu数据
         this.cpu = []
         this.timeX = []
-        for (let i=0; i<data.data.length; i++){
+        for (let i = 0; i < data.data.length; i++) {
           this.cpu.push(data.data[i].value)
-          let timeStamp = dayjs.unix(data.data[i].timestamp).format('MM-DD hh:mm:ss');
+          let timeStamp = dayjs.unix(data.data[i].timestamp).format('MM-DD hh:mm:ss')
           this.timeX.push(timeStamp)
         }
 
         mem_metric.then((data) => {
-        this.mem = []
-        console.log('object', data.data);
-        for (let i=0; i<data.data.length; i++){
-          this.mem.push(data.data[i].value)
-        }
-        this.drawChart()
+          this.mem = []
+          console.log('object', data.data)
+          for (let i = 0; i < data.data.length; i++) {
+            this.mem.push(data.data[i].value)
+          }
+          this.drawChart()
         })
           .catch((err) => {
             if (err.msg) {
-              this.$alert(err.msg);
-              return;
+              this.$alert(err.msg)
+              return
             }
-            this.$alert(err);
-          });
+            this.$alert(err)
+          })
       })
         .catch((err) => {
           if (err.msg) {
-            this.$alert(err.msg);
-            return;
+            this.$alert(err.msg)
+            return
           }
-          this.$alert(err);
-        });
-     
-      console.log('drawChart');
+          this.$alert(err)
+        })
+
+      console.log('drawChart')
     },
     now () {
       var thisTime = new Date()
       let timeS = new Date(thisTime.setMinutes(thisTime.getMinutes() - this.selector))
       this.timePickerValue = [timeS, new Date()]
-    },
+    }
 
   },
   mounted () {

@@ -2,14 +2,14 @@ admin:
   listen: ":8083"
   server: ":8082"
 store:
-  listen: ":8080"
+  listen: ":8888"
 alert:
   listen: ":8081"
 rule:
   method: 1
   period: "5m"
   threshold:
-    info: 0.01
-    warn: 0.03
-    error: 0.06
-    panic: 0.08
+    info: 0.1
+    warn: 0.3
+    error: 0.6
+    panic: 0.8
