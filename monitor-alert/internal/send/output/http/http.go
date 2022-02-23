@@ -114,7 +114,6 @@ func (h *Http) send() {
 			log.Printf("send request error :%s \n", err.Error())
 			continue
 		}
-		defer response.Body.Close()
 		if response.StatusCode != 200 {
 			b, err := ioutil.ReadAll(response.Body)
 			if err != nil {
@@ -124,7 +123,7 @@ func (h *Http) send() {
 			}
 			continue
 		}
-
+		response.Body.Close()
 		log.Println("http 告警结束")
 	}
 	h.stopCh <- true
