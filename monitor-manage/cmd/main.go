@@ -17,7 +17,7 @@ var configPath string
 var debug bool
 
 func init() {
-	flag.StringVar(&configPath, "config", "../configs/config.yaml", "config path")
+	flag.StringVar(&configPath, "config", "./configs/config.yaml", "config path")
 	flag.BoolVar(&debug, "debug", true, "is debug")
 }
 

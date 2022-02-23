@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/influxdata/influxdb-client-go/v2 v2.7.0
+	github.com/panjf2000/ants/v2 v2.4.7
 	github.com/spf13/viper v1.10.1
 	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
