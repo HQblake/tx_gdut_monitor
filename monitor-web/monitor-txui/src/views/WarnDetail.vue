@@ -106,51 +106,51 @@ export default {
       threshold: {},
       dialogFormVisible: false,
       tableData: [
-        {
-          id: -1,
-          ip: '127.0.0.1',
-          local: '北京',
-          metric: 'cpu利用率',
-          method: 1,
-          period: '5m',
-          threshold: { '0': 0.01, '1': 0.02 }
-        },
-        {
-          id: 11,
-          ip: '127.0.0.1',
-          local: '广州',
-          metric: 'mem',
-          method: 2,
-          period: '5m',
-          threshold: {}
-        },
-        {
-          id: 12,
-          ip: '127.0.0.1',
-          local: '深圳',
-          metric: 'rate',
-          method: 3,
-          period: '5m',
-          threshold: {}
-        },
-        {
-          id: 13,
-          ip: '127.0.0.1',
-          local: '上海',
-          metric: 'cpu利用率',
-          method: 0,
-          period: '5m',
-          threshold: { '1': 0.01, '2': 0.02 }
-        },
-        {
-          id: 14,
-          ip: '127.0.0.1',
-          local: '北京',
-          metric: 'cpu利用率',
-          method: 1,
-          period: '5m',
-          threshold: { '3': 0.01 }
-        }
+        // {
+        //   id: -1,
+        //   ip: '127.0.0.1',
+        //   local: '北京',
+        //   metric: 'cpu利用率',
+        //   method: 1,
+        //   period: '5m',
+        //   threshold: { '0': 0.01, '1': 0.02 }
+        // },
+        // {
+        //   id: 11,
+        //   ip: '127.0.0.1',
+        //   local: '广州',
+        //   metric: 'mem',
+        //   method: 2,
+        //   period: '5m',
+        //   threshold: {}
+        // },
+        // {
+        //   id: 12,
+        //   ip: '127.0.0.1',
+        //   local: '深圳',
+        //   metric: 'rate',
+        //   method: 3,
+        //   period: '5m',
+        //   threshold: {}
+        // },
+        // {
+        //   id: 13,
+        //   ip: '127.0.0.1',
+        //   local: '上海',
+        //   metric: 'cpu利用率',
+        //   method: 0,
+        //   period: '5m',
+        //   threshold: { '1': 0.01, '2': 0.02 }
+        // },
+        // {
+        //   id: 14,
+        //   ip: '127.0.0.1',
+        //   local: '北京',
+        //   metric: 'cpu利用率',
+        //   method: 1,
+        //   period: '5m',
+        //   threshold: { '3': 0.01 }
+        // }
       ],
       search: '',
       methodList: MethodType

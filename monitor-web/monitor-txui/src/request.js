@@ -69,15 +69,15 @@ axios.interceptors.response.use((res) => {
 //   })
 // }
 
-export function fetchPost(url, params, json = false) {
+export function fetchPost (url, params, json = false) {
   // json格式请求头
   const headerJSON = {
-    "Content-Type": "application/json"
-  };
+    'Content-Type': 'application/json'
+  }
   // FormData格式请求头
   const headerFormData = {
-    "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-  };
+    'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+  }
   return new Promise((resolve, reject) => {
     axios
       .post(getBaseUrl() + url, json ? JSON.stringify(params) : qs.stringify(params), {
@@ -91,7 +91,7 @@ export function fetchPost(url, params, json = false) {
       .catch((error) => {
         reject(error)
       })
-  });
+  })
 }
 // 返回一个Promise(发送get请求)
 export function fetchGet (url, param) {

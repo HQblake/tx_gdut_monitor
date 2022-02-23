@@ -137,7 +137,11 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 	metInfo := model.MetricsReq{}
 	err := json.Unmarshal(buff.Bytes(), &metInfo)
 	if err != nil {
-		log.Printf("json.Unmarshal();err: %v\n", err)
+		c.JSON(http.StatusOK, gin.H{
+			"code": "040004",
+			"msg":  "参数获取有误" + err.Error(),
+			"data": nil,
+		})
 		return
 	}
 	log.Printf("GetMetricsWithTime(): %v\n", metInfo)

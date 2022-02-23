@@ -114,42 +114,9 @@ export default {
     return {
       dialogVisible: false,
       search: '',
-      tableData: [{
-        ip: '127.0.0.1',
-        port: '80',
-        local: '北京',
-        is_live: false
-      }, {
-        ip: '127.0.0.2',
-        port: '80',
-        local: '上海',
-        is_live: false
-      }, {
-        ip: '127.0.0.1',
-        port: '80',
-        local: '北京',
-        is_live: true
-      }, {
-        ip: '127.0.0.1',
-        port: '81',
-        local: '北京',
-        is_live: true
-      }, {
-        ip: '127.0.0.1',
-        port: '80',
-        local: '北京',
-        is_live: true
-      }, {
-        ip: '127.0.0.1',
-        port: '80',
-        local: '北京',
-        is_live: true
-      }, {
-        ip: '127.0.0.1',
-        port: '80',
-        local: '北京',
-        is_live: true
-      }],
+      tableData: [
+
+      ],
       search: ''
     }
   },

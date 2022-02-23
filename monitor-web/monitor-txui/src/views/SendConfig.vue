@@ -55,49 +55,51 @@ export default {
   },
   data () {
     return {
-      tableData: [{
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        send: [1, 2, 1]
-      }, {
-        ip: '127.0.0.2',
-        port: '2016-05-03',
-        local: '上海',
-        is_live: false,
-        send: [1, 2]
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        send: [1, 2]
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        send: [1, 2]
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        send: [1, 2]
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        send: [1, 2]
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        send: [1, 2]
-      }],
+      tableData: [
+      //   {
+      //   ip: '127.0.0.1',
+      //   port: '2016-05-03',
+      //   local: '北京',
+      //   is_live: true,
+      //   send: [1, 2, 1]
+      // }, {
+      //   ip: '127.0.0.2',
+      //   port: '2016-05-03',
+      //   local: '上海',
+      //   is_live: false,
+      //   send: [1, 2]
+      // }, {
+      //   ip: '127.0.0.1',
+      //   port: '2016-05-03',
+      //   local: '北京',
+      //   is_live: true,
+      //   send: [1, 2]
+      // }, {
+      //   ip: '127.0.0.1',
+      //   port: '2016-05-03',
+      //   local: '北京',
+      //   is_live: true,
+      //   send: [1, 2]
+      // }, {
+      //   ip: '127.0.0.1',
+      //   port: '2016-05-03',
+      //   local: '北京',
+      //   is_live: true,
+      //   send: [1, 2]
+      // }, {
+      //   ip: '127.0.0.1',
+      //   port: '2016-05-03',
+      //   local: '北京',
+      //   is_live: true,
+      //   send: [1, 2]
+      // }, {
+      //   ip: '127.0.0.1',
+      //   port: '2016-05-03',
+      //   local: '北京',
+      //   is_live: true,
+      //   send: [1, 2]
+      // }
+      ],
       search: ''
     }
   },

@@ -122,46 +122,46 @@ export default {
       search: '',
       dialogFormVisible: false,
       tableData: [
-        {
-          id: 1,
-          ip: '127.0.0.1',
-          local: '北京',
-          send_type: 0,
-          level: 0,
-          config: `{"target": "526756656@qq.com,123456789@163.com", "format_type": "html"}`
-        },
-        {
-          id: 11,
-          ip: '127.0.0.1',
-          local: '广州',
-          send_type: 1,
-          level: 1,
-          config: `{"topic": "test", "format_type": "line", "address": "127.0.0.1:8554,127.0.0.2:7894", "version": "0.2.0.1", "partition_type": "hash","partition":0, "partition_key": "test"}`
-        },
-        {
-          id: 12,
-          ip: '127.0.0.1',
-          local: '深圳',
-          send_type: 2,
-          level: 2,
-          config: `{"topic": "test_nsq", "format_type": "json", "address": "127.0.0.1:1234"}`
-        },
-        {
-          id: 13,
-          ip: '127.0.0.1',
-          local: '上海',
-          send_type: 0,
-          level: 3,
-          config: `{"target": "526756656@qq.com", "format_type": "line"}`
-        },
-        {
-          id: 14,
-          ip: '127.0.0.1',
-          local: '北京',
-          send_type: 3,
-          level: 0,
-          config: `{"url": "http://127.0.0.1/test", "format_type": "json", "method": "GET"}`
-        }
+        // {
+        //   id: 1,
+        //   ip: '127.0.0.1',
+        //   local: '北京',
+        //   send_type: 0,
+        //   level: 0,
+        //   config: `{"target": "526756656@qq.com,123456789@163.com", "format_type": "html"}`
+        // },
+        // {
+        //   id: 11,
+        //   ip: '127.0.0.1',
+        //   local: '广州',
+        //   send_type: 1,
+        //   level: 1,
+        //   config: `{"topic": "test", "format_type": "line", "address": "127.0.0.1:8554,127.0.0.2:7894", "version": "0.2.0.1", "partition_type": "hash","partition":0, "partition_key": "test"}`
+        // },
+        // {
+        //   id: 12,
+        //   ip: '127.0.0.1',
+        //   local: '深圳',
+        //   send_type: 2,
+        //   level: 2,
+        //   config: `{"topic": "test_nsq", "format_type": "json", "address": "127.0.0.1:1234"}`
+        // },
+        // {
+        //   id: 13,
+        //   ip: '127.0.0.1',
+        //   local: '上海',
+        //   send_type: 0,
+        //   level: 3,
+        //   config: `{"target": "526756656@qq.com", "format_type": "line"}`
+        // },
+        // {
+        //   id: 14,
+        //   ip: '127.0.0.1',
+        //   local: '北京',
+        //   send_type: 3,
+        //   level: 0,
+        //   config: `{"url": "http://127.0.0.1/test", "format_type": "json", "method": "GET"}`
+        // }
       ]
     }
   },

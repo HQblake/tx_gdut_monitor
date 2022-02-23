@@ -54,49 +54,51 @@ export default {
   },
   data () {
     return {
-      tableData: [{
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        metric: ['cpu利用率', 'mem']
-      }, {
-        ip: '127.0.0.2',
-        port: '2016-05-03',
-        local: '上海',
-        is_live: false,
-        metric: ['cpu利用率', 'mem']
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        metric: ['cpu利用率', 'mem']
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        metric: ['cpu利用率', 'mem']
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        metric: ['cpu利用率', 'mem']
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        metric: ['cpu利用率', 'mem']
-      }, {
-        ip: '127.0.0.1',
-        port: '2016-05-03',
-        local: '北京',
-        is_live: true,
-        metric: ['cpu利用率', 'mem']
-      }],
+      tableData: [
+        //   {
+        //   ip: '127.0.0.1',
+        //   port: '2016-05-03',
+        //   local: '北京',
+        //   is_live: true,
+        //   metric: ['cpu利用率', 'mem']
+        // }, {
+        //   ip: '127.0.0.2',
+        //   port: '2016-05-03',
+        //   local: '上海',
+        //   is_live: false,
+        //   metric: ['cpu利用率', 'mem']
+        // }, {
+        //   ip: '127.0.0.1',
+        //   port: '2016-05-03',
+        //   local: '北京',
+        //   is_live: true,
+        //   metric: ['cpu利用率', 'mem']
+        // }, {
+        //   ip: '127.0.0.1',
+        //   port: '2016-05-03',
+        //   local: '北京',
+        //   is_live: true,
+        //   metric: ['cpu利用率', 'mem']
+        // }, {
+        //   ip: '127.0.0.1',
+        //   port: '2016-05-03',
+        //   local: '北京',
+        //   is_live: true,
+        //   metric: ['cpu利用率', 'mem']
+        // }, {
+        //   ip: '127.0.0.1',
+        //   port: '2016-05-03',
+        //   local: '北京',
+        //   is_live: true,
+        //   metric: ['cpu利用率', 'mem']
+        // }, {
+        //   ip: '127.0.0.1',
+        //   port: '2016-05-03',
+        //   local: '北京',
+        //   is_live: true,
+        //   metric: ['cpu利用率', 'mem']
+        // }
+      ],
       search: ''
     }
   },
