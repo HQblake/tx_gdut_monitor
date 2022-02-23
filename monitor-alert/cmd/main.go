@@ -30,7 +30,10 @@ func main() {
 	Receive := receive.NewService(Judgement)
 	log.Println("接入服务加载完成")
 
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		grpc.MaxConcurrentStreams(1000),
+		grpc.NumStreamWorkers(1000))
+
 	// 注册发送服务
 	Send.RegisterService(server)
 	// 注册判定服务
@@ -50,6 +53,7 @@ func setupSetting(config string) {
 		log.Fatal(err)
 	}
 }
+
 //
 //func setupService() {
 //	// 服务加载顺序：先加载发送服务、再加载判定服务、最后加载接入服务

@@ -26,7 +26,9 @@ func init() {
 }
 
 func main() {
-	server := grpc.NewServer()
+	server := grpc.NewServer(
+		grpc.MaxConcurrentStreams(1000),
+		grpc.NumStreamWorkers(1000))
 	global.JudgmentService.RegisterJudgmentService(server)
 	global.ManageService.RegisterManageService(server)
 	lis, _ := net.Listen(global.Setting.Hosts.Network, global.Setting.Hosts.Server)

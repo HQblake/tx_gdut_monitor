@@ -64,12 +64,14 @@ const (
 	|> filter(fn: (r) => r["local"] == "%s")
 	|> filter(fn: (r) => r["_field"] == "value")
 	|> top(n: %v, columns: ["_time"])
-	|> sort(columns: ["_time"], desc: false)`
+	|> sort(columns: ["_time"], desc: false)
+	|> yield(name: "everyWitLimit")`
 
 	everyWitoutLimit = `from(bucket: "%s")
 	|> range(start: %v, stop: %v)
 	|> filter(fn: (r) => r["_measurement"] == "%s")
 	|> filter(fn: (r) => r["ip"] == "%s")
 	|> filter(fn: (r) => r["local"] == "%s")
-	|> filter(fn: (r) => r["_field"] == "value")`
+	|> filter(fn: (r) => r["_field"] == "value")
+	|> yield(name: "everyWitoutLimit")`
 )
