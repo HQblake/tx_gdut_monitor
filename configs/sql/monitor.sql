@@ -11,7 +11,7 @@
  Target Server Version : 80027
  File Encoding         : 65001
 
- Date: 21/02/2022 18:11:27
+ Date: 23/02/2022 14:33:12
 */
 
 SET NAMES utf8mb4;
@@ -107,7 +107,7 @@ CREATE TABLE `metric`  (
   `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Procedure structure for AddAgentInfo
@@ -117,32 +117,31 @@ delimiter ;;
 CREATE PROCEDURE `AddAgentInfo`(IN i VARCHAR(50), 
 	IN l VARCHAR(50), 
 	IN p VARCHAR(50), 
-	IN m VARCHAR(50))
+	IN mid INT)
 BEGIN
 	-- 定义 MetricID 与 AgentID 变量
-	DECLARE metricId INT DEFAULT -1;
 	DECLARE agentId INT DEFAULT -1;
 	DECLARE id INT DEFAULT -1;
 	
-	-- 获取metricID，若不存在则插入新的metric
-	SELECT m.id FROM metric AS m WHERE m.`name`=m INTO metricId;
-	IF metricId=-1 THEN
-		INSERT INTO metric(`name`) VALUES(m);
-		SELECT m.id FROM metric AS m WHERE m.`name`=m INTO metricId;
-	END IF;
+-- 	-- 获取metricID，若不存在则插入新的metric
+-- 	SELECT m.id FROM metric AS m WHERE m.`name`=m INTO metricId;
+-- 	IF metricId=-1 THEN
+-- 		INSERT INTO metric(`name`) VALUES(m);
+-- 		SELECT m.id FROM metric AS m WHERE m.`name`=m INTO metricId;
+-- 	END IF;
 
 	-- 获取AgentID，若不存在则插入新的agent
-	SELECT a.id FROM agent AS a WHERE a.`ip`=i AND a.`local`=l AND a.`port`=p INTO agentId;
+	SELECT a.id FROM agent AS a WHERE a.`ip`=i AND a.`local`=l INTO agentId;
 	IF agentId=-1 THEN
 		INSERT INTO agent(`ip`,`local`,`port`) VALUES(i,l,p);
-		SELECT a.id FROM agent AS a WHERE a.`ip`=i AND a.`local`=l AND a.`port`=p INTO agentId;
+		SELECT a.id FROM agent AS a WHERE a.`ip`=i AND a.`local`=l INTO agentId;
 	END IF;
 
 	
 	-- 检测Agent是否包含该指标，若不存在则插入新的agent-metric关联
-	SELECT am.id FROM agent_metric AS am WHERE am.`agentId`=agentId AND am.`metricId`=metricId INTO id;
+	SELECT am.id FROM agent_metric AS am WHERE am.`agentId`=agentId AND am.`metricId`=mid INTO id;
 	IF id=-1 THEN
-		INSERT INTO agent_metric(`agentId`,`metricId`) VALUES(agentId,metricId);
+		INSERT INTO agent_metric(`agentId`,`metricId`) VALUES(agentId,mid);
 	END IF;
 END
 ;;

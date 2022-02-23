@@ -26,7 +26,8 @@ func (c *Client) GetAggregatedData(metric *model.Metric, period string, method i
 	|> filter(fn: (r) => r["ip"] == "%s")
 	|> filter(fn: (r) => r["local"] == "%s")
 	|> filter(fn: (r) => r["_field"] == "value")
-	|> aggregateWindow(every: %s, fn: %s, createEmpty: false)`
+	|> aggregateWindow(every: %s, fn: %s, createEmpty: %v)
+	|> yield(name: "%s")`
 	duration, err := time.ParseDuration(period)
 	if err != nil {
 		return 0, err
@@ -34,7 +35,9 @@ func (c *Client) GetAggregatedData(metric *model.Metric, period string, method i
 	stop := time.Unix(timestamp, 0).Add(1 * time.Second)
 	start := stop.Add(-(duration + 1)).Unix()
 
-	flux := fmt.Sprintf(query, c.bucket, start, stop.Unix(), metric.Name, metric.IP, metric.Local, period, Methods[method].English)
+	m := Methods[method].English
+	flux := fmt.Sprintf(query, c.bucket, start, stop.Unix(), metric.Name, metric.IP, metric.Local, period,
+		m, false, m)
 	result, err := c.queryAPI.Query(context.Background(), flux)
 	if err != nil {
 		return 0, err
