@@ -247,39 +247,39 @@ export default {
       dialogVisible: false,
       search: "",
       tableData: [
-        {
-          id: 1,
-          ip: '127.0.0.1',
-          local: '北京',
-          metric: 'cpu_rate',
-          level: 1,
-          start: '2022-02-10 18:00:00',
-          value: 85,
-          threshold: 80,
-          duration: 30
-        },
-        {
-          id: 2,
-          ip: '127.0.0.2',
-          local: '北京',
-          metric: 'mem_rate',
-          level: 2,
-          start: '2022-02-10 19:00:00',
-          value: 85,
-          threshold: 80,
-          duration: 30
-        },
-        {
-          id: 3,
-          ip: '127.0.0.2',
-          local: '上海',
-          metric: 'mem_rate',
-          level: 2,
-          start: '2022-02-10 20:00:00',
-          value: 85,
-          threshold: 80,
-          duration: 30
-        }
+        // {
+        //   id: 1,
+        //   ip: '127.0.0.1',
+        //   local: '北京',
+        //   metric: 'cpu_rate',
+        //   level: 1,
+        //   start: '2022-02-10 18:00:00',
+        //   value: 85,
+        //   threshold: 80,
+        //   duration: 30
+        // },
+        // {
+        //   id: 2,
+        //   ip: '127.0.0.2',
+        //   local: '北京',
+        //   metric: 'mem_rate',
+        //   level: 2,
+        //   start: '2022-02-10 19:00:00',
+        //   value: 85,
+        //   threshold: 80,
+        //   duration: 30
+        // },
+        // {
+        //   id: 3,
+        //   ip: '127.0.0.2',
+        //   local: '上海',
+        //   metric: 'mem_rate',
+        //   level: 2,
+        //   start: '2022-02-10 20:00:00',
+        //   value: 85,
+        //   threshold: 80,
+        //   duration: 30
+        // }
       ],
       selector: 30,
     };
