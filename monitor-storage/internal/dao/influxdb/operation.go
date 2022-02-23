@@ -83,7 +83,7 @@ func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop
 
 	metrics := make([]model.Metric, 0, 20)
 	for result.Next() {
-		log.Printf("res-value", result.Record().Value())
+		// log.Printf("res-value", result.Record().Value())
 		metrics = append(metrics, model.Metric{
 			Name:      metricName,
 			Value:     result.Record().Value().(float64),

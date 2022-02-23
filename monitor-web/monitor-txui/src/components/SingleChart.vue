@@ -148,29 +148,9 @@ export default {
       noDataTip: false,
       config: '',
       chart: '',
-      runtime: [
-        [30, 40],
-        [40, 50],
-        [30, 40],
-        [45, 60],
-        [50, 40],
-        [30, 40],
-        [40, 50],
-        [30, 40],
-        [45, 60],
-        [80, 40],
-        [30, 40],
-        [45, 60],
-        [50, 40],
-        [30, 40],
-        [45, 60],
-        [50, 40],
-        [30, 40],
-        [45, 60],
-        [50, 40],
-      ],
       cpu:[],
       mem:[],
+      timeX: [],
       thisTime: Date(),
       myEchart:null
     }
@@ -213,7 +193,6 @@ export default {
       var timeX = []
       const now = new Date()
       var timeGap
-      console.log('time',this.time);
       switch (this.time) {
         case '1s':
           timeGap = 1
@@ -234,36 +213,8 @@ export default {
           timeGap = 86400
           break;
       }
-      console.log('timeGap',timeGap);
-      for (let i = 0; i < this.cpu.length; i++) {
-        console.log();
-        let timeS = new Date(now.setSeconds(now.getSeconds() - timeGap))
-        var curr_date = timeS.getDate()
-        var curr_month = timeS.getMonth() + 1
-        // var curr_year = timeS.getFullYear();
-        String(curr_month).length < 2
-          ? (curr_month = '0' + curr_month)
-          : curr_month
-        String(curr_date).length < 2
-          ? (curr_date = '0' + curr_date)
-          : curr_date
-        var yyyyMMdd = curr_month + '-' + curr_date
-        var curr_hour = timeS.getHours()
-        if (curr_hour < 10) {
-          curr_hour = '0' + curr_hour
-        }
-        var curr_min = timeS.getMinutes()
-        if (curr_min < 10) {
-          curr_min = '0' + curr_min
-        }
-        var curr_sec = timeS.getSeconds()
-        if (curr_sec < 10) {
-          curr_sec = '0' + curr_sec
-        }
-        var tmp = yyyyMMdd + '\n' + curr_hour + ':' + curr_min + ':' + curr_sec
-        
-        timeX.unshift(tmp)
-      }
+
+      
       
       let option = {
         title: {
@@ -304,13 +255,12 @@ export default {
               type: 'solid'
             }
           },
-          data: timeX
+          data: this.timeX
         },
         yAxis: [
           {
             type: 'value',
             name: 'Cpu',
-            // show: true,
             axisLine: {
               lineStyle: {
                 color: '#a1a1a2'
@@ -349,6 +299,7 @@ export default {
         ]
       }
       this.myEchart.setOption(option)
+      console.log('drawChart');
     },
     search () {
 
@@ -361,21 +312,69 @@ export default {
       console.log('endFormat', endFormat);
       console.log('method',this.method)
       console.log('time',this.time);
-      // console.log(start);
-      // console.log(end);
-      // console.log(this.ip);
-      // console.log(this.local);
-      let cpu_metric = GetMetricsWithTime(this.ip, this.local, 'cpu_rate', startFormat, endFormat, this.method, -1)
-      let mem_metric = GetMetricsWithTime(this.ip, this.local, 'mem_rate', startFormat, endFormat, this.method, -1)
-      // this.runtime = []
-      
-      // for (let i=0; i<mem_metric.length; i++) {
-      //   this.runtime.push([cpu_metric[i], mem_metric[i]])
-      // }
-      this.cpu = cpu_metric
-      this.mem = mem_metric
-      this.drawChart()
+      var timeGap
+      switch (this.time) {
+        case '1s':
+          timeGap = '1s'
+          break;
+        case '30m':
+          timeGap = '1800s'
+          break;
+        case '60m':
+          timeGap = '3600s'
+          break;
+        case '6h':
+          timeGap = '21600s'
+          break;
+        case '12h':
+          timeGap = '43200s'
+          break;
+        case '24h':
+          timeGap = '86400s'
+          break;
+      }
 
+      let cpu_metric = GetMetricsWithTime(this.ip, this.local, 'cpu_rate', startFormat, endFormat, timeGap, this.method, -1)
+      let mem_metric = GetMetricsWithTime(this.ip, this.local, 'mem_rate', startFormat, endFormat, timeGap, this.method, -1)
+      
+     
+
+
+      cpu_metric.then((data) => {
+        // 处理cpu数据
+        this.cpu = []
+        this.timeX = []
+        for (let i=0; i<data.data.length; i++){
+          this.cpu.push(data.data[i].value)
+          let timeStamp = dayjs.unix(data.data[i].timestamp).format('MM-DD hh:mm:ss');
+          this.timeX.push(timeStamp)
+        }
+
+        mem_metric.then((data) => {
+        this.mem = []
+        console.log('object', data.data);
+        for (let i=0; i<data.data.length; i++){
+          this.mem.push(data.data[i].value)
+        }
+        this.drawChart()
+        })
+          .catch((err) => {
+            if (err.msg) {
+              this.$alert(err.msg);
+              return;
+            }
+            this.$alert(err);
+          });
+      })
+        .catch((err) => {
+          if (err.msg) {
+            this.$alert(err.msg);
+            return;
+          }
+          this.$alert(err);
+        });
+     
+      console.log('drawChart');
     },
     now () {
       var thisTime = new Date()
@@ -386,11 +385,7 @@ export default {
   },
   mounted () {
     this.now()
-    this.getCpu()
-    this.getMem()
     this.chartInit()
-    this.drawChart()
-    // this.testProps()
   },
   components: {}
 }

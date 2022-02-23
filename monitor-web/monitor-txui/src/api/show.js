@@ -1,12 +1,19 @@
+/*
+ * @Description: 
+ * @Autor: yzq
+ * @Date: 2022-02-18 16:59:22
+ * @LastEditors: yzq
+ */
 import { fetchGet, fetchPost } from '@/request.js'
 
-export function GetMetricsWithTime (ip, local, metric, begin, end, method, limit) {
+export function GetMetricsWithTime (ip, local, metric, begin, end, period, method, limit) {
   let metricReq = {
     "ip":ip,
     "local":local,
     "metricName":metric,
     "begin":begin,
     "end":end,
+    "period":period,
     "method":method,
     "limit":limit
   }

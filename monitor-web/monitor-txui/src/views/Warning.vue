@@ -169,6 +169,13 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 试图添加分页功能 -->
+      <!-- <div class="page">
+        <el-pagination
+          layout="prev, pager, next"
+          :total="1000">
+        </el-pagination>
+      </div> -->
     </div>
 
   </div>
@@ -345,10 +352,7 @@ export default {
   created() {
     GetWarnList()
       .then((data) => {
-        // console.log(data);
-        // console.log(111);
         this.tableData = data.data;
-        // console.log(tableData);
       })
       .catch((err) => {
         if (err.msg) {
@@ -382,5 +386,8 @@ export default {
 }
 .el-select {
   width: 200px;
+}
+.page{
+  float: right;
 }
 </style>
