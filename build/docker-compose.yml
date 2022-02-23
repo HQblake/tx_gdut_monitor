@@ -56,6 +56,16 @@ services:
       - $PWD/data/manage:/data/manage
     depends_on:
       - monitor-alert
+  monitor-web:
+    build: ./monitor-web
+    container_name: web
+    networks:
+      - monitor
+    ports:
+      - "8086:80"
+    volumes:
+      - $PWD/data/web:/usr/share/nginx/html/static
+      - $PWD/data/web/nginx:/etc/nginx/conf.d
 
   monitor-agent:
     build: ./monitor-agent
@@ -68,16 +78,3 @@ services:
       - $PWD/data/agent-01:/data/agent
     depends_on:
       - monitor-manage
-
-  monitor-web:
-    build: ./monitor-web
-    container_name: web
-    networks:
-      - monitor
-    ports:
-      - "8086:80"
-    volumes:
-      - $PWD/data/web:/usr/share/nginx/html/static
-      - $PWD/data/web/nginx:/etc/nginx/conf.d
-    depends_on:
-      - monitor-agent

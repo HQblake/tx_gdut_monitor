@@ -13,9 +13,10 @@ import (
 )
 
 type Client struct {
-	db      *sql.DB
-	mx      *CientLock
-	metrics sync.Map
+	db       *sql.DB
+	agents   *CientLock
+	metricMx sync.Mutex
+	metrics  sync.Map
 }
 
 func NewClient(s *MySQLSetting) *Client {
@@ -45,5 +46,5 @@ func NewClient(s *MySQLSetting) *Client {
 	}
 
 	// 返回客户端
-	return &Client{db, NewLock(), metrics}
+	return &Client{db, NewLock(), sync.Mutex{}, metrics}
 }
