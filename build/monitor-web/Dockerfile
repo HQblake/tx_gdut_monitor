@@ -13,6 +13,7 @@ RUN git clone -b develop https://gitee.com/zekeGitee_admin/tx_gdut_monitor.git /
 WORKDIR /home/monitor/monitor-web/monitor-txui
 RUN cd /home/monitor/monitor-web/monitor-txui
 RUN npm install node-sass --sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
+RUN npm install --save dayjs
 RUN npm run build
 
 FROM nginx:latest
