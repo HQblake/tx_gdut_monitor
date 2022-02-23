@@ -57,8 +57,11 @@
 </template>
 
 <script>
+
 import { GetMetricsWithTime } from '@/api/show'
 import dayjs from 'dayjs'
+// import rateChart from '../global'
+// import { markRaw } from 'vue'
 
 export default {
   name: 'SingleChart',
@@ -144,7 +147,7 @@ export default {
       chartTitle: null,
       noDataTip: false,
       config: '',
-      myChart: '',
+      chart: '',
       runtime: [
         [30, 40],
         [40, 50],
@@ -166,24 +169,14 @@ export default {
         [45, 60],
         [50, 40],
       ],
-      thisTime: Date()
+      cpu:[],
+      mem:[],
+      thisTime: Date(),
+      myEchart:null
     }
   },
   computed: {
-    cpu: function () {
-      let cpu = []
-      for (let i = 0; i < this.runtime.length; i++) {
-        cpu.push(this.runtime[i][0])
-      }
-      return cpu
-    },
-    mem: function () {
-      let mem = []
-      for (let i = 0; i < this.runtime.length; i++) {
-        mem.push(this.runtime[i][1])
-      }
-      return mem
-    }
+    
   },
   props: ['data1'],
   created () {
@@ -191,12 +184,6 @@ export default {
     this.local = this.$route.params.local
   },
   watch: {
-    cpu (val) {
-      this.drawChart()
-    },
-    mem (val) {
-      this.drawChart()
-    },
   },
   destroyed () {
     clearInterval(this.interval)
@@ -204,6 +191,23 @@ export default {
   methods: {
     parseTime() {
 
+    },
+    getCpu(){
+      for (let i = 0; i < this.runtime.length; i++) {
+        this.cpu.push(this.runtime[i][0])
+      }
+    },
+    getMem(){
+      for (let i = 0; i < this.runtime.length; i++) {
+        this.mem.push(this.runtime[i][1])
+      }
+    },
+    chartInit() {
+      let c = 'main'
+      let dom = document.getElementById(c)
+
+      console.log('echart',this.$echarts.myEchart);
+      this.myEchart = this.$echarts.init(dom)
     },
     drawChart () {
       var timeX = []
@@ -241,10 +245,6 @@ export default {
         timeX.unshift(tmp)
       }
       
-      const echarts = require('echarts/lib/echarts')
-      let c = 'main'
-      let myEchart = this.$echarts.init(document.getElementById(c))
-
       let option = {
         title: {
           text: 'runtime'
@@ -328,37 +328,33 @@ export default {
           }
         ]
       }
-      myEchart.setOption(option)
+      this.myEchart.setOption(option)
     },
     search () {
-      
-      // console.log(this.time)
-      // console.log(this.method)
-      // let start = dayjs().format("YYYY-MM-DD HH:mm:ss")
-      // console.log('dayjs',start);
+
       let start1 = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       let startFormat = dayjs(start1).format("YYYY-MM-DD HH:mm:ss")
       let endFormat = dayjs(end).format("YYYY-MM-DD HH:mm:ss")
 
       console.log('startFormat', startFormat);
-      console.log('startFormat', endFormat);
+      console.log('endFormat', endFormat);
 
       // console.log(start);
       // console.log(end);
       // console.log(this.ip);
       // console.log(this.local);
-      let cpu_metric = GetMetricsWithTime(this.ip, this.local, 'cpu_rate', start, end, this.method, -1)
-      let mem_metric = GetMetricsWithTime(this.ip, this.local, 'mem_rate', start, end, this.method, -1)
-      if (cpu_metric.length != mem_metric.length) {
-        this.runtime = []
-      }
-      for (let i=0; i<mem_metric.length; i++) {
-        this.runtime.push([cpu_metric[0], mem_metric[0]])
-      }
-      // ip, local, metric, begin, end, method, limit
-      // let time = this.value1[0].toString()
-      // console.log(time)
+      let cpu_metric = GetMetricsWithTime(this.ip, this.local, 'cpu_rate', startFormat, endFormat, this.method, -1)
+      let mem_metric = GetMetricsWithTime(this.ip, this.local, 'mem_rate', startFormat, endFormat, this.method, -1)
+      this.runtime = []
+      
+      // for (let i=0; i<mem_metric.length; i++) {
+      //   this.runtime.push([cpu_metric[i], mem_metric[i]])
+      // }
+      this.cpu = cpu_metric
+      this.mem = mem_metric
+      this.drawChart()
+
     },
     now () {
       var thisTime = new Date()
@@ -368,8 +364,11 @@ export default {
 
   },
   mounted () {
-    this.drawChart()
     this.now()
+    this.getCpu()
+    this.getMem()
+    this.chartInit()
+    this.drawChart()
     // this.testProps()
   },
   components: {}
