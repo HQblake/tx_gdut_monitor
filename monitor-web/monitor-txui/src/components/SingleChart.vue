@@ -72,7 +72,7 @@ export default {
       // list: [],
       ip: '',
       local: '',
-      time: '',
+      time: '1s',
       timeOptions: [
         {
           value: '1s',
@@ -87,8 +87,8 @@ export default {
           label: '60m'
         },
         {
-          value: '5h',
-          label: '5h'
+          value: '6h',
+          label: '6h'
         },
         {
           value: '12h',
@@ -99,7 +99,7 @@ export default {
           label: '24h'
         }
       ],
-      method: '',
+      method: -1,
       methodOptions: [
         {
           label: '不聚合',
@@ -212,12 +212,32 @@ export default {
     drawChart () {
       var timeX = []
       const now = new Date()
-      // this.cpu.push(20)
-      // console.log(timeS);
-      // value = value + Math.random() * 21; // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random
-      // console.log(cpu[index])
+      var timeGap
+      console.log('time',this.time);
+      switch (this.time) {
+        case '1s':
+          timeGap = 1
+          break;
+        case '30m':
+          timeGap = 1800
+          break;
+        case '60m':
+          timeGap = 3600
+          break;
+        case '6h':
+          timeGap = 21600
+          break;
+        case '12h':
+          timeGap = 43200
+          break;
+        case '24h':
+          timeGap = 86400
+          break;
+      }
+      console.log('timeGap',timeGap);
       for (let i = 0; i < this.cpu.length; i++) {
-        let timeS = new Date(now.setMinutes(now.getMinutes() - 1))
+        console.log();
+        let timeS = new Date(now.setSeconds(now.getSeconds() - timeGap))
         var curr_date = timeS.getDate()
         var curr_month = timeS.getMonth() + 1
         // var curr_year = timeS.getFullYear();
@@ -339,14 +359,15 @@ export default {
 
       console.log('startFormat', startFormat);
       console.log('endFormat', endFormat);
-
+      console.log('method',this.method)
+      console.log('time',this.time);
       // console.log(start);
       // console.log(end);
       // console.log(this.ip);
       // console.log(this.local);
       let cpu_metric = GetMetricsWithTime(this.ip, this.local, 'cpu_rate', startFormat, endFormat, this.method, -1)
       let mem_metric = GetMetricsWithTime(this.ip, this.local, 'mem_rate', startFormat, endFormat, this.method, -1)
-      this.runtime = []
+      // this.runtime = []
       
       // for (let i=0; i<mem_metric.length; i++) {
       //   this.runtime.push([cpu_metric[i], mem_metric[i]])
