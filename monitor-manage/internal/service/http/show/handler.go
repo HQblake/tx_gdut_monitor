@@ -174,7 +174,7 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 
 	// log.Println("res")
 	res, err := h.service.GetMetricsWithTime(metInfo, begin, end)
-	// log.Println("res", res)
+	log.Println("finishGetMetricsWithTime", res)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040007",

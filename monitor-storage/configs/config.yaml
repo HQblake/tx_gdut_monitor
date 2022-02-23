@@ -1,11 +1,11 @@
 InfluxDB:   # InfluxDB配置
   URL: http://81.71.165.211:8086/ # http://81.71.165.211:8086/ http://127.0.0.1:9096/
-  ORG: debug
-  Token: ohwL8Jc2vEUKL3AsytCXtuA35_MimZI9w2NLE3ARhYksk8_jWQ1phl9srfaGfv_K1tA7H2X30Aet0jdH7OD2Uw== # W494CW95RhZzEc95DpxubUw19EoBuKxCxAlv3YfVCS4KRmYnJf6MhPJGWXFvzkX4hJ76-ZDBIwpV2D76wIZMcA==
+  ORG: tx-monitor
+  Token: W494CW95RhZzEc95DpxubUw19EoBuKxCxAlv3YfVCS4KRmYnJf6MhPJGWXFvzkX4hJ76-ZDBIwpV2D76wIZMcA== # W494CW95RhZzEc95DpxubUw19EoBuKxCxAlv3YfVCS4KRmYnJf6MhPJGWXFvzkX4hJ76-ZDBIwpV2D76wIZMcA==
   # CZ5ZuD-j5XtbTHDmG_RHIuHuu8LU2UOhTSp02hpR6z9hMPk4-5ETiNuYtFrNYDghHq0OLHxSCQA4vBEhm6OJpA==
   # ohwL8Jc2vEUKL3AsytCXtuA35_MimZI9w2NLE3ARhYksk8_jWQ1phl9srfaGfv_K1tA7H2X30Aet0jdH7OD2Uw==
   Bucket: metric
-  BatchSize: 20   # 批处理数量
+  BatchSize: 1000   # 批处理数量
   LogLevel: 0
   FlushIntervalMs: 1000     # 单位为ms
   RetryInterval: 5000
@@ -20,14 +20,20 @@ InfluxDB:   # InfluxDB配置
 MySQL:     # MySQL配置
   DBType: mysql
   Username: root
-  Password: tx-monitor-gdut-group2 # tx-monitor-gdut-group2 root
-  Host: 81.71.165.211:3307 # 81.71.165.211:3307 127.0.0.1:3306
+  Password: root # tx-monitor-gdut-group2
+  Host: 127.0.0.1:3306 # 81.71.165.211:3307
   DBName: monitor
   Charset: utf8mb4
   ParseTime: True
-  MaxIdleConns: 10
-  MaxOpenConns: 10
+  MaxIdleConns: 100
+  MaxOpenConns: 100
   MaxLifetime: 3
 Hosts:
   Network: tcp
   Server: 127.0.0.1:8080
+Workers:
+  Capacity: 10000       # 协程池容量
+  ExpiryDuration: 30s   # 协程过期时间，过期后的协程会被清理
+  Nonblocking: false    # 非阻塞提交，默认否，任务无worker执行时阻塞，当为true时，无worker则立即返回nil
+  PreAlloc: false       # 内存预分配，是否初始化Pool的时候分配worker资源
+  MaxBlockingTasks: 0   # 最大阻塞任务数，默认0，任务阻塞直到分配到worker；当非0时，达到最大任务数，不执行任务并返回overload

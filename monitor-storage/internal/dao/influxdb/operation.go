@@ -3,10 +3,11 @@ package influxdb
 import (
 	"context"
 	"fmt"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
-	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"log"
 	"time"
+
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 )
 
 // SaveMatricData 将上报记录保存到InfluxDB中
@@ -62,15 +63,16 @@ func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop
 				start, stop+1, metricName, ip, local, limit)
 		}
 	} else {
+		m := Methods[method].English
 		if limit <= 0 {
 			query = fmt.Sprintf(aggregateWitoutLimit, c.bucket,
-				start, stop+1, metricName, ip, local, period, Methods[method].English)
+				start, stop+1, metricName, ip, local, period, m, false, m)
 		} else {
 			query = fmt.Sprintf(aggregateWitLimit, c.bucket,
-				start, stop+1, metricName, ip, local, period, Methods[method].English, limit)
+				start, stop+1, metricName, ip, local, period, m, false, limit, m)
 		}
 	}
-
+	fmt.Println(query)
 	result, err := c.queryAPI.Query(context.Background(), query)
 	if err != nil {
 		return nil, err
@@ -78,6 +80,7 @@ func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop
 
 	metrics := make([]model.Metric, 0, 20)
 	for result.Next() {
+		log.Printf("res-value", result.Record().Value())
 		metrics = append(metrics, model.Metric{
 			Name:      metricName,
 			Value:     result.Record().Value().(float64),

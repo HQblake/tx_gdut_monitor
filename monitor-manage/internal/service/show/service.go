@@ -158,6 +158,7 @@ func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time
 
 // 根据开始时间和数据量限制获取指定条数的指标数据
 func (s *Service) GetMetricsWithTime(req model.MetricsReq, begin, end time.Time) ([]model.MetricsInfo, error) {
+	log.Println("req: ", req, begin.Unix(), end.Unix())
 	var err error
 	// log.Println("req", req.MetricName, begin, end)
 	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{
@@ -172,7 +173,7 @@ func (s *Service) GetMetricsWithTime(req model.MetricsReq, begin, end time.Time)
 	if err != nil {
 		return nil, err
 	}
-	// log.Println(&stream)
+	// log.Println("stream", &stream)
 	var resp *managepb.MetricResponse
 	res := make([]model.MetricsInfo, 0, 10)
 	for {
@@ -182,16 +183,20 @@ func (s *Service) GetMetricsWithTime(req model.MetricsReq, begin, end time.Time)
 		}
 		// log.Printf("11111111")
 		if err != nil {
+			// log.Printf("2222")
+
 			log.Printf("grpc get historyAlert rule error %v", err)
+
 			continue
 		}
-		// if resp.Code != managepb.ResponseCode_SUCCESS {
-		// 	// log.Printf("222")
+		if resp.Code != managepb.ResponseCode_SUCCESS {
+			log.Printf("3333")
 
-		// 	log.Printf("grpc get historyAlert rule error %v", resp.Msg)
-		// 	continue
-		// }
-		// log.Printf("222")
+			log.Printf("grpc get historyAlert rule error %v", resp.Msg)
+			continue
+		}
+		log.Printf("44444")
+
 		config := resp.GetResult()
 		conf := model.MetricsInfo{
 			Timestamp: config.GetTimestamp(),

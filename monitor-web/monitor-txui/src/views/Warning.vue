@@ -178,6 +178,7 @@
 import { GetWarnList } from "@/api/show";
 import { GetWarnInfoWithParams } from "@/api/show";
 import { DelWarnInfo } from "@/api/show"
+import dayjs from 'dayjs'
 
 export default {
   name: "warning",
@@ -217,6 +218,10 @@ export default {
           label: "警告",
           value: "1",
         },
+        {
+          label: "信息",
+          value: "0",
+        }
       ],
       warnContent: "",
       warnOptions: [
@@ -278,13 +283,19 @@ export default {
       console.log('timepicker',this.timePickerValue[1]);
       // let start = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       // let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
+      let start1 = this.timePickerValue[0]
+      let end1 = this.timePickerValue[1]
       let levelInt = Number(this.level)
+      let startFormat = dayjs(start1).format("YYYY-MM-DD HH:mm:ss")
+      let endFormat = dayjs(end1).format("YYYY-MM-DD HH:mm:ss")
+      console.log('startFormat',startFormat);
+      console.log('endFormat',endFormat);
       // console.log(start);
       // console.log(end);
       let start = '2022-02-22 23:26:14'
       let end = '2022-02-22 23:56:14'
-      console.log(this.ip, this.local, this.warnContent, levelInt, start, end);
-      GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, start, end).then(data => {
+      console.log(this.ip, this.local, this.warnContent, levelInt, startFormat, endFormat);
+      GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, startFormat, endFormat).then(data => {
         this.tableData = data.data
       })
         .catch((err) => {
@@ -304,11 +315,11 @@ export default {
     },
     deleteData(index, row) {
       this.dialogVisible = false;
-      // console.log(index);
-      // console.log(row);
+      console.log('index',index);
+      console.log(row.id);
 
       this.tableData.splice(index, 1);
-      DelWarnInfo(index)
+      DelWarnInfo(row.id)
     },
     openDelete(index, row) {
       this.$confirm("此操作将永久删除该消息, 是否继续?", "提示", {
