@@ -3,10 +3,11 @@ package influxdb
 import (
 	"context"
 	"fmt"
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
-	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"log"
 	"time"
+
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-storage/internal/model"
+	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 )
 
 // SaveMatricData 将上报记录保存到InfluxDB中
@@ -71,6 +72,7 @@ func (c *Client) GetMetricData(ip, local, metricName, period string, start, stop
 		}
 	}
 
+	log.Printf("query", query)
 	result, err := c.queryAPI.Query(context.Background(), query)
 	if err != nil {
 		return nil, err

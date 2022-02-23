@@ -86,7 +86,7 @@ func router(h *http.Handler) *gin.Engine {
 
 	// show
 	show := r.Group("show")
-	show.POST("/metrics", h.GetMetricsWithTime)
+	show.GET("/metrics", h.GetMetricsWithTime)
 	show.GET("/warnList", h.GetWarnInfo)
 	show.GET("/warnId/:id", h.GetWarnInfoWithId)
 	show.POST("/warnParams", h.GetWarnInfoWithParams)

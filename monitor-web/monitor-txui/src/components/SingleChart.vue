@@ -332,16 +332,22 @@ export default {
     },
     search () {
       
-      console.log(this.time)
-      console.log(this.method)
-      let start = dayjs().format("YYYY-MM-DD HH:mm:ss")
-      console.log('dayjs',start);
-      this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
+      // console.log(this.time)
+      // console.log(this.method)
+      // let start = dayjs().format("YYYY-MM-DD HH:mm:ss")
+      // console.log('dayjs',start);
+      let start1 = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
-      console.log(start);
-      console.log(end);
-      console.log(this.ip);
-      console.log(this.local);
+      let startFormat = dayjs(start1).format("YYYY-MM-DD HH:mm:ss")
+      let endFormat = dayjs(end).format("YYYY-MM-DD HH:mm:ss")
+
+      console.log('startFormat', startFormat);
+      console.log('startFormat', endFormat);
+
+      // console.log(start);
+      // console.log(end);
+      // console.log(this.ip);
+      // console.log(this.local);
       let cpu_metric = GetMetricsWithTime(this.ip, this.local, 'cpu_rate', start, end, this.method, -1)
       let mem_metric = GetMetricsWithTime(this.ip, this.local, 'mem_rate', start, end, this.method, -1)
       if (cpu_metric.length != mem_metric.length) {

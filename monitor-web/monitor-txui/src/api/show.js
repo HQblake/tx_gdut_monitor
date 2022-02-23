@@ -45,6 +45,6 @@ export function GetWarnInfoWithParams (ip, local, metric, level, start, end) {
 
 // 删除指定id的告警信息
 export function DelWarnInfo (id) {
-  let url = 'warn/del/' + id
+  let url = '/show/del/' + id
   return fetchPost(url, {})
 }
