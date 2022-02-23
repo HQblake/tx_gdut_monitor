@@ -1,5 +1,5 @@
 Workers:
-  Capacity: 10000       # 协程池容量
+  Capacity: 1000       # 协程池容量
   ExpiryDuration: 30s   # 协程过期时间，过期后的协程会被清理
   Nonblocking: false    # 非阻塞提交，默认否，任务无worker执行时阻塞，当为true时，无worker则立即返回nil
   PreAlloc: false       # 内存预分配，是否初始化Pool的时候分配worker资源

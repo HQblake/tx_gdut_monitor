@@ -11,6 +11,7 @@ import (
 	"github.com/panjf2000/ants/v2"
 	"log"
 	"os"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -21,6 +22,11 @@ type Service struct {
 	send   send.ISend
 	client *client.Client
 	*judgpb.UnimplementedRuleUpdaterServer
+}
+
+type aggrate struct {
+	metric string
+	value  float64
 }
 
 func (s *Service) Update(ctx context.Context, rule *judgpb.AgentRule) (*judgpb.Response, error) {
@@ -54,41 +60,51 @@ func (s *Service) Check(agent *model.AgentReport) error {
 	log.Printf("Judgment rules: %v\n", *rule)
 
 	// 从协程池中提取worker完成各个指标的判定
-	var wg sync.WaitGroup
 	alert := model.AlertInfoPool.Get().(*model.AlertInfo)
 	alert.IP, alert.Local, alert.Metrics = agent.IP, agent.Local, make(map[string]model.MetricInfo)
-	for k, _ := range agent.Metrics {
-		wg.Add(1)
-		s.pool.Submit(func() {
-			var level int32
 
-			// 从存储系统中获得聚合结果
-			aggregation := s.client.GetAggregation(k, agent, rule)
-			if threshold, ok := rule.Metrics[k]; ok {
-				for k, v := range threshold.Threshold {
-					if k > level && v < aggregation {
-						level = k
-					}
+	// 创建聚合结果channel
+	aggregations := make(chan aggrate, len(agent.Metrics))
+	s.pool.Submit(func() {
+		var wg sync.WaitGroup
+		for k, _ := range agent.Metrics {
+			wg.Add(1)
+			go func() {
+				aggregations <- aggrate{
+					metric: k,
+					value:  s.client.GetAggregation(k, agent, rule),
 				}
-			}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
+		close(aggregations)
+	})
 
-			// 整合告警信息
-			alert.Metrics[k] = model.MetricInfo{
-				Metric:    k,
-				Value:     agent.Metrics[k],
-				Threshold: rule.Metrics[k].Threshold[level],
-				Method:    rule.Metrics[k].Method,
-				Level:     level,
-				Duration:  rule.Metrics[k].Period,
-				Start:     agent.Timestamp,
-			}
+	for result := range aggregations {
+		var level int32
 
-			// 将告警信息保存到存储系统中
-			s.client.SaveAlert(k, alert)
-			wg.Done()
-		})
+		// 计算判定等级
+		for k, v := range rule.Metrics[result.metric].Threshold {
+			if k > level && v < result.value {
+				level = k
+			}
+		}
+
+		// 整合告警信息
+		alert.Metrics[result.metric] = model.MetricInfo{
+			Metric:    result.metric,
+			Value:     result.value,
+			Threshold: rule.Metrics[result.metric].Threshold[level],
+			Method:    rule.Metrics[result.metric].Method,
+			Level:     level,
+			Duration:  rule.Metrics[result.metric].Period,
+			Start:     agent.Timestamp,
+		}
+
+		// 保存告警信息
+		s.client.SaveAlert(result.metric, alert)
 	}
-	wg.Wait()
 	log.Printf("Judgment result: %v\n", alert)
 
 	// 发送告警信息
@@ -112,8 +128,19 @@ func NewService(send send.ISend) *Service {
 		PreAlloc:         ws.PreAlloc,
 		MaxBlockingTasks: ws.MaxBlockingTasks,
 		Nonblocking:      ws.Nonblocking,
-		PanicHandler:     nil,
-		Logger:           ants.Logger(log.New(os.Stderr, "", log.LstdFlags)),
+		PanicHandler: func(i interface{}) {
+			defer func() {
+				// 发生宕机时，获取panic传递的上下文并打印
+				err := recover()
+				switch err.(type) {
+				case runtime.Error: // 运行时错误
+					log.Println("runtime error:", err)
+				default: // 非运行时错误
+					log.Println("error:", err)
+				}
+			}()
+		},
+		Logger: ants.Logger(log.New(os.Stderr, "", log.LstdFlags)),
 	}))
 	if err != nil {
 		log.Fatalln(err)

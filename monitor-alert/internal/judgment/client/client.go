@@ -18,7 +18,7 @@ type Client struct {
 
 func (c *Client) GetAggregation(metric string, agent *model.AgentReport, rule *model.AgentRule) float64 {
 	resp, err := c.storage.GetAggregatedData(context.Background(), &storepb.AggregatedRequest{
-		Method:     int32(rule.Metrics[metric].Method),
+		Method:     rule.Metrics[metric].Method,
 		Period:     rule.Metrics[metric].Period,
 		Metric:     metric,
 		Value:      agent.Metrics[metric],

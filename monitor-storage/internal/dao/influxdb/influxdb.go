@@ -28,7 +28,8 @@ func NewClient(s *InfluxDBSetting) *Client {
 	option.SetHTTPRequestTimeout(uint(s.HttpRequestTimeout))
 	option.SetRetryBufferLimit(uint(s.RetryBufferLimit))
 	option.SetUseGZip(s.UseGZip)
-	client := influxdb2.NewClientWithOptions(s.URL, s.Token, option)
+	client := influxdb2.NewClientWithOptions(s.URL, s.Token,
+		option)
 	defer log.Println("InfluxDB Connection Succeeded")
 	return &Client{client.WriteAPI(s.ORG, s.Bucket), client.QueryAPI(s.ORG), s.Bucket}
 }
