@@ -61,7 +61,7 @@ func TestClient_SaveMatricData(t *testing.T) {
 }
 
 func TestClient_GetMetricData(t *testing.T) {
-	client := NewClient(setting)
+	/*client := NewClient(setting)
 	begin, _ := time.ParseInLocation("2006-01-02 15:04:05", "2022-02-21 00:00:00", time.UTC)
 	start := begin.Unix()
 	end, _ := time.ParseInLocation("2006-01-02 15:04:05", "2022-02-22 00:00:00", time.UTC)
@@ -71,7 +71,11 @@ func TestClient_GetMetricData(t *testing.T) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	fmt.Println(len(metrics))
+	fmt.Println(len(metrics))*/
+	format := "2006-01-02 15:04:05"
+	begin := "2022-02-24 10:11:33"
+	start, _ := time.Parse(format, begin)
+	fmt.Println(begin, start.Unix(), start)
 }
 
 func TestClient_GetAggregatedData(t *testing.T) {

@@ -64,6 +64,7 @@ func (cache *Cache) GetRuleByIPAndLocal(ip, local string, metrics []string, clie
 		}
 	}
 	if len(newMetrics) != n {
+		log.Printf("缓存指标%v规则过期，重新请求：%v\n", rule.Metrics, newMetrics)
 		// 缓存规则过期，向管理服务请求新的规则
 		*rule = client.GetAgentRule(rule.IP, rule.Local, newMetrics)
 		// 将此规则保存至缓存
@@ -79,11 +80,13 @@ func (cache *Cache) SetRuleByID(ip, local string, rule *model.AgentRule) error {
 	defer cache.mx.Unlock(agentID)
 	value, err := json.Marshal(rule)
 	if err != nil {
+		log.Printf("JSON Marshal Error: %v\n", err)
 		return err
 	}
 	return cache.setRuleByID(agentID, string(value))
 }
 
 func (cache *Cache) setRuleByID(id string, value string) error {
+	log.Printf("Insert Judge Config: %v\n", value)
 	return cache.rdb.Set(context.Background(), id, value, 0).Err()
 }

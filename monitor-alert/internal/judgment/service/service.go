@@ -29,11 +29,13 @@ type aggrate struct {
 }
 
 func (s *Service) Update(ctx context.Context, rule *judgpb.AgentRule) (*judgpb.Response, error) {
+	log.Printf("Update Judge Config: %v\n", rule)
 	ruleTemp := model.AgentRulePool.Get().(*model.AgentRule)
 	defer model.AgentRulePool.Put(ruleTemp)
 	parseAgentRule(rule, ruleTemp)
 	err := s.cache.SetRuleByID(rule.IP, rule.Local, ruleTemp)
 	if err != nil {
+		log.Printf("Update Judge Config Error: %v\n", err)
 		return &judgpb.Response{
 			Code: judgpb.ResponseCode_ERROR,
 			Msg:  err.Error(),
@@ -41,7 +43,7 @@ func (s *Service) Update(ctx context.Context, rule *judgpb.AgentRule) (*judgpb.R
 	}
 	return &judgpb.Response{
 		Code: judgpb.ResponseCode_SUCCESS,
-		Msg:  err.Error(),
+		Msg:  "SUCCESS",
 	}, nil
 }
 
