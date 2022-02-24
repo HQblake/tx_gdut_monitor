@@ -42,7 +42,7 @@ func main() { //Agent端的主程序
 	}
 	defer coon.Close()
 	client := receivepb.NewReportServerClient(coon) //注册服务
-	unixtime := time.Now().Unix()                   //获取当前时间戳
+	unixtime := time.Now().UTC().Unix()             //获取当前时间戳
 	for _, str := range metrics {
 		f := model.GlobalMetrics[str]     //从全局Map中获取取得对应指标值的函数
 		Metrics[str] = f() / float64(100) //将指标值填入Map
@@ -52,7 +52,7 @@ func main() { //Agent端的主程序
 	req, _ := client.Report(context.Background(), &receivepb.ReportReq{Timestamp: unixtime, Metric: Metrics, Local: local})
 	fmt.Println(req.GetMsg())                                    //打印返回结果
 	for range time.Tick(time.Duration(interval) * time.Second) { //定时器，以大小为Internal的固定时间间隔重复上报数据
-		unixtime := time.Now().Unix() //获取当前时间戳
+		unixtime := time.Now().UTC().Unix() //获取当前时间戳
 		for _, str := range metrics {
 			f := model.GlobalMetrics[str]     //从全局Map中获取取得对应指标值的函数
 			Metrics[str] = f() / float64(100) //将指标值填入Map

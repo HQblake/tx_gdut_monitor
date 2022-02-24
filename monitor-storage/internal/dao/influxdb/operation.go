@@ -32,8 +32,8 @@ func (c *Client) GetAggregatedData(metric *model.Metric, period string, method i
 	if err != nil {
 		return 0, err
 	}
-	stop := time.Unix(timestamp, 0).Add(1 * time.Second)
-	start := stop.Add(-(duration + 1)).Unix()
+	stop := time.Unix(timestamp, 0).UTC().Add(1 * time.Second).UTC()
+	start := stop.Add(-(duration + 1)).UTC().Unix()
 
 	m := Methods[method].English
 	flux := fmt.Sprintf(query, c.bucket, start, stop.Unix(), metric.Name, metric.IP, metric.Local, period,

@@ -14,6 +14,13 @@
  Date: 23/02/2022 14:33:12
 */
 
+-- ----------------------------
+-- Database structure for monitor
+-- ----------------------------
+DROP DATABASE IF EXISTS `monitor`;
+CREATE DATABASE `monitor` CHARACTER SET utf8mb4 COLLATE = utf8mb4_general_ci;
+USE `monitor`;
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
