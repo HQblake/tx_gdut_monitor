@@ -80,7 +80,7 @@ func (n *Nsq) Output(infos []model.Info) error {
 		return nil
 	}
 	// 是否判定联通待定
-	log.Println("nsq 告警结束")
+	log.Println("nsq 告警开始")
 	err = n.producer.Publish(n.topic, msg)
 	if err != nil {
 		return err
