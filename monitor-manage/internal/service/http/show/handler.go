@@ -92,6 +92,7 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 	}
 
 	format := "2006-01-02 15:04:05"
+
 	start, err := time.ParseInLocation(format, hinfo.Start, time.Local)
 	if err != nil {
 		log.Printf("time.Parse();err: %v", err)
@@ -114,7 +115,7 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 		return
 	}
 
-	res, err := h.service.GetWarnInfoWithParams(hinfo, start, end)
+	res, err := h.service.GetWarnInfoWithParams(hinfo, start.UTC(), end.UTC())
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040005",
@@ -169,7 +170,7 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 		return
 	}
 
-	res, err := h.service.GetMetricsWithTime(metInfo, begin, end)
+	res, err := h.service.GetMetricsWithTime(metInfo, begin.UTC(), end.UTC())
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040007",
