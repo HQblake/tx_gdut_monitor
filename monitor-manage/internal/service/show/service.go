@@ -152,6 +152,7 @@ func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo) ([]model.Histor
 		}
 		res = append(res, conf)
 	}
+
 	return res, nil
 }
 

@@ -53,7 +53,6 @@ func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
 				return &email.Email{
 					Headers: textproto.MIMEHeader{},
 					From:    user,
-					To:      conf.Target,
 					Subject: subject,
 				}
 			},
@@ -69,7 +68,7 @@ func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
 
 func (m *Mail) sendMail() {
 	for mail := range m.infoCh {
-		log.Println(mail.To, "mail 告警开始")
+		log.Println("mail 告警开始, mail to", mail.To)
 		err := m.mail.Send(mail, 10*time.Second)
 		if err != nil {
 			log.Println("send mail:", err)
@@ -100,14 +99,6 @@ func (m *Mail) Reset(level output.Level, config interface{}) error {
 	m.level = level
 	m.formatType = c.FormatType
 	m.target = c.Target
-	m.pool.New = func() interface{} {
-		return &email.Email{
-			Headers: textproto.MIMEHeader{},
-			From:    user,
-			To:      c.Target,
-			Subject: subject,
-		}
-	}
 	return nil
 }
 
@@ -132,6 +123,7 @@ func (m *Mail) Output(infos []model.Info) error {
 		em.Text = msg
 		em.Headers.Add("Content-Type", "text/plain; charset=UTF-8")
 	}
+	em.To = m.target
 	m.infoCh <- em
 	return nil
 }

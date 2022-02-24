@@ -100,12 +100,11 @@ func (o *Outputs) Set(id int, conf Config) error {
 	// 存在则更新配置
 	if ok {
 		// 开始更新配置
-		fmt.Printf("reset config %+v\n", c)
 		err = v.Reset(conf.Level, c)
 		if err != nil {
 			return err
 		}
-		fmt.Printf("reset config success\n")
+		fmt.Printf("reset config %+v success\n", c)
 		return nil
 	}
 	// 不存在则直接新增

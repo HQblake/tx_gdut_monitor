@@ -1,5 +1,9 @@
 package model
 
+import (
+	"time"
+)
+
 // Info 格式化结构
 type Info struct {
 	Agent     string  `json:"agent"`
@@ -30,4 +34,10 @@ func (i *Info) ParseMethod(method int32) {
 	}
 	i.Method = "unknown"
 	return
+}
+
+// ParseDate UTC时间戳转东八区
+func (i *Info) ParseDate(timestamp int64) {
+	Loc := time.FixedZone("CST", 8*3600)
+	i.Start = time.Unix(timestamp, 0).In(Loc).Format("2006-01-02 15:04:05")
 }

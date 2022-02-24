@@ -208,7 +208,7 @@ func (c *Convergence) newInfo(agent string, alert model2.MetricInfo) model.Info 
 	i.Threshold = alert.Threshold
 	i.Level = output.Level(alert.Level).String()
 	i.Duration = alert.Duration
-	i.Start = time.Unix(alert.Start, 0).Format("[2006-01-01 15:04:05]")
+	i.ParseDate(alert.Start)
 	i.ParseMethod(alert.Method)
 	return i
 }
