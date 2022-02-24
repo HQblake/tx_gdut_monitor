@@ -28,14 +28,14 @@ func NewService(alertClient managepb.HistoryServiceClient, metricClient managepb
 }
 
 // 获取截止目前为止所有的告警信息
-func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
+func (s *Service) GetWarnInfo() ([]model.HistoryResponse, error) {
 	var err error
 	stream, err := s.alertClient.GetAllAlertInfo(context.Background(), &managepb.BaseRequest{})
 	if err != nil {
 		return nil, err
 	}
 	var resp *managepb.AlertResponse
-	res := make([]model.HistoryInfo, 0, 10)
+	res := make([]model.HistoryResponse, 0, 10)
 	for {
 		resp, err = stream.Recv()
 		if err == io.EOF {
@@ -50,7 +50,7 @@ func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 			continue
 		}
 		config := resp.GetResult()
-		conf := model.HistoryInfo{
+		conf := model.HistoryResponse{
 			Id:        config.GetID(),
 			Ip:        config.GetIP(),
 			Local:     config.GetLocal(),
@@ -68,7 +68,7 @@ func (s *Service) GetWarnInfo() ([]model.HistoryInfo, error) {
 }
 
 // 根据id获取当前告警信息
-func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error) {
+func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryResponse, error) {
 	var err error
 
 	stream, err := s.alertClient.GetAlertInfo(context.Background(), &managepb.AlertRequest{ID: id})
@@ -76,7 +76,7 @@ func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error) {
 		return nil, err
 	}
 	var resp *managepb.AlertResponse
-	res := make([]model.HistoryInfo, 0)
+	res := make([]model.HistoryResponse, 0)
 	for {
 		resp, err = stream.Recv()
 
@@ -92,7 +92,7 @@ func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error) {
 			continue
 		}
 		config := resp.GetResult()
-		conf := model.HistoryInfo{
+		conf := model.HistoryResponse{
 			Id:        config.GetID(),
 			Ip:        config.GetIP(),
 			Local:     config.GetLocal(),
@@ -110,21 +110,20 @@ func (s *Service) GetWarnInfoWithId(id int32) ([]model.HistoryInfo, error) {
 }
 
 // 根据参数灵活查询告警信息
-func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time.Time) ([]model.HistoryInfo, error) {
-	log.Println("req: ", hinfo, start.Unix(), end.Unix())
+func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo) ([]model.HistoryResponse, error) {
 	req := managepb.AlertRequest{
 		IP:     hinfo.Ip,
 		Local:  hinfo.Local,
 		Level:  hinfo.Level,
 		Metric: hinfo.Metric,
-		Begin:  start.Unix(),
-		End:    end.Unix()}
+		Begin:  hinfo.Start,
+		End:    hinfo.End}
 	stream, err := s.alertClient.GetAlertInfo(context.Background(), &req)
 	if err != nil {
 		return nil, err
 	}
 	var resp *managepb.AlertResponse
-	res := make([]model.HistoryInfo, 0, 10)
+	res := make([]model.HistoryResponse, 0, 10)
 	for {
 		resp, err = stream.Recv()
 		if err == io.EOF {
@@ -139,7 +138,7 @@ func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time
 			continue
 		}
 		config := resp.GetResult()
-		conf := model.HistoryInfo{
+		conf := model.HistoryResponse{
 			Id:        config.GetID(),
 			Ip:        config.GetIP(),
 			Local:     config.GetLocal(),
@@ -157,15 +156,15 @@ func (s *Service) GetWarnInfoWithParams(hinfo model.HistoryInfo, start, end time
 }
 
 // 根据开始时间和数据量限制获取指定条数的指标数据
-func (s *Service) GetMetricsWithTime(req model.MetricsReq, begin, end time.Time) ([]model.MetricsInfo, error) {
-	log.Println("req: ", req, begin.Unix(), end.Unix())
+func (s *Service) GetMetricsWithTime(req model.MetricsReq) ([]model.MetricsInfo, error) {
+
 	var err error
 	stream, err := s.metricClient.GetMetricData(context.Background(), &managepb.MetricRequest{
 		IP:     req.IP,
 		Local:  req.Local,
 		Metric: req.MetricName,
-		Begin:  begin.Unix(),
-		End:    end.Unix(),
+		Begin:  req.Begin,
+		End:    req.End,
 		Period: req.Period,
 		Method: req.Method,
 		Limit:  req.Limit})

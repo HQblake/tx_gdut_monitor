@@ -2,7 +2,7 @@
  * @Description:
  * @Autor: yzq
  * @Date: 2022-02-10 16:05:05
- * @LastEditors: yzq
+ * @LastEditors: zeke
 -->
 <template>
   <div class="warning">
@@ -290,9 +290,9 @@ export default {
       let end1 = this.timePickerValue[1].getTime();
       let levelInt = Number(this.level)
       // let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
-      let startFormat = start1
+      let startFormat =	Math.round(start1 / 1000)
       // let endFormat = dayjs(end1).format('YYYY-MM-DD HH:mm:ss')
-      let endFormat = end1
+      let endFormat = Math.round(end1 / 1000)
       console.log('startFormat', startFormat)
       console.log('endFormat', endFormat)
       // console.log(start);

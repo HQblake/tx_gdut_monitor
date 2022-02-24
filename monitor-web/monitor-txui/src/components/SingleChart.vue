@@ -2,7 +2,7 @@
  * @Description:
  * @Autor: yzq
  * @Date: 2022-02-08 11:20:37
- * @LastEditors: yzq
+ * @LastEditors: zeke
 -->
 <template>
   <div>
@@ -35,7 +35,6 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            value-format="yyyy-MM-dd HH:mm:ss"
           >
           </el-date-picker>
         </div>
@@ -299,10 +298,12 @@ export default {
       console.log('drawChart')
     },
     search () {
-      let start1 = this.timePickerValue[0].toLocaleString('chinese', { hour12: false }).split('/').join('-')
-      let end = this.timePickerValue[1].toLocaleString('chinese', { hour12: false }).split('/').join('-')
-      let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
-      let endFormat = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
+      let start1 = this.timePickerValue[0]
+      let end = this.timePickerValue[1]
+      //let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
+      let startFormat = Math.round(start1 / 1000)
+      //let endFormat = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
+      let endFormat = Math.round(end1 / 1000)
 
       console.log('startFormat', startFormat)
       console.log('endFormat', endFormat)

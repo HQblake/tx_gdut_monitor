@@ -3,12 +3,10 @@ package show
 import (
 	"bytes"
 	"encoding/json"
+	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/model"
 	"log"
 	"net/http"
 	"strconv"
-	"time"
-
-	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/model"
 	// managepb "gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/rpc/client/judgment/gen"
 
 	"gitee.com/zekeGitee_admin/tx_gdut_monitor/monitor-manage/internal/service/show"
@@ -91,31 +89,31 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 		return
 	}
 
-	format := "2006-01-02 15:04:05"
+	//format := "2006-01-02 15:04:05"
+	//
+	//start, err := time.ParseInLocation(format, hinfo.Start, time.UTC)
+	//if err != nil {
+	//	log.Printf("time.Parse();err: %v", err)
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code": "040004",
+	//		"msg":  "初始时间和终止时间获取有误",
+	//		"data": nil,
+	//	})
+	//	return
+	//}
+	//
+	//end, err := time.ParseInLocation(format, hinfo.End, time.UTC)
+	//if err != nil {
+	//	log.Printf("time.Parse();err: %v", err)
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code": "040004",
+	//		"msg":  "初始时间和终止时间获取有误",
+	//		"data": nil,
+	//	})
+	//	return
+	//}
 
-	start, err := time.ParseInLocation(format, hinfo.Start, time.UTC)
-	if err != nil {
-		log.Printf("time.Parse();err: %v", err)
-		c.JSON(http.StatusOK, gin.H{
-			"code": "040004",
-			"msg":  "初始时间和终止时间获取有误",
-			"data": nil,
-		})
-		return
-	}
-
-	end, err := time.ParseInLocation(format, hinfo.End, time.UTC)
-	if err != nil {
-		log.Printf("time.Parse();err: %v", err)
-		c.JSON(http.StatusOK, gin.H{
-			"code": "040004",
-			"msg":  "初始时间和终止时间获取有误",
-			"data": nil,
-		})
-		return
-	}
-
-	res, err := h.service.GetWarnInfoWithParams(hinfo, start.UTC(), end.UTC())
+	res, err := h.service.GetWarnInfoWithParams(hinfo)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040005",
@@ -147,30 +145,30 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 	}
 	log.Printf("GetMetricsWithTime(): %v\n", metInfo)
 
-	format := "2006-01-02 15:04:05"
-	begin, err := time.ParseInLocation(format, metInfo.Begin, time.UTC)
-	if err != nil {
-		log.Printf("time.Parse();err: %v", err)
-		c.JSON(http.StatusOK, gin.H{
-			"code": "040004",
-			"msg":  "初始时间和终止时间获取有误",
-			"data": nil,
-		})
-		return
-	}
+	//format := "2006-01-02 15:04:05"
+	//begin, err := time.ParseInLocation(format, metInfo.Begin, time.UTC)
+	//if err != nil {
+	//	log.Printf("time.Parse();err: %v", err)
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code": "040004",
+	//		"msg":  "初始时间和终止时间获取有误",
+	//		"data": nil,
+	//	})
+	//	return
+	//}
+	//
+	//end, err := time.ParseInLocation(format, metInfo.End, time.UTC)
+	//if err != nil {
+	//	log.Printf("time.Parse();err: %v\n", err)
+	//	c.JSON(http.StatusOK, gin.H{
+	//		"code": "040004",
+	//		"msg":  "初始时间和终止时间获取有误",
+	//		"data": nil,
+	//	})
+	//	return
+	//}
 
-	end, err := time.ParseInLocation(format, metInfo.End, time.UTC)
-	if err != nil {
-		log.Printf("time.Parse();err: %v\n", err)
-		c.JSON(http.StatusOK, gin.H{
-			"code": "040004",
-			"msg":  "初始时间和终止时间获取有误",
-			"data": nil,
-		})
-		return
-	}
-
-	res, err := h.service.GetMetricsWithTime(metInfo, begin.UTC(), end.UTC())
+	res, err := h.service.GetMetricsWithTime(metInfo)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "040007",
