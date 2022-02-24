@@ -302,16 +302,17 @@ export default {
         this.tableData = data.data
         let ret = []
         let res = {}
-        for (let it in this.tableData) {
-          if (res[it.metric]) {
+        for(let j = 0; j < this.tableData.length; j++) {
+          let m = this.tableData[j].metric
+          if (res[m]) {
             continue
           }
-          res[it.metric] = true
+          res[m] = true
           ret.push({
-            'label': it.metric,
-            'value': it.metric
+            'label': m,
+            'value': m
           })
-        }
+        } 
         this.warnOptions = ret
       })
         .catch((err) => {
@@ -362,6 +363,20 @@ export default {
     GetWarnList()
       .then((data) => {
         this.tableData = data.data
+        let ret = []
+        let res = {}
+        for(let j = 0; j < this.tableData.length; j++) {
+          let m = this.tableData[j].metric
+          if (res[m]) {
+            continue
+          }
+          res[m] = true
+          ret.push({
+            'label': m,
+            'value': m
+          })
+        } 
+        this.warnOptions = ret
       })
       .catch((err) => {
         if (err.msg) {
