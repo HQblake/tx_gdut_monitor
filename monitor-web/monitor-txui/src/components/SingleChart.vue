@@ -298,17 +298,20 @@ export default {
       console.log('drawChart')
     },
     search () {
-      let start1 = this.timePickerValue[0]
-      let end = this.timePickerValue[1]
-      //let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
-      let startFormat = Math.round(start1 / 1000)
-      //let endFormat = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
-      let endFormat = Math.round(end1 / 1000)
+      if (!this.timePickerValue) {
+        this.$alert('请选择合适的起始时间~')
+        return
+      }
+      if (this.timePickerValue.length < 2) {
+        this.$alert('请选择合适的起始时间~')
+        return
+      }
 
-      console.log('startFormat', startFormat)
-      console.log('endFormat', endFormat)
-      console.log('method', this.method)
-      console.log('time', this.time)
+      // let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
+      let startFormat = Math.round(this.timePickerValue[0] / 1000)
+      // let endFormat = dayjs(end).format('YYYY-MM-DD HH:mm:ss')
+      let endFormat = Math.round(this.timePickerValue[1] / 1000)
+
       var timeGap
       switch (this.time) {
         case '1s':

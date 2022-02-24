@@ -282,26 +282,37 @@ export default {
   },
   methods: {
     searchWarnInfo () {
-      console.log('timepicker', this.timePickerValue[0])
-      console.log('timepicker', this.timePickerValue[1])
-      // let start = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
-      // let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
-      let start1 = this.timePickerValue[0].getTime();
-      let end1 = this.timePickerValue[1].getTime();
+      if (!this.timePickerValue) {
+        this.$alert('请选择合适的起始时间~')
+        return
+      }
+      if (this.timePickerValue.length < 2) {
+        this.$alert('请选择合适的起始时间~')
+        return
+      }
+
       let levelInt = Number(this.level)
-      // let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
-      let startFormat =	Math.round(start1 / 1000)
-      // let endFormat = dayjs(end1).format('YYYY-MM-DD HH:mm:ss')
-      let endFormat = Math.round(end1 / 1000)
-      console.log('startFormat', startFormat)
-      console.log('endFormat', endFormat)
-      // console.log(start);
-      // console.log(end);
-      let start = '2022-02-22 23:26:14'
-      let end = '2022-02-22 23:56:14'
+
+      let startFormat =	Math.round(this.timePickerValue[0].getTime() / 1000)
+
+      let endFormat = Math.round(this.timePickerValue[1].getTime() / 1000)
+
       console.log(this.ip, this.local, this.warnContent, levelInt, startFormat, endFormat)
       GetWarnInfoWithParams(this.ip, this.local, this.warnContent, levelInt, startFormat, endFormat).then(data => {
         this.tableData = data.data
+        let ret = []
+        let res = {}
+        for (let it in this.tableData) {
+          if (res[it.metric]) {
+            continue
+          }
+          res[it.metric] = true
+          ret.push({
+            'label': it.metric,
+            'value': it.metric
+          })
+        }
+        this.warnOptions = ret
       })
         .catch((err) => {
           if (err.msg) {
