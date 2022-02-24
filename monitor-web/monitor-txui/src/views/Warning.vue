@@ -57,7 +57,8 @@
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                value-format="yyyy-MM-dd HH:mm:ss"
+
+                value-format="timestamp"
 
               >
               </el-date-picker>
@@ -291,8 +292,10 @@ export default {
       let start1 = this.timePickerValue[0]
       let end1 = this.timePickerValue[1]
       let levelInt = Number(this.level)
-      let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
-      let endFormat = dayjs(end1).format('YYYY-MM-DD HH:mm:ss')
+      // let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
+      let startFormat = start1
+      // let endFormat = dayjs(end1).format('YYYY-MM-DD HH:mm:ss')
+      let endFormat = end1
       console.log('startFormat', startFormat)
       console.log('endFormat', endFormat)
       // console.log(start);
