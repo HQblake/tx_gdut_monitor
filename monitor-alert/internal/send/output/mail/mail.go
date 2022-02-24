@@ -69,7 +69,7 @@ func NewMail(level output.Level, conf *EMailConf) (*Mail, error) {
 
 func (m *Mail) sendMail() {
 	for mail := range m.infoCh {
-		log.Println(m.target, "mail 告警开始")
+		log.Println(mail.To, "mail 告警开始")
 		err := m.mail.Send(mail, 10*time.Second)
 		if err != nil {
 			log.Println("send mail:", err)
