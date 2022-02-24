@@ -93,7 +93,7 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 
 	format := "2006-01-02 15:04:05"
 
-	start, err := time.ParseInLocation(format, hinfo.Start, time.Local)
+	start, err := time.ParseInLocation(format, hinfo.Start, time.UTC)
 	if err != nil {
 		log.Printf("time.Parse();err: %v", err)
 		c.JSON(http.StatusOK, gin.H{
@@ -104,7 +104,7 @@ func (h *Handler) GetWarnInfoWithParams(c *gin.Context) {
 		return
 	}
 
-	end, err := time.ParseInLocation(format, hinfo.End, time.Local)
+	end, err := time.ParseInLocation(format, hinfo.End, time.UTC)
 	if err != nil {
 		log.Printf("time.Parse();err: %v", err)
 		c.JSON(http.StatusOK, gin.H{
@@ -148,7 +148,7 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 	log.Printf("GetMetricsWithTime(): %v\n", metInfo)
 
 	format := "2006-01-02 15:04:05"
-	begin, err := time.ParseInLocation(format, metInfo.Begin, time.Local)
+	begin, err := time.ParseInLocation(format, metInfo.Begin, time.UTC)
 	if err != nil {
 		log.Printf("time.Parse();err: %v", err)
 		c.JSON(http.StatusOK, gin.H{
@@ -159,7 +159,7 @@ func (h *Handler) GetMetricsWithTime(c *gin.Context) {
 		return
 	}
 
-	end, err := time.ParseInLocation(format, metInfo.End, time.Local)
+	end, err := time.ParseInLocation(format, metInfo.End, time.UTC)
 	if err != nil {
 		log.Printf("time.Parse();err: %v\n", err)
 		c.JSON(http.StatusOK, gin.H{
