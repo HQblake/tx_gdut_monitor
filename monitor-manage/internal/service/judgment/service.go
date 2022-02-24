@@ -109,16 +109,10 @@ func (s *Service) Update(ID int32, IP string,Local string, Metric string, Method
 	if resp.GetCode() != managepb.ResponseCode_SUCCESS {
 		return fmt.Errorf("update judgment config store service error %s", resp.GetMsg())
 	}
-	go func(ip string, local string) {
-		err := s.TriggerUpdate(ip, local)
-		if err != nil {
-			log.Printf("update judgment config trigger update error: %s", err.Error())
-		}
-	}(IP, Local)
 	return nil
 }
 
-func (s *Service) Del(ip string, local string, id int32) error {
+func (s *Service) Del(id int32) error {
 	resp, err := s.store.DeleteConfig(context.Background(), &managepb.IDRequest{ID: id})
 	if err != nil {
 		return err
@@ -126,17 +120,12 @@ func (s *Service) Del(ip string, local string, id int32) error {
 	if resp.GetCode() != managepb.ResponseCode_SUCCESS {
 		return fmt.Errorf("del judgment config store service error %s", resp.GetMsg())
 	}
-	go func(ip string, local string) {
-		err := s.TriggerUpdate(ip, local)
-		if err != nil {
-			log.Printf("del judgment config trigger update error: %s", err.Error())
-		}
-	}(ip, local)
 	return nil
 }
 
-func (s *Service) TriggerUpdate(ip string, local string) error {
-	list, err := s.GetConfigs(ip, local)
+func (s *Service) TriggerUpdate(ip string, local string, metrics []string) error {
+	// 获取数据库中有的配置
+	cfgs, err := s.GetConfigs(ip, local)
 	if err != nil {
 		return err
 	}
@@ -145,11 +134,22 @@ func (s *Service) TriggerUpdate(ip string, local string) error {
 		Local: local,
 		Metrics: make(map[string]*managepb2.MetricRule),
 	}
-	for key, config := range list {
-		agent.Metrics[key] = &managepb2.MetricRule{
-			Method: config.Method,
-			Period: config.Period,
-			Threshold: config.Threshold,
+	defaultRule := configs.GetDefaultRule()
+	for _, m := range metrics {
+		if v, ok := cfgs[m]; ok {
+			// 数据库里有
+			agent.Metrics[m] = &managepb2.MetricRule{
+				Method: v.Method,
+				Period: v.Period,
+				Threshold: v.Threshold,
+			}
+		}else {
+			// 数据库里没有，用默认
+			agent.Metrics[m] = &managepb2.MetricRule{
+				Method: defaultRule.Method,
+				Period: defaultRule.Period,
+				Threshold: defaultRule.Threshold,
+			}
 		}
 	}
 	resp, err := s.judgment.Update(context.Background(), agent)
@@ -159,6 +159,7 @@ func (s *Service) TriggerUpdate(ip string, local string) error {
 	if resp.GetCode() != managepb2.ResponseCode_SUCCESS {
 		return fmt.Errorf("update judgment rpc service error %s", resp.GetMsg())
 	}
+
 	return nil
 }
 

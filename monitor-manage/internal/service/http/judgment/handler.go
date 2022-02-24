@@ -100,6 +100,24 @@ func (h *Handler) UpdateRule(c *gin.Context) {
 		})
 		return
 	}
+	agentInfo, err := h.agent.GetAgentInfo(ip, local)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "020003",
+			"msg":  "获取agent信息出错" + err.Error(),
+			"data": nil,
+		})
+		return
+	}
+	err = h.service.TriggerUpdate(ip, local, agentInfo.Metric)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "020004",
+			"msg":  "判定服务更新信息出错" + err.Error(),
+			"data": nil,
+		})
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": "000000",
 		"msg":  "success",
@@ -129,11 +147,29 @@ func (h *Handler) DelRule(c *gin.Context) {
 		})
 		return
 	}
-	err = h.service.Del(ip, local, int32(delId))
+	err = h.service.Del(int32(delId))
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code": "020003",
 			"msg":  "删除agent rule信息出错"  + err.Error(),
+			"data": nil,
+		})
+		return
+	}
+	agentInfo, err := h.agent.GetAgentInfo(ip, local)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "020003",
+			"msg":  "获取agent信息出错" + err.Error(),
+			"data": nil,
+		})
+		return
+	}
+	err = h.service.TriggerUpdate(ip, local, agentInfo.Metric)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code": "020004",
+			"msg":  "判定服务更新信息出错" + err.Error(),
 			"data": nil,
 		})
 		return
