@@ -75,7 +75,7 @@ func (m *Mail) sendMail() {
 			log.Println("send mail:", err)
 		}
 		m.pool.Put(mail)
-		log.Println("mail 告警开始")
+		log.Println("mail 告警结束")
 	}
 	m.stopCh <- true
 }
