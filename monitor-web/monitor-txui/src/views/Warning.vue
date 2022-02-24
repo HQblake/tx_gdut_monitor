@@ -57,9 +57,6 @@
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-
-                value-format="timestamp"
-
               >
               </el-date-picker>
             </div>
@@ -289,8 +286,8 @@ export default {
       console.log('timepicker', this.timePickerValue[1])
       // let start = this.timePickerValue[0].toLocaleString('chinese', {hour12:false}).split('/').join('-')
       // let end = this.timePickerValue[1].toLocaleString('chinese', {hour12:false}).split('/').join('-')
-      let start1 = this.timePickerValue[0]
-      let end1 = this.timePickerValue[1]
+      let start1 = this.timePickerValue[0].getTime();
+      let end1 = this.timePickerValue[1].getTime();
       let levelInt = Number(this.level)
       // let startFormat = dayjs(start1).format('YYYY-MM-DD HH:mm:ss')
       let startFormat = start1
