@@ -86,3 +86,14 @@ type IOutputs interface {
 }
 ```
 
+##### 格式处理
+
+不同的输出业务有不同的格式要求，可以基于该接口实现不同的格式化处理方式，目前支持**line，json，html**，可继续扩展
+
+```golang
+// IFormat 内容格式化工具，可以是json格式化，也可以自定义格式化方式
+type IFormat interface {
+	Format(info []model.Info) ([]byte, error)
+}
+```
+
